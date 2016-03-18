@@ -1,0 +1,86 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+	<link rel="stylesheet" type="text/css" href="{% static 'common/lib/bootstrap/css/bootstrap.min.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'common/lib/font-awesome/css/font-awesome.min.css' %}" >
+	
+	<link rel="stylesheet" type="text/css" href="{% static 'common/css/heroic-features.css' %}" />
+	
+	<script src="{% static 'common/lib/jquery/jquery.min.js' %}"></script>
+	<script src="{% static 'common/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}">Jambo</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                	{% if user.is_anonymous %}
+                	<li>
+                		<a href="{% url 'django.contrib.auth.views.login' %}">Login</a>
+                	</li>
+                	{% else %}
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><i class="fa fa-user"></i> {{ user }} <b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+							</li>
+							<li><a href="#"><i class="fa fa-fw fa-gear"></i>
+									Settings</a></li>
+							<li class="divider"></li>
+							<li><a href="{% url 'django.contrib.auth.views.logout' %}"><i class="fa fa-fw fa-power-off"></i>
+									Log Out</a></li>
+						</ul>
+					</li>
+					{% endif %}
+				</ul>
+            </div>
+		</div>
+        <!-- /.container -->
+    </nav>
+    
+    <!-- Page Content -->
+    <div class="container">
+    	<div>
+    		{% block content %}
+    		{% endblock %}
+		</div>
+
+		<!-- Footer -->
+		<footer>
+			<div class="row">
+				<div class="col-lg-12">
+					<p>Copyright &copy; Jambo 2016</p>
+				</div>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>
