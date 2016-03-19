@@ -8,7 +8,16 @@
 
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 	{% csrf_token %}
-	{{ form }}
+
+	<div class="form-group">
+		{{ form.username.label_tag }}
+		{{ form.username }}
+	</div>
+	<div class="form-group">
+		{{ form.password.label_tag }}
+		{{ form.password }}
+	</div>
+
 	<input class="btn btn-default" type="submit" value="Login" />
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
