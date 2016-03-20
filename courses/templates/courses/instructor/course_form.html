@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<a class="btn btn-default" href="{% url 'courses:instructor.courses' %}" role="button">Back to List</a>
+
+<h2>Create a Course</h2>
+<form action="" method="post">
+	{% csrf_token %}
+	
+	<div class="form-group">
+		{{ form.title.label_tag }}
+		{{ form.title }}
+	</div>
+	<div class="form-group">
+		{{ form.instructors.label_tag }}
+		{{ form.instructors }}
+	</div>
+	<div class="form-group">
+		{{ form.description.label_tag }}
+		{{ form.description }}
+	</div>
+	<div class="form-group">
+		{{ form.students.label_tag }}
+		{{ form.students }}
+	</div>
+
+	<input type="submit" value="Submit" />
+	<input type="reset" value="Reset" />
+</form>
+
+{% endblock %}

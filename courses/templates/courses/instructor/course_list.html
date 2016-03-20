@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>My Courses</h2>
+<a class="btn btn-default" href="{% url 'courses:instructor.courses.create' %}" role="button">Create</a>
+<table class="table table-hover">
+	<tr>
+		<th>Title</th>
+		<th>Instructors</th>
+		<th>Created by</th>
+		<th>Create Date</th>
+		<th>#Students</th>
+		<th>Active</th>
+		<th></th>
+	</tr>
+	{% for course in object_list %}
+	<tr>
+		<td>{{ course.title }}</td>
+		<td>
+			{% for instructor in course.instructors.all %}
+			{{ instructor }}
+			{% endfor %}
+		</td>
+		<td>{{ course.created_by }}</td>
+		<td>{{ course.create_date }}</td>
+		<td>{{ course.students.count }}</td>
+		<td>{{ course.status }}</td>
+		<td>
+			<a class="btn btn-default" href="{% url 'courses:instructor.courses.update' course.id %}" role="button">Modify</a>
+			<a class="btn btn-default" href="#" role="button">Assignments</a>
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}
