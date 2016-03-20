@@ -7,11 +7,15 @@
 	<tr>
 		<th>Title</th>
 		<th>Active</th>
+		<th></th>
 	</tr>
 	{% for course in object_list %}
 	<tr>
 		<td>{{ course.title }}</td>
 		<td>{{ course.status }}</td>
+		<td>
+			<a class="btn btn-default" href="{% url 'courses:student.assignment.list' course.id %}" role="button">Assignments</a>
+		</td>
 	</tr>
 	{% empty %}
 	<p>You do not have any course.</p>
