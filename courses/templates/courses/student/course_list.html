@@ -13,6 +13,8 @@
 		<td>{{ course.title }}</td>
 		<td>{{ course.status }}</td>
 	</tr>
+	{% empty %}
+	<p>You do not have any course.</p>
 	{% endfor %}
 </table>
 

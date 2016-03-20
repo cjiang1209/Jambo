@@ -26,4 +26,15 @@ class CourseUpdate(generic.UpdateView):
     fields = [ 'title', 'instructors', 'description', 'students' ]
     template_name = 'courses/instructor/course_form.html'
     success_url = reverse_lazy('courses:instructor.courses')
+
+class AssignmentList(generic.ListView):
+    model = models.Assignment
+    template_name = 'courses/instructor/assignment_list.html'
     
+    def get_context_data(self, **kwargs):
+        context = super(AssignmentList, self).get_context_data(**kwargs)
+        context['course'] = models.Course.objects.get(id=self.kwargs['pk'])
+        return context
+    
+    def get_queryset(self):
+        return models.Assignment.objects.filter(course__id=self.request.GET.get('pk'))

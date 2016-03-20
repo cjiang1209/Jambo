@@ -28,9 +28,11 @@
 		<td>{{ course.status }}</td>
 		<td>
 			<a class="btn btn-default" href="{% url 'courses:instructor.courses.update' course.id %}" role="button">Modify</a>
-			<a class="btn btn-default" href="#" role="button">Assignments</a>
+			<a class="btn btn-default" href="{% url 'courses:instructor.assignment.list' course.id %}" role="button">Assignments</a>
 		</td>
 	</tr>
+	{% empty %}
+	<p>You do not have any course.</p>
 	{% endfor %}
 </table>
 
