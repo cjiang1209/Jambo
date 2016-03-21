@@ -12,8 +12,14 @@
 	
 	<link rel="stylesheet" type="text/css" href="{% static 'common/css/heroic-features.css' %}" />
 	
+	{% block css-head %}
+	{% endblock css-head %}
+	
 	<script src="{% static 'common/lib/jquery/jquery.min.js' %}"></script>
 	<script src="{% static 'common/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+	
+	{% block script-head %}
+	{% endblock script-head %}
 </head>
 <body>
 

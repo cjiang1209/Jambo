@@ -54,7 +54,7 @@ class AssignmentCreate(generic.CreateView):
     
     def get_context_data(self, **kwargs):
         context = super(AssignmentCreate, self).get_context_data(**kwargs)
-        context['course'] = self.get_form().instance.course
+        context['course'] = get_object_or_404(models.Course, pk=self.kwargs['pk'])
         return context
     
     def form_valid(self, form):

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+{% endblock script-head %}
+
+{% block content %}
+
+<h2>{{ article.assignment.title }} - {{ article.assignment.course.title }}</h2>
+<blockquote>{{ article.assignment.description }}</blockquote>
+
+<div>
+{{ article.content | safe }}
+</div>
+
+{% endblock %}

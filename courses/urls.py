@@ -14,4 +14,6 @@ urlpatterns = [
     
     url(r'^s/$', student_views.CourseList.as_view(), name='student.courses'),
     url(r'^s/course/(?P<pk>[0-9]+)/assignments/$', student_views.AssignmentList.as_view(), name='student.assignment.list'),
+    url(r'^s/course/assignments/(?P<pk>[0-9]+)/article/create/$', student_views.ArticleCreate.as_view(), name='student.article.create'),
+    url(r'^s/article/(?P<pk>[0-9]+)/$', student_views.ArticleDetail.as_view(), name='student.article.detail'),
 ]

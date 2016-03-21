@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+{% endblock script-head %}
+
+{% block content %}
+
+<h2>{{ assignment.title }} - {{ assignment.course.title }}</h2>
+<blockquote>{{ assignment.description }}</blockquote>
+
+{% if form.errors %}
+	{{ form.errors }}
+{% endif %}
+
+<form action="" method="post">
+	{% csrf_token %}
+	
+	<div class="form-group">
+		{{ form.assignment }}
+	</div>
+	
+	<div class="form-group">
+		{{ form.content }}
+	</div>
+
+	<input type="submit" value="Submit" />
+	<input type="reset" value="Reset" />
+</form>
+
+{% endblock %}

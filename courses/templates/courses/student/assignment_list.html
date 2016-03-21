@@ -17,6 +17,9 @@
 		<td>{{ assignment.created_by }}</td>
 		<td>{{ assignment.create_date }}</td>
 		<td>{{ assignment.due_date }}</td>
+		<td>
+			<a class="btn btn-default" href="{% url 'courses:student.article.create' assignment.id %}" role="button">Articles</a>
+		</td>
 	</tr>
 	{% empty %}
 	<p>{{ course.title }} does not have any assignment.</p>

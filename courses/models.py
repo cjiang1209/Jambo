@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
@@ -23,3 +24,13 @@ class Assignment(models.Model):
     
     def __str__(self):
         return self.title
+
+class Article(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+    status = models.BooleanField(default=False, help_text="This field denotes if the article has been reviewed.")
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    
+    def get_absolute_url(self):
+        return reverse('courses:student.article.detail', kwargs={'pk': self.pk})
