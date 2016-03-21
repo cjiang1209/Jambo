@@ -3,37 +3,46 @@
 {% block content %}
 
 <h2>My Courses</h2>
-<a class="btn btn-default" href="{% url 'courses:instructor.courses.create' %}" role="button">Create</a>
-<table class="table table-hover">
-	<tr>
-		<th>Title</th>
-		<th>Instructors</th>
-		<th>Created by</th>
-		<th>Create Date</th>
-		<th>#Students</th>
-		<th>Active</th>
-		<th></th>
-	</tr>
-	{% for course in object_list %}
-	<tr>
-		<td>{{ course.title }}</td>
-		<td>
-			{% for instructor in course.instructors.all %}
-			{{ instructor }}
-			{% endfor %}
-		</td>
-		<td>{{ course.created_by }}</td>
-		<td>{{ course.create_date }}</td>
-		<td>{{ course.students.count }}</td>
-		<td>{{ course.status }}</td>
-		<td>
-			<a class="btn btn-default" href="{% url 'courses:instructor.courses.update' course.id %}" role="button">Modify</a>
-			<a class="btn btn-default" href="{% url 'courses:instructor.assignment.list' course.id %}" role="button">Assignments</a>
-		</td>
-	</tr>
-	{% empty %}
-	<p>You do not have any course.</p>
-	{% endfor %}
-</table>
+<a class="btn btn-default" href="{% url 'courses:instructor.courses.create' %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+
+<ul class="list-unstyled">
+{% for course in object_list %}
+	<li>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<span>{{ course.title }}</span>
+				
+				<span class="dropdown pull-right">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="{% url 'courses:instructor.courses.update' course.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
+							<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
+						<li>
+					</ul>
+				</span>
+				
+				<span class="pull-right">Instructor:
+				{% for instructor in course.instructors.all %}
+					{{ instructor }}
+				{% endfor %}
+				</span>
+			</div>
+			<div class="panel-body">
+				<div>
+					{{ course.description }}
+				</div>
+				<div class="pull-right">
+					<a class="btn btn-default" href="{% url 'courses:instructor.assignment.list' course.id %}" role="button">Assignments</a>
+				</div>
+			</div>
+		</div>
+	</li>
+{% empty %}
+	<li>You do not have any course.</li>
+{% endfor %}
+</ul>
 
 {% endblock %}
