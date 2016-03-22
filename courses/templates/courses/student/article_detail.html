@@ -11,8 +11,13 @@
 <h2>{{ article.assignment.title }} - {{ article.assignment.course.title }}</h2>
 <blockquote>{{ article.assignment.description }}</blockquote>
 
-<div>
+<textarea id="id_content" rows="10" cols="40">
 {{ article.content | safe }}
-</div>
+</textarea>
+<script>
+CKEDITOR.replace('id_content', {
+	customConfig: '{% static 'common/miscellaneous/ckeditor_display_config.js' %}'
+});
+</script>
 
 {% endblock %}

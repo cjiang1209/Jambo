@@ -6,7 +6,7 @@
 <a class="btn btn-default" href="{% url 'courses:instructor.courses.create' %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
 
 <ul class="list-unstyled">
-{% for course in object_list %}
+{% for course in course_list %}
 	<li>
 		<div class="panel panel-info">
 			<div class="panel-heading">

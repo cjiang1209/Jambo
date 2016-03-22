@@ -16,5 +16,6 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'about', groups: [ 'about' ] }
 	];
 
+	config.removePlugins= 'elementspath';
 	config.removeButtons = 'Subscript,Superscript,Source,About';
 };

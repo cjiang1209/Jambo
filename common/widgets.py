@@ -6,7 +6,7 @@ class RichTextEditor(Textarea):
     def render(self, name, value, attrs=None):
         html = super(RichTextEditor, self).render(name, value, attrs)
         
-        config_url = static('common/miscellaneous/ckeditor_config.js')
+        config_url = static('common/miscellaneous/ckeditor_edit_config.js')
         html = html + """<script>CKEDITOR.replace('""" + attrs['id'] + """', {
             customConfig: '""" + config_url + """'
         });</script>"""
