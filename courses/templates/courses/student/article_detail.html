@@ -4,6 +4,116 @@
 
 {% block script-head %}
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+
+{% verbatim %}
+<script id="comment-template" type="text/x-handlebars-template">
+<div class="panel panel-default">
+	<input class="comment_start" type="hidden" value={{{start}}} />
+	<input class="comment_end" type="hidden" value={{{end}}} />
+	<div class="panel-heading">
+		<span class="panel-title">
+			Comment: {{{title}}}
+		</span>
+		<span class="pull-right">
+			Last modified: {{time}}
+		</span>
+	</div>
+	<div class="panel-body">
+		<form action="" method="post">
+			<div class="form-group">
+				<textarea id="id_comment_{{id}}" rows="4" cols="50"></textarea>
+			</div>
+			<input type="submit" value="Submit" />
+			<input type="reset" value="Reset" />
+		</form>
+	</div>
+	<input type="button" value="Select" onclick="highlightComment(this)" />
+</div>
+</script>
+{% endverbatim %}
+
+<script>
+
+function addComment()
+{
+	var editor = CKEDITOR.instances['id_content'];
+	var sel = editor.getSelection();
+	var ranges = sel.getRanges();
+	if(ranges.length == 0) {
+		console.log('select some text to add comment.')
+	}
+	else {
+		var range = sel.getRanges()[0];
+		console.log('start: ' + range.startContainer.getAddress() + ' offset: ' + range.startOffset);
+		console.log('end: ' + range.endContainer.getAddress() + ' offset: ' + range.endOffset);
+		
+		//console.log(content.getCommand('bold'));
+		
+		editor.execCommand('comment');
+		
+		console.log(editor.getData());
+		
+		var bookmark = range.createBookmark(true);
+		console.log(bookmark);
+	}
+}
+
+function addCommentCallback(event)
+{
+	console.log(event.data);
+	
+	var next = $('#id_list_comment #id_list_next');
+	var index = next.val();
+	next.val(index + 1);
+	
+	var editor = CKEDITOR.instances['id_content'];
+	var title = editor.getSelectedHtml().getHtml();
+	var range = editor.getSelection().getRanges()[0];
+	var bookmark = range.createBookmark(true);
+	
+	var source = $('#comment-template').html();
+	var template = Handlebars.compile(source);
+	var context = {
+		id: index,
+		title: title,
+		comment: event.data,
+		time: new Date().toLocaleString(),
+		start: bookmark.startNode,
+		end: bookmark.endNode
+	};
+	var html = template(context);
+	$('#id_list_comment').append(html);
+	
+	CKEDITOR.replace('id_comment_' + index, {
+        customConfig: '{% static 'common/miscellaneous/ckeditor_edit_config.js' %}'
+    });
+}
+
+function highlightComment(obj)
+{
+	var parent = $(obj).parent();
+	console.log(parent);
+	console.log(parent.children('.comment_start').val());
+	console.log(parent.children('.comment_end').val());
+	
+	var bookmark = {
+		startNode: parent.children('.comment_start').val(),
+		endNode: parent.children('.comment_end').val(),
+		serializable: true,
+		collapsed: false
+	}
+	
+	var editor = CKEDITOR.instances['id_content'];
+	editor.getSelection().selectBookmarks([bookmark]);
+	
+	var range = editor.createRange();
+	range.moveToBookmark(bookmark);
+	sel.selectRanges( [ range ] );
+}
+
+</script>
+
 {% endblock script-head %}
 
 {% block content %}
@@ -15,9 +125,36 @@
 {{ article.content | safe }}
 </textarea>
 <script>
-CKEDITOR.replace('id_content', {
+var editor = CKEDITOR.replace('id_content', {
 	customConfig: '{% static 'common/miscellaneous/ckeditor_display_config.js' %}'
 });
+editor.on('add_comment', addCommentCallback);
 </script>
+
+<input class="btn btn-default" type="button" value="Comment" onclick="addComment()" />
+
+<div class="panel-group" id="id_list_comment">
+	<input id="id_list_next" type="hidden" value="0" />
+</div>
+
+<form action="" method="post">
+	{% csrf_token %}
+	
+	<div class="form-group">
+		<textarea id="id_comment" rows="4" cols="50">
+		</textarea>
+		
+		<script>
+		CKEDITOR.replace('id_comment', {
+            customConfig: '{% static 'common/miscellaneous/ckeditor_edit_config.js' %}'
+        });
+		</script>
+		</script>
+	</div>
+
+	<input type="submit" value="Submit" />
+	<input type="reset" value="Reset" />
+</form>
+
 
 {% endblock %}
