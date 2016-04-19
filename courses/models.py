@@ -33,4 +33,4 @@ class Article(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     
     def get_absolute_url(self):
-        return reverse('courses:student.article.detail', kwargs={'pk': self.pk})
+        return reverse('courses:article.detail', kwargs={'pk': self.pk})

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>{{ course.title }}</h2>
+
+{% if perms.courses.add_assignment %}
+<a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+{% endif %}
+
+<ul class="list-unstyled">
+{% for assignment in object_list %}
+	<li>
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<span>{{ assignment.title }}</span>
+				
+				{% if perms.courses.change_assignment %}
+				<span class="dropdown pull-right">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<b class="caret"></b>
+					</a>
+					
+					<ul class="dropdown-menu">
+						<li>
+							<a href="{% url 'courses:assignment.update' assignment.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
+							<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
+						<li>
+					</ul>
+				</span>
+				{% endif %}
+				
+				<span class="pull-right">Due Date: {{ assignment.due_date }}</span>
+			</div>
+			<div class="panel-body">
+				<blockquote>
+					{{ assignment.description }}
+				</blockquote>
+				
+				<h4>Submissions</h4>
+				<ul class="list-group">
+					{% for article in assignment.article_set.all %}
+					<li class="list-group-item">
+						<a href="{% url 'courses:article.detail' article.id %}">{{ article.author }} - {{ article.create_date }}</a>
+					</li>
+					{% endfor %}
+				</ul>
+				
+				{% if perms.courses.add_article %}
+				<a class="btn btn-default" href="{% url 'courses:article.create' assignment.id %}" role="button">Submit an Article</a>
+				{% endif %}
+			</div>
+		</div>
+	</li>
+{% empty %}
+	<li>{{ course.title }} does not have any assignment.</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

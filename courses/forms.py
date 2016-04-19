@@ -5,7 +5,7 @@ from common import widgets
 class ArticleForm(ModelForm):
     class Meta:
         model = models.Article
-        fields = ( 'assignment', 'content' )
+        fields = [ 'content' ]
         widgets = {
             'content' : widgets.RichTextEditor(),
         }

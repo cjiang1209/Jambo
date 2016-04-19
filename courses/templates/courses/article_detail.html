@@ -118,6 +118,8 @@ function highlightComment(obj)
 
 {% block content %}
 
+<a class="btn btn-default" href="{% url 'courses:assignment.list' article.assignment.course.id %}" role="button">Back to List</a>
+
 <h2>{{ article.assignment.title }} - {{ article.assignment.course.title }}</h2>
 <blockquote>{{ article.assignment.description }}</blockquote>
 

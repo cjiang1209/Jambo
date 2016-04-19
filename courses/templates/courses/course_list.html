@@ -3,7 +3,10 @@
 {% block content %}
 
 <h2>My Courses</h2>
-<a class="btn btn-default" href="{% url 'courses:instructor.courses.create' %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+
+{% if perms.courses.add_course %}
+<a class="btn btn-default" href="{% url 'courses:course.create' %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+{% endif %}
 
 <ul class="list-unstyled">
 {% for course in course_list %}
@@ -12,17 +15,20 @@
 			<div class="panel-heading">
 				<span>{{ course.title }}</span>
 				
+				{% if perms.courses.change_course %}
 				<span class="dropdown pull-right">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 						<b class="caret"></b>
 					</a>
+					
 					<ul class="dropdown-menu">
 						<li>
-							<a href="{% url 'courses:instructor.courses.update' course.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
+							<a href="{% url 'courses:course.update' course.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
 							<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
 						<li>
 					</ul>
 				</span>
+				{% endif %}
 				
 				<span class="pull-right">Instructor:
 				{% for instructor in course.instructors.all %}
@@ -35,7 +41,7 @@
 					{{ course.description }}
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-default" href="{% url 'courses:instructor.assignment.list' course.id %}" role="button">Assignments</a>
+					<a class="btn btn-default" href="{% url 'courses:assignment.list' course.id %}" role="button">Assignments</a>
 				</div>
 			</div>
 		</div>
