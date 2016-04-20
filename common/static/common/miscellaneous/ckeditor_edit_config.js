@@ -13,5 +13,5 @@ CKEDITOR.editorConfig = function( config ) {
 	config.removePlugins= 'elementspath';
 	config.removeButtons = 'Subscript,Superscript,Styles,Blockquote';
 	
-	config.extraPlugins = 'comment';
+	config.extraPlugins = 'comment,placeholder,devtools';
 };
