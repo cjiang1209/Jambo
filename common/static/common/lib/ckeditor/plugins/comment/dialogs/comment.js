@@ -24,6 +24,7 @@ CKEDITOR.dialog.add('comment', function(editor) {
 						commit: function(widget) {
 							var html = editor.getSelectedHtml(true);
 							widget.setData('name', html);
+							widget.setData('comment_id', 0);
 						}
 					}
 				]
