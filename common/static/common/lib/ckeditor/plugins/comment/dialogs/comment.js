@@ -22,7 +22,8 @@ CKEDITOR.dialog.add('comment', function(editor) {
 							CKEDITOR.replace(this.getInputElement().getId());
 						},
 						commit: function(widget) {
-							//widget.setData('name', this.getValue());
+							var html = editor.getSelectedHtml(true);
+							widget.setData('name', html);
 						}
 					}
 				]
