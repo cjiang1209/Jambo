@@ -34,3 +34,14 @@ class Article(models.Model):
     
     def get_absolute_url(self):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
+
+class GradingAttempt(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    content = models.TextField()
+    create_date = models.DateTimeField()
+    last_modified_date = models.DateTimeField()
+
+class Comment(models.Model):
+    content = models.TextField()
+    attempt = models.ForeignKey(GradingAttempt, on_delete=models.CASCADE)
+    create_date = models.TextField()

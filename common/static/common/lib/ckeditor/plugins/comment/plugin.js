@@ -12,6 +12,14 @@
 		readOnly : true,
 		exec : function(editor) {
 			editor.setReadOnly(false);
+			
+			
+			console.log(editor.getSelection().getStartElement());
+			var ranges = editor.getSelection().getRanges();
+			console.log(ranges.length);
+			console.log(ranges);
+			
+			
 			editor.execCommand(pluginName);
 		}
 	};

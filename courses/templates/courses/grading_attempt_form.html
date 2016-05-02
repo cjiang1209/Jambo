@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+<script src="{% static 'common/script/csrf.js' %}"></script>
+
+<script>
+
+function addComment(evt)
+{
+	var dialog = evt.sender;
+	console.log('fire ok');
+ 	$.post("{% url 'courses:comment.create' %}", {
+ 		attempt: {{ gradingattempt.id }},
+ 		content: dialog.getValueOf('cke_info', 'cke_content')
+ 	}, function(data) {
+ 		dialog.setValueOf('cke_info', 'cke_comment_id', data.id);
+		//console.log(data);
+		evt.data.success();
+		updateGradingAttemptContent();
+	});
+}
+
+function updateGradingAttemptContent()
+{
+	$.post("{% url 'courses:grading_attempt.update_content' gradingattempt.id %}", {
+		content: CKEDITOR.instances.id_content.getData()
+	}, function(data) {
+		console.log(data);
+	})
+}
+
+$(document).ready(function() {
+	CKEDITOR.on('dialogDefinition', function(evt) {
+		if (evt.data.name == 'comment') {
+			var dialogDef = evt.data.definition;
+			console.log('listen to ok');
+			//dialogDef.dialog.on('ok', addComment);
+			//dialogDef.onOk = function() {
+				//console.log('new OK');
+			//}
+			dialogDef.dialog.on('ajaxOk', addComment);
+		}
+	});
+ });
+
+</script>
+
+{% endblock script-head %}
+
+{% block content %}
+
+<a class="btn btn-default" href="{% url 'courses:assignment.list' gradingattempt.article.assignment.course.id %}" role="button">Back to List</a>
+
+<h2>{{ gradingattempt.article.assignment.title }} - {{ gradingattempt.article.assignment.course.title }}</h2>
+<blockquote>{{ gradingattempt.article.assignment.description }}</blockquote>
+
+<textarea id="id_content" rows="10" cols="40">
+{{ gradingattempt.content | safe }}
+</textarea>
+<script>
+var editor = CKEDITOR.replace('id_content', {
+	customConfig: '{% static 'common/miscellaneous/ckeditor_display_config.js' %}'
+});
+</script>
+
+{% endblock %}

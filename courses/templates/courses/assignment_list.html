@@ -42,6 +42,18 @@
 					{% for article in assignment.article_set.all %}
 					<li class="list-group-item">
 						<a href="{% url 'courses:article.detail' article.id %}">{{ article.author }} - {{ article.create_date }}</a>
+						
+						<ul>
+						{% for attempt in article.gradingattempt_set.all %}
+							<li>
+								<a href="{% url 'courses:grading_attempt.update' attempt.id %}">Grading Attempt - {{ attempt.last_modified_date }}</a>
+							</li>
+						{% empty %}
+							<li>Not graded yet</li>
+						{% endfor %}
+						</ul>
+						
+						<a class="btn btn-default" href="{% url 'courses:grading_attempt.create' article.id %}" role="button">New grading attempt</a>
 					</li>
 					{% endfor %}
 				</ul>

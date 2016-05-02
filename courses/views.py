@@ -5,7 +5,33 @@ from helper import auth
 from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 from . import forms
+
+class AjaxableResponseMixin(object):
+    """
+    Mixin to add AJAX support to a form.
+    Must be used with an object-based FormView (e.g. CreateView)
+    """
+    def form_invalid(self, form):
+        response = super(AjaxableResponseMixin, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+    def form_valid(self, form):
+        # We make sure to call the parent's form_valid() method because
+        # it might do some processing (in the case of CreateView, it will
+        # call form.save() for example).
+        response = super(AjaxableResponseMixin, self).form_valid(form)
+        if self.request.is_ajax():
+            data = {
+                'id': self.object.pk,
+            }
+            return JsonResponse(data)
+        else:
+            return response
 
 class CourseList(generic.ListView):
     model = models.Course
@@ -112,3 +138,37 @@ class ArticleCreate(generic.CreateView):
 class ArticleDetail(generic.DetailView):
     model = models.Article
     template_name = 'courses/article_detail.html'
+
+class GradingAttemptCreate(generic.base.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        article = get_object_or_404(models.Article, pk=self.kwargs['pk'])
+        attempt = models.GradingAttempt(article=article, content=article.content,
+            create_date=datetime.now(), last_modified_date=datetime.now())
+        attempt.save()
+        return reverse_lazy('courses:grading_attempt.update', kwargs={'pk' : attempt.id})
+
+class GradingAttemptUpdate(generic.DetailView):
+    model = models.GradingAttempt
+    template_name = 'courses/grading_attempt_form.html'
+
+class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
+    model = models.GradingAttempt
+    fields = [ 'content' ]
+    
+    def form_valid(self, form):
+        form.instance.last_modified_date = datetime.now()
+        return super(GradingAttemptContentUpdate, self).form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('courses:grading_attempt.update', kwargs={'pk' : self.kwargs['pk']})
+
+class CommentCreate(AjaxableResponseMixin, generic.CreateView):
+    model = models.Comment
+    fields = [ 'content', 'attempt' ]
+    
+    def form_valid(self, form):
+        form.instance.create_date = datetime.now()
+        return super(CommentCreate, self).form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('courses:course.list')
