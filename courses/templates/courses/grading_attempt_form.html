@@ -24,6 +24,16 @@ function addComment(evt)
 	});
 }
 
+function removeComment(evt)
+{
+	var widget = evt.sender;
+	console.log(widget.data.comment_id);
+	var url = "{% url 'courses:comment.delete' %}" + widget.data.comment_id + '/';
+ 	$.post(url, function(data) {
+		updateGradingAttemptContent();
+	});
+}
+
 function updateGradingAttemptContent()
 {
 	$.post("{% url 'courses:grading_attempt.update_content' gradingattempt.id %}", {
@@ -36,7 +46,8 @@ function updateGradingAttemptContent()
 function setTooltipContent(evt)
 {
 	var widget = evt.sender;
-	$.get("{% url 'courses:comment.detail' %}" + widget.data.comment_id, function(data) {
+	var url = "{% url 'courses:comment.detail' %}" + widget.data.comment_id + '/';
+	$.get(url, function(data) {
 		evt.data.setContent(data);
 	});
 }
@@ -65,6 +76,7 @@ $(document).ready(function() {
 				if (widget.name == 'comment') {
 					//console.log('listen to show tooltip');
 					widget.on('showTooltip', setTooltipContent);
+					widget.on('remove', removeComment);
 				}
 			});
 			editor.widgets.on('instanceCreated', function(evt) {
@@ -72,6 +84,7 @@ $(document).ready(function() {
 				if (widget.name == 'comment') {
 					//console.log('listen to show tooltip');
 					widget.on('showTooltip', setTooltipContent);
+					widget.on('remove', removeComment);
 				}
 			});
 		}

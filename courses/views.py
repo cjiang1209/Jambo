@@ -166,13 +166,11 @@ class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
 class CommentCreate(AjaxableResponseMixin, generic.CreateView):
     model = models.Comment
     fields = [ 'content', 'attempt' ]
+    success_url = reverse_lazy('courses:course.list')
     
     def form_valid(self, form):
         form.instance.create_date = datetime.now()
         return super(CommentCreate, self).form_valid(form)
-    
-    def get_success_url(self):
-        return reverse_lazy('courses:course.list')
 
 class CommentDetail(generic.DetailView):
     model = models.Comment
@@ -189,3 +187,7 @@ class CommentDetail(generic.DetailView):
             "create_date": self.object.create_date
         }
         return JsonResponse(data)
+
+class CommentDelete(AjaxableResponseMixin, generic.DeleteView):
+    model = models.Comment
+    success_url = reverse_lazy('courses:course.list')

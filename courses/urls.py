@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^comment/create/$', CommentCreate.as_view(), name='comment.create'),
     url(r'^comment/$', CommentDetail.as_view(), name='comment.detail'),
     url(r'^comment/(?P<pk>[0-9]+)/$', CommentDetail.as_view(), name='comment.detail'),
+    url(r'^comment/delete/$', CommentDelete.as_view(), name='comment.delete'),
+    url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
     
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),
