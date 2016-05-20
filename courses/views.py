@@ -6,6 +6,7 @@ from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from django.core import serializers
 from . import forms
 
 class AjaxableResponseMixin(object):
@@ -172,3 +173,19 @@ class CommentCreate(AjaxableResponseMixin, generic.CreateView):
     
     def get_success_url(self):
         return reverse_lazy('courses:course.list')
+
+class CommentDetail(generic.DetailView):
+    model = models.Comment
+    fields = [ 'content', 'create_date' ]
+    
+    #def get_object(self, queryset=None):
+    #    return self.model.objects.get(pk=self.kwargs['id'])
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        data = {
+            "comment_id": self.object.id,
+            "content": self.object.content,
+            "create_date": self.object.create_date
+        }
+        return JsonResponse(data)

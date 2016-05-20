@@ -18,6 +18,8 @@ urlpatterns = [
     url(r'^gradingattempt/(?P<pk>[0-9]+)/update/$', GradingAttemptUpdate.as_view(), name='grading_attempt.update'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/updatecontent/$', GradingAttemptContentUpdate.as_view(), name='grading_attempt.update_content'),
     url(r'^comment/create/$', CommentCreate.as_view(), name='comment.create'),
+    url(r'^comment/$', CommentDetail.as_view(), name='comment.detail'),
+    url(r'^comment/(?P<pk>[0-9]+)/$', CommentDetail.as_view(), name='comment.detail'),
     
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),

@@ -5,7 +5,10 @@
 	var template = new CKEDITOR.template('<span>'
 		+ '<span class="' + idCls + '">{comment_id}</span>'
 		+ '<span class="' + cls + '">{name}</span>'
-		+ '</span>' );
+		+ '</span>');
+	var tooltipTemplate = new CKEDITOR.template('<span>{comment_id}</span>'
+		+ '<span>{content}</span>'
+		+ '<span>{create_date}</span>');
 	
 	var addCommentCmd = {
 		canUndo : false,
@@ -41,27 +44,39 @@
 	
 	var tooltip;
 	
-	function showTooltip(callback, widget, editor) {
+	function showTooltip(widget, editor) {
 		var cpos = editor.container.getDocumentPosition();
 		var wpos = editor.window.getScrollPosition();
 		var pos = widget.parts.name.getDocumentPosition();
 		var styles = {
 			'z-index': editor.config.baseFloatZIndex + 10,
-			top: (cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height')) + 'px',
+			top: (cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height') + 40) + 'px',
 			left: (cpos.x - wpos.x + pos.x) + 'px'
 		};
 
-		tooltip.setHtml(callback(widget, editor));
 		tooltip.setStyles(styles);
 		tooltip.show();
 	}
 	
-	function hideTooltip(callback, widget, editor) {
+	function hideTooltip(widget, editor) {
 		tooltip.hide();
 	}
 	
 	function getComment(widget, editor) {
 		return widget.data.comment_id + ' - This is your comment';
+	}
+	
+	function setTooltipContent(data) {
+		tooltip.setCustomData('comment_id', data.comment_id);
+		tooltip.setCustomData('content', data.content);
+		tooltip.setCustomData('create_data', data.create_date);
+		
+		var html = tooltipTemplate.output({
+        	comment_id: data.comment_id,
+        	content: data.content,
+        	create_date: data.create_date
+        });
+		tooltip.setHtml(html);
 	}
 	
 	var plugin = {
@@ -84,6 +99,7 @@
 		    	tooltip = CKEDITOR.dom.element.createFromHtml(
 		    			'<div id="cke_tooltip" tabindex="-1" style="position: absolute"></div>',
 		    			CKEDITOR.document);
+		    	tooltip.setCustomData('updating', false);
 				tooltip.hide();
 				tooltip.appendTo(editor.element.getParent());
 	    	}
@@ -117,10 +133,29 @@
 	            	
 	            	var widget = this;
 	            	this.parts.name.on('mouseover', function() {
-	            		showTooltip(getComment, widget, editor);
+	            		var id = widget.data.comment_id;
+	            		if(id != tooltip.getCustomData('comment_id')) {
+	            			tooltip.setCustomData('comment_id', id);
+	            			tooltip.setCustomData('updating', true);
+	            			widget.fire('showTooltip', {
+	            				setContent: function(data) {
+	            					setTooltipContent(data);
+	            					showTooltip(widget, editor);
+	            					tooltip.setCustomData('updating', false);
+	            				}
+	            			});
+	            		}
+	            		else{
+	            			if(!tooltip.getCustomData('updating')) {
+	            				showTooltip(widget, editor);
+	            			}
+	            		}
 	            	});
 	            	this.parts.name.on('mouseout', function() {
-	            		hideTooltip(getComment, widget, editor);
+	            		hideTooltip(widget, editor);
+	            	});
+	            	this.on('select', function() {
+	            		console.log('selected');
 	            	});
 	            	
 	            	this.on('contextMenu', function(evt) {

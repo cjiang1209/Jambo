@@ -33,6 +33,14 @@ function updateGradingAttemptContent()
 	})
 }
 
+function setTooltipContent(evt)
+{
+	var widget = evt.sender;
+	$.get("{% url 'courses:comment.detail' %}" + widget.data.comment_id, function(data) {
+		evt.data.setContent(data);
+	});
+}
+
 $(document).ready(function() {
 	CKEDITOR.on('dialogDefinition', function(evt) {
 		if (evt.data.name == 'comment') {
@@ -43,6 +51,29 @@ $(document).ready(function() {
 				//console.log('new OK');
 			//}
 			dialogDef.dialog.on('ajaxOk', addComment);
+		}
+	});
+	CKEDITOR.on('instanceReady', function(evt) {
+		var editor = evt.editor;
+		if (editor.name == 'id_content') {
+			console.log(editor);
+			console.log(editor.title);
+			
+			//editor.widgets.on('showTooltip', setTooltipContent);
+			$.each(editor.widgets.instances, function(index, value) {
+				var widget = value;
+				if (widget.name == 'comment') {
+					//console.log('listen to show tooltip');
+					widget.on('showTooltip', setTooltipContent);
+				}
+			});
+			editor.widgets.on('instanceCreated', function(evt) {
+				var widget = evt.data;
+				if (widget.name == 'comment') {
+					//console.log('listen to show tooltip');
+					widget.on('showTooltip', setTooltipContent);
+				}
+			});
 		}
 	});
  });
@@ -62,7 +93,7 @@ $(document).ready(function() {
 {{ gradingattempt.content | safe }}
 </textarea>
 <script>
-var editor = CKEDITOR.replace('id_content', {
+CKEDITOR.replace('id_content', {
 	customConfig: '{% static 'common/miscellaneous/ckeditor_display_config.js' %}'
 });
 </script>
