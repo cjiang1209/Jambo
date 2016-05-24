@@ -19,8 +19,10 @@
 </textarea>
 <script>
 var editor = CKEDITOR.replace('id_content', {
-	customConfig: '{% static 'common/miscellaneous/ckeditor_display_config.js' %}'
+	customConfig: '{% static 'common/miscellaneous/ckeditor_readonly_config.js' %}'
 });
 </script>
+
+<a class="btn btn-default" href="{% url 'courses:grading_attempt.create' article.id %}" role="button">New grading attempt</a>
 
 {% endblock %}

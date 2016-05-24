@@ -1,0 +1,31 @@
+ {% for article in articles %}
+<li>
+	<div>
+		<i class="fa fa-pencil-square-o"></i>
+		<a href="{% url 'courses:article.detail' article.id %}">
+			{{article.author }} - {{ article.create_date }}
+		</a>
+	</div>
+
+	<ul>
+		{% for attempt in article.gradingattempt_set.all %}
+		<li>
+			<i class="fa fa-check" aria-hidden="true"></i>
+			<a href="{% url 'courses:grading_attempt.update' attempt.id %}">
+				Grading Attempt - {{ attempt.last_modified_date }}
+			</a>
+			
+			{% if attempt.article_set.all %}
+				<ul>
+					{% with attempt.article_set.all as articles %}
+						{% include "courses/article_revision_tree.html" %}
+					{% endwith %}
+				</ul>
+			{% endif %}
+		</li>
+		{% empty %}
+		<li>Not graded yet</li>
+		{% endfor %}
+	</ul>
+</li>
+{% endfor %}

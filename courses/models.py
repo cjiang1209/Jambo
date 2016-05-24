@@ -31,12 +31,13 @@ class Article(models.Model):
     create_date = models.DateTimeField()
     status = models.BooleanField(default=False, help_text="This field denotes if the article has been reviewed.")
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    parent_attempt = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
     
     def get_absolute_url(self):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
 
 class GradingAttempt(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    parent_article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()

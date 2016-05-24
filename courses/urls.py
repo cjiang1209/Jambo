@@ -17,11 +17,13 @@ urlpatterns = [
     url(r'^article/(?P<pk>[0-9]+)/gradingattempt/create/$', GradingAttemptCreate.as_view(), name='grading_attempt.create'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/update/$', GradingAttemptUpdate.as_view(), name='grading_attempt.update'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/updatecontent/$', GradingAttemptContentUpdate.as_view(), name='grading_attempt.update_content'),
+    url(r'^gradingattempt/(?P<pk>[0-9]+)/$', GradingAttemptDetail.as_view(), name='grading_attempt.detail'),
     url(r'^comment/create/$', CommentCreate.as_view(), name='comment.create'),
     url(r'^comment/$', CommentDetail.as_view(), name='comment.detail'),
     url(r'^comment/(?P<pk>[0-9]+)/$', CommentDetail.as_view(), name='comment.detail'),
     url(r'^comment/delete/$', CommentDelete.as_view(), name='comment.delete'),
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
+    url(r'^gradingattempt/(?P<pk>[0-9]+)/article/create/$', ArticleFromGradingAttemptCreate.as_view(), name='article.grading_attempt.create'),
     
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),

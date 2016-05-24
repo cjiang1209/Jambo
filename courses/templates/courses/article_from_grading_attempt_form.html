@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+{% endblock script-head %}
+
+{% block content %}
+
+<h2>{{ gradingattempt.parent_article.assignment.title }} - {{ gradingattempt.parent_article.assignment.course.title }}</h2>
+<blockquote>{{ gradingattempt.parent_article.assignment.description }}</blockquote>
+
+{% if form.errors %}
+	{{ form.errors }}
+{% endif %}
+
+<div class="row">
+	<div class="col-md-6">
+		<textarea id="id_grading_attempt" rows="10" cols="40">
+			{{ gradingattempt.content | safe }}
+		</textarea>
+		<script>
+			var editor = CKEDITOR.replace('id_grading_attempt', {
+				customConfig: '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}'
+			});
+		</script>
+	</div>
+
+	<div class="col-md-6">
+		<form action="" method="post">
+			{% csrf_token %}
+
+			<div class="form-group">{{ form.content }}</div>
+
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</form>
+	</div>
+</div>
+
+{% endblock %}

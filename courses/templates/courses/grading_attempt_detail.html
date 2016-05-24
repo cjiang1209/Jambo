@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+<script src="{% static 'common/script/csrf.js' %}"></script>
+
+<script>
+
+function setTooltipContent(evt)
+{
+	var widget = evt.sender;
+	var url = "{% url 'courses:comment.detail' %}" + widget.data.comment_id + '/';
+	$.get(url, function(data) {
+		evt.data.setContent(data);
+	});
+}
+
+$(document).ready(function() {
+	CKEDITOR.on('instanceReady', function(evt) {
+		var editor = evt.editor;
+		if (editor.name == 'id_content') {
+			console.log(editor);
+			console.log(editor.title);
+			
+			$.each(editor.widgets.instances, function(index, value) {
+				var widget = value;
+				if (widget.name == 'comment') {
+					//console.log('listen to show tooltip');
+					widget.on('showTooltip', setTooltipContent);
+				}
+			});
+		}
+	});
+ });
+
+</script>
+
+{% endblock script-head %}
+
+{% block content %}
+
+<a class="btn btn-default" href="{% url 'courses:assignment.list' gradingattempt.parent_article.assignment.course.id %}" role="button">Back to List</a>
+
+<h2>{{ gradingattempt.parent_article.assignment.title }} - {{ gradingattempt.parent_article.assignment.course.title }}</h2>
+<blockquote>{{ gradingattempt.parent_article.assignment.description }}</blockquote>
+
+<textarea id="id_content" rows="10" cols="40">
+{{ gradingattempt.content | safe }}
+</textarea>
+<script>
+CKEDITOR.replace('id_content', {
+	customConfig: '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}'
+});
+</script>
+
+<a class="btn btn-default" href="{% url 'courses:article.grading_attempt.create' gradingattempt.id %}" role="button">Submit Another Article</a>
+
+{% endblock %}
