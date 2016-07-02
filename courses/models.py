@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import default
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
@@ -46,3 +47,12 @@ class Comment(models.Model):
     content = models.TextField()
     attempt = models.ForeignKey(GradingAttempt, on_delete=models.CASCADE)
     create_date = models.TextField()
+
+class CommentTemplateClass(models.Model):
+    name = models.TextField()
+    is_end_class = models.BooleanField(default=True)
+    parent_class = models.ForeignKey("CommentTemplateClass", on_delete=models.CASCADE, null=True)
+
+class CommentTemplate(models.Model):
+    content = models.TextField()
+    template_class = models.ForeignKey(CommentTemplateClass, on_delete=models.CASCADE)
