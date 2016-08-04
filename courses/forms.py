@@ -9,3 +9,11 @@ class ArticleForm(ModelForm):
         widgets = {
             'content' : widgets.RichTextEditor(),
         }
+
+class CommentTemplateForm(ModelForm):
+    class Meta:
+        model = models.CommentTemplate
+        fields = [ 'title', 'template_class', 'content' ]
+        widgets = {
+            'content' : widgets.RichTextEditor(),
+        }

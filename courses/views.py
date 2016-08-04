@@ -230,3 +230,21 @@ class CommentDetail(generic.DetailView):
 class CommentDelete(AjaxableResponseMixin, generic.DeleteView):
     model = models.Comment
     success_url = reverse_lazy('courses:course.list')
+
+class CommentTemplateList(generic.ListView):
+    model = models.CommentTemplateClass
+    template_name = 'courses/comment_template_list.html'
+     
+    def get_queryset(self):
+        return models.CommentTemplateClass.objects.filter(parent_class__isnull=True)
+
+class CommentTemplateClassCreate(generic.CreateView):
+    model = models.CommentTemplateClass
+    fields = [ 'title', 'is_end_class', 'parent_class']
+    template_name = 'courses/comment_template_class_form.html'
+    success_url = reverse_lazy('courses:commenttemplate.list')
+
+class CommentTemplateCreate(generic.CreateView):
+    form_class = forms.CommentTemplateForm
+    template_name = 'courses/comment_template_form.html'
+    success_url = reverse_lazy('courses:commenttemplate.list')

@@ -1,0 +1,29 @@
+<div>
+	<i class="fa fa-pencil-square-o"></i> {{templateClass.title }}
+</div>
+
+<ul>
+	{% if templateClass.is_end_class %}
+		<ul>
+		{% for template in templateClass.commenttemplate_set.all %}
+			<li>
+				<span onmousemove="showCommentTemplateContent(this);" onmouseout="hideCommentTemplateContent();">
+					{{template.title}}
+					<input type="hidden" value="{{template.content}}"></input>
+				</span>
+			</li>
+		{% empty %}
+			No comment template exists.
+		{% endfor %}
+		</ul>
+	{% else %}
+		{% for childTemplateClass in templateClass.commenttemplateclass_set.all %}
+			<li>
+			{% with childTemplateClass as templateClass %}
+				{% include "courses/comment_template_tree.html" %}
+			{% endwith %}
+			</li>
+		{% endfor %}
+	{% endif %}
+</ul>
+

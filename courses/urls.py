@@ -24,6 +24,9 @@ urlpatterns = [
     url(r'^comment/delete/$', CommentDelete.as_view(), name='comment.delete'),
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/article/create/$', ArticleFromGradingAttemptCreate.as_view(), name='article.grading_attempt.create'),
+    url(r'^commenttemplate/$', CommentTemplateList.as_view(), name='commenttemplate.list'),
+    url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),
+    url(r'^commenttemplate/create/$', CommentTemplateCreate.as_view(), name='commenttemplate.create'),
     
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),

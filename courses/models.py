@@ -49,10 +49,17 @@ class Comment(models.Model):
     create_date = models.TextField()
 
 class CommentTemplateClass(models.Model):
-    name = models.TextField()
+    title = models.CharField(max_length=200)
     is_end_class = models.BooleanField(default=True)
     parent_class = models.ForeignKey("CommentTemplateClass", on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return self.title
 
 class CommentTemplate(models.Model):
+    title = models.CharField(max_length=200)
     content = models.TextField()
     template_class = models.ForeignKey(CommentTemplateClass, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.title

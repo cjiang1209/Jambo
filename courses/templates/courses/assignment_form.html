@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a class="btn btn-default" href="{% url 'courses:instructor.assignment.list' course.id %}" role="button">Back to List</a>
+<a class="btn btn-default" href="{% url 'courses:assignment.list' course.id %}" role="button">Back to List</a>
 
 <h2>Create an Assignment of {{ course.title }}</h2>
 <form action="" method="post">
