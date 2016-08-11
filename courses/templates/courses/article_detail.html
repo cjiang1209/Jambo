@@ -3,8 +3,18 @@
 {% load staticfiles %}
 
 {% block script-head %}
+
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
 <script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+	RichTextEditor.render('id_content', '{% static 'common/miscellaneous/ckeditor_readonly_config.js' %}');
+});
+</script>
+
 {% endblock script-head %}
 
 {% block content %}
@@ -17,11 +27,6 @@
 <textarea id="id_content" rows="10" cols="40">
 {{ article.content | safe }}
 </textarea>
-<script>
-var editor = CKEDITOR.replace('id_content', {
-	customConfig: '{% static 'common/miscellaneous/ckeditor_readonly_config.js' %}'
-});
-</script>
 
 <a class="btn btn-default" href="{% url 'courses:grading_attempt.create' article.id %}" role="button">New grading attempt</a>
 

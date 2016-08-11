@@ -7,89 +7,22 @@
 <script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
 <script src="{% static 'common/script/csrf.js' %}"></script>
 
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
 <script>
-
-function addComment(evt)
-{
-	var dialog = evt.sender;
-	console.log('fire ok');
- 	$.post("{% url 'courses:comment.create' %}", {
- 		attempt: {{ gradingattempt.id }},
- 		content: dialog.getValueOf('cke_info', 'cke_content')
- 	}, function(data) {
- 		dialog.setValueOf('cke_info', 'cke_comment_id', data.id);
-		//console.log(data);
-		evt.data.success();
-		updateGradingAttemptContent();
-	});
-}
-
-function removeComment(evt)
-{
-	var widget = evt.sender;
-	console.log(widget.data.comment_id);
-	var url = "{% url 'courses:comment.delete' %}" + widget.data.comment_id + '/';
- 	$.post(url, function(data) {
-		updateGradingAttemptContent();
-	});
-}
-
-function updateGradingAttemptContent()
-{
-	$.post("{% url 'courses:grading_attempt.update_content' gradingattempt.id %}", {
-		content: CKEDITOR.instances.id_content.getData()
-	}, function(data) {
-		console.log(data);
-	})
-}
-
-function setTooltipContent(evt)
-{
-	var widget = evt.sender;
-	var url = "{% url 'courses:comment.detail' %}" + widget.data.comment_id + '/';
-	$.get(url, function(data) {
-		evt.data.setContent(data);
-	});
-}
-
+ 
 $(document).ready(function() {
-	CKEDITOR.on('dialogDefinition', function(evt) {
-		if (evt.data.name == 'comment') {
-			var dialogDef = evt.data.definition;
-			console.log('listen to ok');
-			//dialogDef.dialog.on('ok', addComment);
-			//dialogDef.onOk = function() {
-				//console.log('new OK');
-			//}
-			dialogDef.dialog.on('ajaxOk', addComment);
-		}
-	});
-	CKEDITOR.on('instanceReady', function(evt) {
-		var editor = evt.editor;
-		if (editor.name == 'id_content') {
-			console.log(editor);
-			console.log(editor.title);
-			
-			//editor.widgets.on('showTooltip', setTooltipContent);
-			$.each(editor.widgets.instances, function(index, value) {
-				var widget = value;
-				if (widget.name == 'comment') {
-					//console.log('listen to show tooltip');
-					widget.on('showTooltip', setTooltipContent);
-					widget.on('remove', removeComment);
-				}
-			});
-			editor.widgets.on('instanceCreated', function(evt) {
-				var widget = evt.data;
-				if (widget.name == 'comment') {
-					//console.log('listen to show tooltip');
-					widget.on('showTooltip', setTooltipContent);
-					widget.on('remove', removeComment);
-				}
-			});
-		}
-	});
- });
+	var urlConfig = {
+		contentId: {{gradingattempt.id}},
+		getComment: "{% url 'courses:comment.detail' %}",
+		addComment: "{% url 'courses:comment.create' %}",
+		deleteComment: "{% url 'courses:comment.delete' %}",
+		updateContent: "{% url 'courses:grading_attempt.update_content' gradingattempt.id %}"
+	};
+	
+	var rteditor = RichTextEditor.render('id_content', '{% static 'common/miscellaneous/ckeditor_grading_config.js' %}');
+	rteditor.supportComment(urlConfig, false);
+});
 
 </script>
 
@@ -105,10 +38,5 @@ $(document).ready(function() {
 <textarea id="id_content" rows="10" cols="40">
 {{ gradingattempt.content | safe }}
 </textarea>
-<script>
-CKEDITOR.replace('id_content', {
-	customConfig: '{% static 'common/miscellaneous/ckeditor_grading_config.js' %}'
-});
-</script>
 
 {% endblock %}
