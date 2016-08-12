@@ -1,7 +1,7 @@
-CKEDITOR.dialog.add('comment', function(editor) {
+CKEDITOR.dialog.add('commentDialog', function(editor) {
 	return {
 		title: 'Comment',
-		minWidth: 500,
+		minWidth: 600,
 		minHeight: 200,
 		contents: [
 			{
@@ -44,9 +44,9 @@ CKEDITOR.dialog.add('comment', function(editor) {
 							var html = editor.getSelectedHtml(true);
 							widget.setData('name', html);
 						}
-					}
+					},
 				]
-			}
+			},
 		],
 		buttons: [
 		    {
@@ -56,16 +56,21 @@ CKEDITOR.dialog.add('comment', function(editor) {
 		        title: 'OK',
 		        onClick: function(evt) {
 		        	var dialog = evt.data.dialog;
-		        	console.log('fire ajaxOK');
-		        	dialog.fire('ajaxOk', { success: function() {
-		        		if (dialog.fire('ok', { hide : true }).hide !== false) {
-		        			dialog.hide();
+		        	console.log('fire commit comment');
+		        	dialog.fire('commitComment', {
+		        		success: function() {
+		        			if (dialog.fire('ok', { hide : true }).hide !== false) {
+		        				dialog.hide();
+		        			}
 		        		}
-		        	} });
+		        	});
 		        }
-		    	
 		    },
 		    CKEDITOR.dialog.cancelButton
-		]
+		],
+		onCancel: function() {
+			var dialog = this;
+        	dialog.getParentEditor().setReadOnly(true);
+		},
 	};
 } );

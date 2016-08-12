@@ -2,8 +2,7 @@ var RichTextEditor = (function() {
 	return {
 		render: function(id_component, config) {
 			var editor = CKEDITOR.replace(id_component, {
-				customConfig: config,
-				height: 500
+				customConfig: config
 			});
 
 			// Return a RichTextEditor instance
@@ -67,10 +66,10 @@ var RichTextEditor = (function() {
 						
 						if (!readonly) {
 							CKEDITOR.on('dialogDefinition', function(evt) {
-								if (evt.data.name == 'comment') {
+								if (evt.data.name == 'commentDialog') {
 									var dialogDef = evt.data.definition;
-									console.log('listen to ok');
-									dialogDef.dialog.on('ajaxOk', addComment);
+									console.log('listen to commit comment');
+									dialogDef.dialog.on('commitComment', addComment);
 								}
 							});
 						}

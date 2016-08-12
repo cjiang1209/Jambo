@@ -12,4 +12,7 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.removePlugins= 'elementspath';
 	config.removeButtons = 'Subscript,Superscript,Styles,Blockquote';
+	config.allowedContent = true;
+	
+	config.height = 500;
 };

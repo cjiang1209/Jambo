@@ -10,4 +10,6 @@ CKEDITOR.editorConfig = function( config ) {
 	config.readOnly = true;
 	
 	config.extraPlugins = 'comment';
+	
+	config.height = 500;
 };

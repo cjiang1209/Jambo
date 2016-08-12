@@ -4,6 +4,22 @@
 
 {% block script-head %}
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+	var urlConfig = {
+		contentId: {{gradingattempt.id}},
+		getComment: "{% url 'courses:comment.detail' %}",
+	};
+			
+	var rteditor = RichTextEditor.render('id_grading_attempt', '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}');
+	rteditor.supportComment(urlConfig, true);
+});
+</script>
+
 {% endblock script-head %}
 
 {% block content %}
@@ -20,11 +36,6 @@
 		<textarea id="id_grading_attempt" rows="10" cols="40">
 			{{ gradingattempt.content | safe }}
 		</textarea>
-		<script>
-			var editor = CKEDITOR.replace('id_grading_attempt', {
-				customConfig: '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}'
-			});
-		</script>
 	</div>
 
 	<div class="col-md-6">

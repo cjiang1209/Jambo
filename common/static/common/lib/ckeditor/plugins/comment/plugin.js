@@ -15,12 +15,6 @@
 		readOnly : true,
 		exec : function(editor) {
 			editor.setReadOnly(false);
-			
-			console.log(editor.getSelection().getStartElement());
-			var ranges = editor.getSelection().getRanges();
-			console.log(ranges.length);
-			console.log(ranges);
-			
 			editor.execCommand(pluginName);
 		}
 	};
@@ -63,10 +57,6 @@
 		tooltip.hide();
 	}
 	
-	function getComment(widget, editor) {
-		return widget.data.comment_id + ' - This is your comment';
-	}
-	
 	function setTooltipContent(data) {
 		tooltip.setCustomData('comment_id', data.comment_id);
 		tooltip.setCustomData('content', data.content);
@@ -88,13 +78,14 @@
 	    onLoad: function() {
 	    	CKEDITOR.addCss('.' + idCls + '{display:none}');
 			CKEDITOR.addCss('.' + cls + '{background-color:#ff0}');
-			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles || '#cke_tooltip { padding: 5px; border: 2px solid #333; background: #ffffff }' +
+			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
+				'#cke_tooltip { padding: 5px; border: 2px solid #333; background: #ffffff }' +
 				'#cke_tooltip h2 { font-size: 1.1em; border-bottom: 1px solid; margin: 0; padding: 1px; }' +
 				'#cke_tooltip ul { padding: 0pt; list-style-type: none; }' );
 		},
 	    
 	    init: function(editor) {
-	    	CKEDITOR.dialog.add('comment', this.path + 'dialogs/comment.js');
+	    	CKEDITOR.dialog.add('commentDialog', this.path + 'dialogs/comment.js');
 	    	
 	    	if (!tooltip) {
 		    	tooltip = CKEDITOR.dom.element.createFromHtml(
@@ -106,7 +97,7 @@
 	    	}
 	    	
 	        editor.widgets.add(pluginName, {
-	        	dialog: 'comment',
+	        	dialog: 'commentDialog',
 	            //button: 'Add Comment',
 	            template: template.output({
 	            	comment_id: '',
@@ -133,7 +124,7 @@
 	            	this.setData('name', this.parts.name.getHtml());
 	            	
 	            	var widget = this;
-	            	this.parts.name.on('mouseover', function() {
+	            	widget.parts.name.on('mouseover', function() {
 	            		var id = widget.data.comment_id;
 	            		if(id != tooltip.getCustomData('comment_id')) {
 	            			tooltip.setCustomData('comment_id', id);
@@ -152,17 +143,14 @@
 	            			}
 	            		}
 	            	});
-	            	this.parts.name.on('mouseout', function() {
+	            	widget.parts.name.on('mouseout', function() {
 	            		hideTooltip(widget, editor);
 	            	});
-	            	this.on('select', function() {
-	            		console.log('selected');
-	            	});
 	            	
-	            	this.on('contextMenu', function(evt) {
+	            	widget.on('contextMenu', function(evt) {
 	            		evt.data.removeComment = CKEDITOR.TRISTATE_OFF;
 	            	});
-	            	this.on('ready', function(evt) {
+	            	widget.on('ready', function(evt) {
 	            		editor.setReadOnly(true);
 	            	});
 	            },
