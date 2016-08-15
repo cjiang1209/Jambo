@@ -11,18 +11,27 @@ urlpatterns = [
     url(r'^course/(?P<pk>[0-9]+)/update/$', CourseUpdate.as_view(), name='course.update'),
     url(r'^course/(?P<pk>[0-9]+)/$', AssignmentList.as_view(), name='assignment.list'),
     url(r'^course/(?P<pk>[0-9]+)/assignment/create/$', AssignmentCreate.as_view(), name='assignment.create'),
+    
     url(r'^assignment/(?P<pk>[0-9]+)/update/$', AssignmentUpdate.as_view(), name='assignment.update'),
-    url(r'^assignment/(?P<pk>[0-9]+)/article/create/$', ArticleCreate.as_view(), name='article.create'),
+    url(r'^submissionperiod/(?P<pk>[0-9]+)/article/create/$', ArticleCreate.as_view(), name='article.create'),
+    
+    url(r'^submissionperiod/create/$', SubmissionPeriodCreate.as_view(), name='submission_period.create'),
+    url(r'^submissionperiod/delete/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
+    url(r'^submissionperiod/delete/(?P<pk>[0-9]+)/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
+    
     url(r'^article/(?P<pk>[0-9]+)/$', ArticleDetail.as_view(), name='article.detail'),
     url(r'^article/(?P<pk>[0-9]+)/gradingattempt/create/$', GradingAttemptCreate.as_view(), name='grading_attempt.create'),
+    
     url(r'^gradingattempt/(?P<pk>[0-9]+)/update/$', GradingAttemptUpdate.as_view(), name='grading_attempt.update'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/updatecontent/$', GradingAttemptContentUpdate.as_view(), name='grading_attempt.update_content'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/$', GradingAttemptDetail.as_view(), name='grading_attempt.detail'),
+    
     url(r'^comment/create/$', CommentCreate.as_view(), name='comment.create'),
     url(r'^comment/$', CommentDetail.as_view(), name='comment.detail'),
     url(r'^comment/(?P<pk>[0-9]+)/$', CommentDetail.as_view(), name='comment.detail'),
     url(r'^comment/delete/$', CommentDelete.as_view(), name='comment.delete'),
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
+    
     url(r'^gradingattempt/(?P<pk>[0-9]+)/article/create/$', ArticleFromGradingAttemptCreate.as_view(), name='article.grading_attempt.create'),
     url(r'^commenttemplate/$', CommentTemplateList.as_view(), name='commenttemplate.list'),
     url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),

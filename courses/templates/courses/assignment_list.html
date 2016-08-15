@@ -37,11 +37,31 @@
 					{{ assignment.description }}
 				</blockquote>
 				
-				<h4>Submissions</h4>
-				<ul>
-					{% with assignment.article_set.all as articles %}
-						{% include "courses/article_revision_tree.html" %}
-					{% endwith %}
+				<ul class="list-group">
+					{% for period in assignment.submissionperiod_set.all %}
+						<li class="list-group-item">
+							<div class="panel panel-info">
+								<div class="panel-heading">
+									<span>{{period.title}}</span>
+									<span class="pull-right">
+										Due: {{period.end_date}}
+									</span>
+								</div>
+								<div class="panel-body">
+									<ul>
+									{% for article in period.article_set.all %}
+										<li>
+											<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.create_date}}</a>
+										</li>
+									{% endfor %}
+									</ul>
+								{% if perms.courses.add_article %}
+									<a class="btn btn-default" href="{% url 'courses:article.create' period.id %}" role="button">Submit an Article</a>
+								{% endif %}
+							</div>
+							</div>
+						</li>
+					{% endfor %}
 				</ul>
 				
 				{% if perms.courses.add_article %}

@@ -26,22 +26,30 @@ class Assignment(models.Model):
     def __str__(self):
         return self.title
 
+class SubmissionPeriod(models.Model):
+    title = models.CharField(max_length=200)
+    start_date = models.DateTimeField()
+    end_date = models.DateField()
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+
 class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
     status = models.BooleanField(default=False, help_text="This field denotes if the article has been reviewed.")
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    parent_attempt = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
+    #assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    submission_period = models.ForeignKey(SubmissionPeriod, on_delete=models.CASCADE)
+    #parent = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
     
     def get_absolute_url(self):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
 
 class GradingAttempt(models.Model):
-    parent_article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()
+    grade = models.IntegerField()
 
 class Comment(models.Model):
     content = models.TextField()
