@@ -50,7 +50,8 @@ class CourseList(generic.ListView):
 
 class CourseCreate(generic.CreateView):
     model = models.Course
-    fields = [ 'title', 'instructors', 'description', 'students' ]
+    #fields = [ 'title', 'instructors', 'description', 'students' ]
+    form_class = forms.CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
     
@@ -61,7 +62,8 @@ class CourseCreate(generic.CreateView):
 
 class CourseUpdate(generic.UpdateView):
     model = models.Course
-    fields = [ 'title', 'instructors', 'description', 'students' ]
+    #fields = [ 'title', 'instructors', 'description', 'students' ]
+    form_class = forms.CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
 

@@ -5,6 +5,9 @@
 <a class="btn btn-default" href="{% url 'courses:course.list' %}" role="button">Back to List</a>
 
 <h2>Create a Course</h2>
+
+{% include "courses/form_errors.html" %}
+
 <form action="" method="post">
 	{% csrf_token %}
 	

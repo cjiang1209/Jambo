@@ -11,9 +11,7 @@
 <h2>{{ assignment.title }} - {{ assignment.course.title }}</h2>
 <blockquote>{{ assignment.description }}</blockquote>
 
-{% if form.errors %}
-	{{ form.errors }}
-{% endif %}
+{% include "courses/form_errors.html" %}
 
 <form action="" method="post">
 	{% csrf_token %}

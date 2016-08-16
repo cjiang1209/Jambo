@@ -2,6 +2,17 @@ from . import models
 from django import forms
 from common import widgets
 
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = models.Course
+        fields = [ 'title', 'description', 'instructors', 'students' ]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'instructors': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'students': forms.SelectMultiple(attrs={'class': 'form-control'})
+        }
+
 class AssignmentForm(forms.ModelForm):
     class Meta:
         model = models.Assignment
