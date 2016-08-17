@@ -52,9 +52,9 @@
 									{% for article in period.article_set.all %}
 										<li>
 											<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.last_modified_date}}</a>
-											{% if article.gradeattempt != None %}
-												Grade: {{article.gradeattempt.grade}}
-												<a href="{% url 'courses:grading_attempt.update' article.articleattempt.id %}">View Details</a>
+											{% if article.gradingattempt %}
+												Grade: {{article.gradingattempt.grade}}
+												<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">View Details</a>
 											{% else %}
 												<a href="{% url 'courses:grading_attempt.create' article.id %}">Start Grading</a>
 											{% endif %}

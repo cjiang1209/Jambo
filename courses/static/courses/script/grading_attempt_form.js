@@ -5,12 +5,10 @@ $(document).ready(function () {
 		var form = $(this);
 		var grade = form.find('input[name="' + nameGrade + '"]').val();
 		
-		console.log(grade);
-		
 		$.post(urlUpdateGrade, {
 			grade: grade
 		}, function (data) {
-			console.log(grade);
+			alert("Grade updated successfully");
 		});
 	});
 	

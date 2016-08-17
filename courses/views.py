@@ -233,7 +233,7 @@ class GradingAttemptDisplay(generic.DetailView):
     
     def get_context_data(self, **kwargs):
         context = super(GradingAttemptDisplay, self).get_context_data(**kwargs)
-        context['form'] = forms.GradingAttemptGradeForm()
+        context['form'] = forms.GradingAttemptGradeForm(instance = get_object_or_404(models.GradingAttempt, pk = self.kwargs['pk']))
         return context
 
 class GradingAttemptGradeUpdate(AjaxableResponseMixin, generic.UpdateView):
@@ -246,6 +246,7 @@ class GradingAttemptGradeUpdate(AjaxableResponseMixin, generic.UpdateView):
 
     def form_valid(self, form):
         form.instance.last_modified_date = datetime.now()
+        print(form.instance.grade)
         return super(GradingAttemptGradeUpdate, self).form_valid(form)
 
     def get_success_url(self):
@@ -266,6 +267,7 @@ class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
     
     def form_valid(self, form):
         form.instance.last_modified_date = datetime.now()
+        print(datetime.now())
         return super(GradingAttemptContentUpdate, self).form_valid(form)
     
     def get_success_url(self):

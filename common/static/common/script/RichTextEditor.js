@@ -9,6 +9,15 @@ var RichTextEditor = (function() {
 			return (function(id_component) {
 				var commentCache = {};
 				
+				var htmlTmplComment = '<div class="panel panel-primary">' +
+					'<div class="panel-heading">' +
+					'<span>{{create_date}}</span>' +
+					'<span><button type="button" class="close cls_btn_close" aria-label="Close"><span aria-hidden="true">&times;</span></button></span>' +
+					'</div>' +
+					'<div class="panel-body">{{{content}}}</div>' +
+					'</div>';
+				var tmplComment = Handlebars.compile(htmlTmplComment);
+				
 				var urlConfig = {
 					contentId: "",
 					getComment: "",
@@ -34,13 +43,15 @@ var RichTextEditor = (function() {
 					var widget = evt.sender;
 					var commentId = widget.data.comment_id;
 					if (commentCache.hasOwnProperty(commentId)) {
-						evt.data.setContent(commentCache[commentId]);
+						var html = tmplComment(commentCache[commentId]);
+						evt.data.setContent(html);
 					}
 					else {
 						var url = urlConfig.getComment + commentId + '/';
 						$.get(url, function(data) {
 							commentCache[commentId] = data;
-							evt.data.setContent(data);
+							var html = tmplComment(data);
+							evt.data.setContent(html);
 						});
 					}
 				};
@@ -120,6 +131,10 @@ var RichTextEditor = (function() {
 									//editor.ui.get('AddComment').setState(CKEDITOR.TRISTATE_OFF);
 								}
 							}
+						});
+						
+						$('body').on('click', '.cls_btn_close', function () {
+							editor.execCommand('hideCommentWindow');
 						});
 					},
 				}

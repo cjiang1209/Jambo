@@ -27,10 +27,10 @@ $(document).ready(function() {
 
 {% block content %}
 
-<a class="btn btn-default" href="{% url 'courses:assignment.list' gradingattempt.parent_article.assignment.course.id %}" role="button">Back to List</a>
+<a class="btn btn-default" href="{% url 'courses:assignment.list' gradingattempt.article.submission_period.assignment.course.id %}" role="button">Back to List</a>
 
-<h2>{{ gradingattempt.parent_article.assignment.title }} - {{ gradingattempt.parent_article.assignment.course.title }}</h2>
-<blockquote>{{ gradingattempt.parent_article.assignment.description }}</blockquote>
+<h2>{{ gradingattempt.article.submission_period.assignment.title }} - {{ gradingattempt.article.submission_period.assignment.course.title }}</h2>
+<blockquote>{{ gradingattempt.article.submission_period.assignment.description }}</blockquote>
 
 <textarea id="id_content" rows="10" cols="40">
 {{ gradingattempt.content | safe }}

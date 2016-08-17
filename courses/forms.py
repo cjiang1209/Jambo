@@ -38,7 +38,7 @@ class GradingAttemptGradeForm(forms.ModelForm):
         model = models.GradingAttempt
         fields = [ 'grade' ]
         widgets = {
-            'grade': forms.TextInput(attrs={'class': 'form-control'})
+            'grade': forms.NumberInput(attrs={'class': 'form-control'})
         }
 
 class CommentTemplateForm(forms.ModelForm):

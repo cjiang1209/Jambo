@@ -6,9 +6,9 @@
 		+ '<span class="' + idCls + '">{comment_id}</span>'
 		+ '<span class="' + cls + '">{name}</span>'
 		+ '</span>');
-	var tooltipTemplate = new CKEDITOR.template('<span>{comment_id}</span>'
-		+ '<span>{content}</span>'
-		+ '<span>{create_date}</span>');
+//	var tooltipTemplate = new CKEDITOR.template('<span>{comment_id}</span>'
+//		+ '<span>{content}</span>'
+//		+ '<span>{create_date}</span>');
 	
 	var addCommentCmd = {
 		canUndo : false,
@@ -29,6 +29,14 @@
 			editor.setReadOnly(true);
 			
 			widget.fire('remove');
+		}
+	};
+	
+	var hideCommentWindowCmd = {
+		canUndo : false,
+		readOnly : true,
+		exec : function(editor) {
+			tooltip.hide();
 		}
 	};
 	
@@ -53,22 +61,9 @@
 		tooltip.show();
 	}
 	
-	function hideTooltip(widget, editor) {
-		tooltip.hide();
-	}
-	
-	function setTooltipContent(data) {
-		tooltip.setCustomData('comment_id', data.comment_id);
-		tooltip.setCustomData('content', data.content);
-		tooltip.setCustomData('create_data', data.create_date);
-		
-		var html = tooltipTemplate.output({
-        	comment_id: data.comment_id,
-        	content: data.content,
-        	create_date: data.create_date
-        });
-		tooltip.setHtml(html);
-	}
+//	function hideTooltip(widget, editor) {
+//		tooltip.hide();
+//	}
 	
 	var plugin = {
 	    requires: 'widget,dialog',
@@ -79,9 +74,11 @@
 	    	CKEDITOR.addCss('.' + idCls + '{display:none}');
 			CKEDITOR.addCss('.' + cls + '{background-color:#ff0}');
 			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
-				'#cke_tooltip { padding: 5px; border: 2px solid #333; background: #ffffff }' +
-				'#cke_tooltip h2 { font-size: 1.1em; border-bottom: 1px solid; margin: 0; padding: 1px; }' +
-				'#cke_tooltip ul { padding: 0pt; list-style-type: none; }' );
+					'#cke_tooltip { max-width: 400px; }');
+//			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
+//				'#cke_tooltip { padding: 5px; border: 2px solid #333; background: #ffffff }' +
+//				'#cke_tooltip h2 { font-size: 1.1em; border-bottom: 1px solid; margin: 0; padding: 1px; }' +
+//				'#cke_tooltip ul { padding: 0pt; list-style-type: none; }' );
 		},
 	    
 	    init: function(editor) {
@@ -91,7 +88,7 @@
 		    	tooltip = CKEDITOR.dom.element.createFromHtml(
 		    			'<div id="cke_tooltip" tabindex="-1" style="position: absolute"></div>',
 		    			CKEDITOR.document);
-		    	tooltip.setCustomData('updating', false);
+		    	//tooltip.setCustomData('updating', false);
 				tooltip.hide();
 				tooltip.appendTo(editor.element.getParent());
 	    	}
@@ -125,27 +122,27 @@
 	            	
 	            	var widget = this;
 	            	widget.parts.name.on('mouseover', function() {
-	            		var id = widget.data.comment_id;
-	            		if(id != tooltip.getCustomData('comment_id')) {
-	            			tooltip.setCustomData('comment_id', id);
-	            			tooltip.setCustomData('updating', true);
+//	            		var id = widget.data.comment_id;
+//	            		if(id != tooltip.getCustomData('comment_id')) {
+	            			//tooltip.setCustomData('comment_id', id);
+//	            			tooltip.setCustomData('updating', true);
 	            			widget.fire('showTooltip', {
-	            				setContent: function(data) {
-	            					setTooltipContent(data);
+	            				setContent: function(html) {
+	            					tooltip.setHtml(html);
 	            					showTooltip(widget, editor);
-	            					tooltip.setCustomData('updating', false);
+//	            					tooltip.setCustomData('updating', false);
 	            				}
 	            			});
-	            		}
-	            		else{
-	            			if(!tooltip.getCustomData('updating')) {
-	            				showTooltip(widget, editor);
-	            			}
-	            		}
+//	            		}
+//	            		else{
+//	            			if(!tooltip.getCustomData('updating')) {
+//	            				showTooltip(widget, editor);
+//	            			}
+//	            		}
 	            	});
-	            	widget.parts.name.on('mouseout', function() {
-	            		hideTooltip(widget, editor);
-	            	});
+//	            	widget.parts.name.on('mouseout', function() {
+//	            		hideTooltip(widget, editor);
+//	            	});
 	            	
 	            	widget.on('contextMenu', function(evt) {
 	            		evt.data.removeComment = CKEDITOR.TRISTATE_OFF;
@@ -163,6 +160,7 @@
 	        
 	        editor.addCommand('addComment', addCommentCmd);
 	        editor.addCommand('removeComment', removeCommentCmd);
+	        editor.addCommand('hideCommentWindow', hideCommentWindowCmd);
 	        
 	        if (editor.contextMenu) {
 	        	editor.addMenuGroup('comment');

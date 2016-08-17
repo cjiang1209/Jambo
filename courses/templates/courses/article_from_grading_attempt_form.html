@@ -24,12 +24,10 @@ $(document).ready(function() {
 
 {% block content %}
 
-<h2>{{ gradingattempt.parent_article.assignment.title }} - {{ gradingattempt.parent_article.assignment.course.title }}</h2>
-<blockquote>{{ gradingattempt.parent_article.assignment.description }}</blockquote>
+<h2>{{ gradingattempt.article.submission_period.assignment.title }} - {{ gradingattempt.article.submission_period.assignment.course.title }}</h2>
+<blockquote>{{ gradingattempt.article.submission_period.assignment.description }}</blockquote>
 
-{% if form.errors %}
-	{{ form.errors }}
-{% endif %}
+{% include "courses/form_errors.html" %}
 
 <div class="row">
 	<div class="col-md-6">
@@ -44,8 +42,7 @@ $(document).ready(function() {
 
 			<div class="form-group">{{ form.content }}</div>
 
-			<input type="submit" value="Submit" /> <input type="reset"
-				value="Reset" />
+			<input class="btn btn-default" type="submit" value="Submit" />
 		</form>
 	</div>
 </div>
