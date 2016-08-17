@@ -7,6 +7,8 @@ var RichTextEditor = (function() {
 
 			// Return a RichTextEditor instance
 			return (function(id_component) {
+				var commentCache = {};
+				
 				var urlConfig = {
 					contentId: "",
 					getComment: "",
@@ -30,16 +32,27 @@ var RichTextEditor = (function() {
 				
 				var setTooltipContent = function (evt) {
 					var widget = evt.sender;
-					var url = urlConfig.getComment + widget.data.comment_id + '/';
-					$.get(url, function(data) {
-						evt.data.setContent(data);
-					});
+					var commentId = widget.data.comment_id;
+					if (commentCache.hasOwnProperty(commentId)) {
+						evt.data.setContent(commentCache[commentId]);
+					}
+					else {
+						var url = urlConfig.getComment + commentId + '/';
+						$.get(url, function(data) {
+							commentCache[commentId] = data;
+							evt.data.setContent(data);
+						});
+					}
 				};
 				
 				var removeComment = function (evt) {
+					console.log('Remove Comment');
+					
 				 	var widget = evt.sender;
-				 	console.log(widget.data.comment_id);
-				 	var url = urlConfig.deleteComment + widget.data.comment_id + '/';
+				 	var commentId = widget.data.comment_id;
+				 	console.log(commentId);
+				 	delete commentCache[commentId];
+				 	var url = urlConfig.deleteComment + commentId + '/';
 				  	$.post(url, function(data) {
 				 		updateContent();
 				 	});
@@ -100,6 +113,11 @@ var RichTextEditor = (function() {
 											widget.on('remove', removeComment);
 										}
 									});
+								}
+								else {
+									editor.removeMenuItem('removeComment');
+									//console.log(editor.ui.get('AddComment'));
+									//editor.ui.get('AddComment').setState(CKEDITOR.TRISTATE_OFF);
 								}
 							}
 						});

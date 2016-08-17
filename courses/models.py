@@ -36,6 +36,7 @@ class Article(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
+    last_modified_date = models.DateTimeField()
     status = models.BooleanField(default=False, help_text="This field denotes if the article has been reviewed.")
     #assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission_period = models.ForeignKey(SubmissionPeriod, on_delete=models.CASCADE)
@@ -45,11 +46,11 @@ class Article(models.Model):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
 
 class GradingAttempt(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.OneToOneField(Article, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()
-    grade = models.IntegerField()
+    grade = models.IntegerField(default=0)
 
 class Comment(models.Model):
     content = models.TextField()

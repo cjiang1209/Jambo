@@ -13,15 +13,16 @@ urlpatterns = [
     url(r'^course/(?P<pk>[0-9]+)/assignment/create/$', AssignmentCreate.as_view(), name='assignment.create'),
     
     url(r'^assignment/(?P<pk>[0-9]+)/update/$', AssignmentUpdate.as_view(), name='assignment.update'),
-    url(r'^submissionperiod/(?P<pk>[0-9]+)/article/create/$', ArticleCreate.as_view(), name='article.create'),
     
     url(r'^submissionperiod/create/$', SubmissionPeriodCreate.as_view(), name='submission_period.create'),
     url(r'^submissionperiod/delete/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
     url(r'^submissionperiod/delete/(?P<pk>[0-9]+)/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
     
+    url(r'^submissionperiod/(?P<pk>[0-9]+)/article/create/$', ArticleCreate.as_view(), name='article.create'),
+    url(r'^article/(?P<pk>[0-9]+)/update/$', ArticleUpdate.as_view(), name='article.update'),
     url(r'^article/(?P<pk>[0-9]+)/$', ArticleDetail.as_view(), name='article.detail'),
-    url(r'^article/(?P<pk>[0-9]+)/gradingattempt/create/$', GradingAttemptCreate.as_view(), name='grading_attempt.create'),
     
+    url(r'^article/(?P<pk>[0-9]+)/gradingattempt/create/$', GradingAttemptCreate.as_view(), name='grading_attempt.create'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/update/$', GradingAttemptUpdate.as_view(), name='grading_attempt.update'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/updatecontent/$', GradingAttemptContentUpdate.as_view(), name='grading_attempt.update_content'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/$', GradingAttemptDetail.as_view(), name='grading_attempt.detail'),

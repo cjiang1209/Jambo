@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.core import serializers
 from . import forms
+from django.views.decorators.http import last_modified
+from django.views.generic.base import View
 
 class AjaxableResponseMixin(object):
     """
@@ -151,7 +153,9 @@ class ArticleCreate(generic.CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.create_date = datetime.now()
+        current_date = datetime.now()
+        form.instance.create_date = current_date
+        form.instance.last_modified_date = current_date
         
         #period = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
         #if not period:
@@ -159,6 +163,24 @@ class ArticleCreate(generic.CreateView):
         #form.instance.assignment = assignment
         
         return super(ArticleCreate, self).form_valid(form)
+
+class ArticleUpdate(generic.UpdateView):
+    model = models.Article
+    form_class = forms.ArticleForm
+    template_name = 'courses/article_form.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(ArticleUpdate, self).get_context_data(**kwargs)
+        context['assignment'] = self.get_form().instance.submission_period.assignment
+        return context
+    
+    def form_valid(self, form):
+        form.instance.last_modified_date = datetime.now()
+        return super(ArticleUpdate, self).form_valid(form)
+    
+    def get_success_url(self):
+        course_id = self.get_form().instance.submission_period.assignment.course.id
+        return reverse_lazy('courses:assignment.list', kwargs={'pk' : course_id})
 
 class ArticleFromGradingAttemptCreate(generic.CreateView):
     form_class = forms.ArticleForm
@@ -177,7 +199,7 @@ class ArticleFromGradingAttemptCreate(generic.CreateView):
         form.instance.author = self.request.user
         form.instance.create_date = datetime.now()
         
-        attempt = get_object_or_404(models.GradingAttempt, pk=self.kwargs['pk'])
+        attempt = get_object_or_404(models.GradingAttempt, pk = self.kwargs['pk'])
         if not attempt:
             return False
         form.instance.parent_attempt = attempt
@@ -189,19 +211,54 @@ class ArticleDetail(generic.DetailView):
     model = models.Article
     template_name = 'courses/article_detail.html'
 
-class GradingAttemptCreate(generic.base.RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        article = get_object_or_404(models.Article, pk=self.kwargs['pk'])
-        attempt = models.GradingAttempt(article=article, content=article.content,
-            create_date=datetime.now(), last_modified_date=datetime.now())
-        attempt.save()
-        return reverse_lazy('courses:grading_attempt.update', kwargs={'pk' : attempt.id})
-
 # Grading Attempt
 
-class GradingAttemptUpdate(generic.DetailView):
+class GradingAttemptCreate(generic.base.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        article = get_object_or_404(models.Article, pk = self.kwargs['pk'])
+        if hasattr(article, 'gradingattempt'):
+            attempt = article.gradingattempt
+        else:
+            current_date = datetime.now()
+            attempt = models.GradingAttempt(article = article,
+                content = article.content,
+                create_date = current_date,
+                last_modified_date = current_date)
+            attempt.save()
+        return reverse_lazy('courses:grading_attempt.update', kwargs = {'pk' : attempt.id})
+
+class GradingAttemptDisplay(generic.DetailView):
     model = models.GradingAttempt
     template_name = 'courses/grading_attempt_form.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(GradingAttemptDisplay, self).get_context_data(**kwargs)
+        context['form'] = forms.GradingAttemptGradeForm()
+        return context
+
+class GradingAttemptGradeUpdate(AjaxableResponseMixin, generic.UpdateView):
+    model = models.GradingAttempt
+    form_class = forms.GradingAttemptGradeForm
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(GradingAttemptGradeUpdate, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.last_modified_date = datetime.now()
+        return super(GradingAttemptGradeUpdate, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('courses:grading_attempt.update', kwargs = {'pk': self.object.pk})
+
+class GradingAttemptUpdate(View):
+    def get(self, request, *args, **kwargs):
+        view = GradingAttemptDisplay.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = GradingAttemptGradeUpdate.as_view()
+        return view(request, *args, **kwargs)
 
 class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
     model = models.GradingAttempt

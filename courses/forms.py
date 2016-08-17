@@ -33,6 +33,14 @@ class ArticleForm(forms.ModelForm):
             'submission_period': forms.HiddenInput
         }
 
+class GradingAttemptGradeForm(forms.ModelForm):
+    class Meta:
+        model = models.GradingAttempt
+        fields = [ 'grade' ]
+        widgets = {
+            'grade': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
 class CommentTemplateForm(forms.ModelForm):
     class Meta:
         model = models.CommentTemplate
