@@ -6,9 +6,9 @@ from django.template.defaultfilters import default
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    instructors = models.ManyToManyField(User, related_name='instructions')
+    instructors = models.ManyToManyField(User, related_name='instructingCourses')
     status = models.BooleanField(default=True, help_text='This field denotes if the course is active.')
-    students = models.ManyToManyField(User, related_name='enrollments')
+    students = models.ManyToManyField(User, related_name='enrollingCourses')
     create_date = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
