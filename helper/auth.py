@@ -10,3 +10,6 @@ def is_instructor(user):
 
 def is_student(user):
     return is_member(user, 'Student');
+
+def is_administrator(user):
+    return is_member(user, 'Administrator');

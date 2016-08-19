@@ -6,10 +6,9 @@ from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.core import serializers
 from . import forms
-from django.views.decorators.http import last_modified
 from django.views.generic.base import View
+from guardian.shortcuts import assign_perm
 
 class AjaxableResponseMixin(object):
     """
@@ -44,15 +43,16 @@ class CourseList(generic.ListView):
     
     def get_queryset(self):
         if auth.is_student(self.request.user):
-            return self.request.user.enrollments.order_by('-create_date')
+            return self.request.user.enrollingCourses.order_by('-create_date')
         elif auth.is_instructor(self.request.user):
-            return self.request.user.instructions.order_by('-create_date')
+            return self.request.user.instructingCourses.order_by('-create_date')
+        elif auth.is_administrator(self.request.user):
+            return self.model.objects.all()
         else:
-            return None
+            None;
 
 class CourseCreate(generic.CreateView):
     model = models.Course
-    #fields = [ 'title', 'instructors', 'description', 'students' ]
     form_class = forms.CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
@@ -60,7 +60,20 @@ class CourseCreate(generic.CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.create_date = datetime.now()
-        return super(CourseCreate, self).form_valid(form)
+        
+        response = super(CourseCreate, self).form_valid(form)
+        
+        # Assign permissions
+        print(form.instance.instructors.all())
+        print(form.instance.students.all())
+        
+        for user in form.instance.instructors.all():
+            assign_perm('change_course', user, form.instance)
+            assign_perm('view_course', user, form.instance)
+        for user in form.instance.students.all():
+            assign_perm('view_course', user, form.instance)
+        
+        return response
 
 class CourseUpdate(generic.UpdateView):
     model = models.Course

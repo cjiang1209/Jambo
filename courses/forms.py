@@ -1,16 +1,22 @@
 from . import models
 from django import forms
 from common import widgets
+from django.contrib.auth.models import Group
 
 class CourseForm(forms.ModelForm):
+    instructors = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
+        queryset = Group.objects.get(name='Instructor').user_set.all(),
+        required = False);
+    students = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
+        queryset = Group.objects.get(name='Student').user_set.all(),
+        required = False);
+    
     class Meta:
         model = models.Course
         fields = [ 'title', 'description', 'instructors', 'students' ]
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'instructors': forms.SelectMultiple(attrs={'class': 'form-control'}),
-            'students': forms.SelectMultiple(attrs={'class': 'form-control'})
+            'title': forms.TextInput(attrs = {'class': 'form-control'}),
+            'description': forms.Textarea(attrs = {'class': 'form-control'})
         }
 
 class AssignmentForm(forms.ModelForm):

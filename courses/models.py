@@ -1,19 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.template.defaultfilters import default
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    instructors = models.ManyToManyField(User, related_name='instructingCourses')
+    instructors = models.ManyToManyField(User, related_name='instructingCourses', blank=True)
     status = models.BooleanField(default=True, help_text='This field denotes if the course is active.')
-    students = models.ManyToManyField(User, related_name='enrollingCourses')
+    students = models.ManyToManyField(User, related_name='enrollingCourses', blank=True)
     create_date = models.DateTimeField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title
+    
+    class Meta:
+        permissions = (
+            ('view_course', 'Can view course'),
+        )
 
 class Assignment(models.Model):
     title = models.CharField(max_length=200)
