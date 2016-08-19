@@ -51,9 +51,13 @@ var urlDeleteSubmissionPeriod = "{% url 'courses:submission_period.delete' %}";
 
 {% block content %}
 
-<a class="btn btn-default" href="{% url 'courses:assignment.list' course.id %}" role="button">Back to List</a>
+{% include "courses/course_header.html" %}
 
-<h2>Create an Assignment of {{ course.title }}</h2>
+{% with active_tab="assignment" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+
+<h2>Create an Assignment</h2>
 
 {% include "courses/form_errors.html" %}
 

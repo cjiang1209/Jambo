@@ -1,0 +1,10 @@
+<div>
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" {% if active_tab == "home" %}class="active"{% endif %}>
+			<a href="{% url 'courses:course.detail' course.id %}" aria-controls="home" role="tab">Home</a>
+		</li>
+		<li role="presentation" {% if active_tab == "assignment" %}class="active"{% endif %}>
+			<a href="{% url 'courses:assignment.list' course.id %}" role="tab">Assignment</a>
+		</li>
+	</ul>
+</div>

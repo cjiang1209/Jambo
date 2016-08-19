@@ -9,7 +9,9 @@ urlpatterns = [
     url(r'^$', CourseList.as_view(), name='course.list'),
     url(r'^course/create/$', CourseCreate.as_view(), name='course.create'),
     url(r'^course/(?P<pk>[0-9]+)/update/$', CourseUpdate.as_view(), name='course.update'),
-    url(r'^course/(?P<pk>[0-9]+)/$', AssignmentList.as_view(), name='assignment.list'),
+    url(r'^course/(?P<pk>[0-9]+)/$', CourseDetail.as_view(), name='course.detail'),
+    
+    url(r'^course/(?P<pk>[0-9]+)/assignment$', AssignmentList.as_view(), name='assignment.list'),
     url(r'^course/(?P<pk>[0-9]+)/assignment/create/$', AssignmentCreate.as_view(), name='assignment.create'),
     
     url(r'^assignment/(?P<pk>[0-9]+)/update/$', AssignmentUpdate.as_view(), name='assignment.update'),

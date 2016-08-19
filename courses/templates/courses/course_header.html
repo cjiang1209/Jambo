@@ -1,0 +1,7 @@
+<h2>{{ course.title }}</h2>
+<p>
+	Instructors:
+	{% for user in course.instructors.all %}
+		<a href="mailto:{{user.email}}">{{user}}</a>
+	{% endfor %}
+</p>

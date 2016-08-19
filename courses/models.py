@@ -2,14 +2,27 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+class CustomUser(User):
+    class Meta:
+        proxy = True
+    
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+    
+    def __str__(self):
+        return self.full_name()
+    
+    def __unicode__(self):
+        return self.full_name()
+
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    instructors = models.ManyToManyField(User, related_name='instructingCourses', blank=True)
+    instructors = models.ManyToManyField(CustomUser, related_name='instructingCourses', blank=True)
     status = models.BooleanField(default=True, help_text='This field denotes if the course is active.')
-    students = models.ManyToManyField(User, related_name='enrollingCourses', blank=True)
+    students = models.ManyToManyField(CustomUser, related_name='enrollingCourses', blank=True)
     create_date = models.DateTimeField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title
@@ -22,7 +35,7 @@ class Course(models.Model):
 class Assignment(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     create_date = models.DateTimeField()
     due_date = models.DateTimeField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -37,7 +50,7 @@ class SubmissionPeriod(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
 
 class Article(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     content = models.TextField()
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()

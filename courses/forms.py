@@ -22,11 +22,10 @@ class CourseForm(forms.ModelForm):
 class AssignmentForm(forms.ModelForm):
     class Meta:
         model = models.Assignment
-        fields = [ 'title', 'description', 'course', 'due_date' ]
+        fields = [ 'title', 'description', 'due_date' ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'course': forms.Select(attrs={'class': 'form-control'}),
             'due_date': forms.TextInput(attrs={'class': 'form-control'})
         }
 

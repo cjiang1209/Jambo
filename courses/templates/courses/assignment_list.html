@@ -2,7 +2,11 @@
 
 {% block content %}
 
-<h2>{{ course.title }}</h2>
+{% include "courses/course_header.html" %}
+
+{% with active_tab="assignment" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
 
 {% if perms.courses.add_assignment %}
 <a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>

@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from . import forms
 from django.views.generic.base import View
 from guardian.shortcuts import assign_perm
+from guardian.decorators import permission_required_or_403
 
 class AjaxableResponseMixin(object):
     """
@@ -82,6 +83,10 @@ class CourseUpdate(generic.UpdateView):
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
 
+class CourseDetail(generic.DetailView):
+    model = models.Course
+    template_name = 'courses/course_detail.html'
+
 # Assignment
 
 class AssignmentList(generic.ListView):
@@ -98,16 +103,11 @@ class AssignmentList(generic.ListView):
 
 class AssignmentCreate(generic.CreateView):
     model = models.Assignment
-    #fields = [ 'title', 'course', 'description', 'due_date' ]
     form_class = forms.AssignmentForm
     template_name = 'courses/assignment_form.html'
     
     def get_success_url(self):
         return reverse_lazy('courses:assignment.list', kwargs={'pk' : self.kwargs['pk']})
-    
-    def get_initial(self):
-        course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
-        return { 'course' : course }
     
     def get_context_data(self, **kwargs):
         context = super(AssignmentCreate, self).get_context_data(**kwargs)
@@ -115,9 +115,9 @@ class AssignmentCreate(generic.CreateView):
         return context
     
     def form_valid(self, form):
-        form.instance.created_by = self.request.user
+        form.instance.course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
+        form.instance.created_by = models.CustomUser.objects.get(pk = self.request.user.id)
         form.instance.create_date = datetime.now()
-        #form.instance.course = models.Course.objects.get(id=self.kwargs['pk'])
         return super(AssignmentCreate, self).form_valid(form)
 
 class AssignmentUpdate(generic.UpdateView):

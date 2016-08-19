@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+{% include "courses/course_header.html" %}
+
+{% with active_tab="home" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+
+<blockquote>{{ course.description }}</blockquote>
+
+{% endblock %}

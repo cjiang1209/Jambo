@@ -35,9 +35,9 @@
 				</span>
 				{% endif %}
 				
-				<span class="pull-right">Instructor:
-				{% for instructor in course.instructors.all %}
-					{{ instructor }}
+				<span class="pull-right">Instructors:
+				{% for user in course.instructors.all %}
+					{{ user }}
 				{% endfor %}
 				</span>
 			</div>
@@ -46,7 +46,7 @@
 					{{ course.description }}
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-default" href="{% url 'courses:assignment.list' course.id %}" role="button">Assignments</a>
+					<a class="btn btn-default" href="{% url 'courses:course.detail' course.id %}" role="button">Enter</a>
 				</div>
 			</div>
 		</div>
