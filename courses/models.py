@@ -45,7 +45,7 @@ class Assignment(models.Model):
 class SubmissionPeriod(models.Model):
     title = models.CharField(max_length=200)
     start_date = models.DateTimeField()
-    end_date = models.DateField()
+    end_date = models.DateTimeField()
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
 
 class Article(models.Model):

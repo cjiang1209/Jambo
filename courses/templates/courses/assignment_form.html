@@ -5,14 +5,16 @@
 {% block script-head %}
 <script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
 <script src="{% static 'common/script/csrf.js' %}"></script>
+<script src="{% static 'common/lib/moment/moment.min.js' %}"></script>
+<script src="{% static 'common/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 
 {% verbatim %}
 <script id="new-submission-period-template" type="text/x-handlebars-template">
 <li class="list-group-item">
-	<form class="formNewSubmissionPeriod" action="" method="post">
+	<form class="form_new_submission_period" action="" method="post">
 		<div class="row">
 			<div class="col-xs-4">
-				<input class="form-control" name="title" type="text" value="{{title}}" />
+				<input class="form-control" name="title" type="text" placeholder="New Submission" />
 			</div>
 			<div class="col-xs-3">
 				<input class="form-control" name="start_date" type="text" value="{{start_date}}" />

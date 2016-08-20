@@ -40,34 +40,31 @@
 						{{ assignment.description }}
 					</blockquote>
 					
-					<ul class="list-group">
+					<ul class="list-unstyled">
 						{% for period in assignment.submissionperiod_set.all %}
-							<li class="list-group-item">
-								<div class="panel panel-info">
-									<div class="panel-heading">
-										<span>{{period.title}}</span>
-										<span class="pull-right">
-											Due: {{period.end_date}}
-										</span>
-									</div>
-									<div class="panel-body">
-										<ul>
-										{% for article in period.article_set.all %}
-											<li>
-												<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.last_modified_date}}</a>
-												{% if article.gradingattempt %}
-													Grade: {{article.gradingattempt.grade}}
-													<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">View Details</a>
-												{% else %}
-													<a href="{% url 'courses:grading_attempt.create' article.id %}">Start Grading</a>
-												{% endif %}
-											</li>
-										{% endfor %}
-										</ul>
-									{% if perms.courses.add_article %}
-										<a class="btn btn-default" href="{% url 'courses:article.create' period.id %}" role="button">Submit an Article</a>
-									{% endif %}
+							<li>
+								<div class="page-header">
+									<span>{{period.title}}</span>
+									<span class="pull-right">
+										Due: {{period.end_date}}
+									</span>
 								</div>
+								<ul>
+								{% for article in period.article_set.all %}
+									<li>
+										<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.last_modified_date}}</a>
+										{% if article.gradingattempt %}
+											Grade: {{article.gradingattempt.grade}}
+											<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">View Details</a>
+										{% else %}
+											<a href="{% url 'courses:grading_attempt.create' article.id %}">Start Grading</a>
+										{% endif %}
+									</li>
+								{% endfor %}
+								</ul>
+								{% if perms.courses.add_article %}
+									<a class="btn btn-default" href="{% url 'courses:article.create' period.id %}" role="button">Submit an Article</a>
+								{% endif %}
 								</div>
 							</li>
 						{% endfor %}

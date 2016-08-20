@@ -11,12 +11,18 @@ $(document).ready(function () {
 		end_date.setDate(end_date.getDate() + 8);
 		
 		var context = {
-			title: "New Submission",
 			start_date: start_date.toLocaleString(),
 			end_date: end_date.toLocaleString()
 		};
 		var html = tmplNewSubmissionPeriod(context);
 		$('#list_submission_periods').append(html);
+		
+		$('form.form_new_submission_period input[name="start_date"]').datetimepicker({
+			format: 'MM/DD/Y HH:mm'
+		});
+		$('form.form_new_submission_period input[name="end_date"]').datetimepicker({
+			format: 'MM/DD/Y HH:mm'
+		});
 	});
 	
 //	$('#list_submission_periods').on('click', 'li form .cls_btn_confirm_add_submision_period', function(evt) {
@@ -31,25 +37,20 @@ $(document).ready(function () {
 //		});
 //	});
 	
-	$('#list_submission_periods').on('submit', 'li form.formNewSubmissionPeriod', function (evt) {
+	$('#list_submission_periods').on('submit', 'li form.form_new_submission_period', function (evt) {
 		evt.preventDefault();
-		
-		console.log('Confirm submission period');
-		console.log(assignmentId);
 		
 		var form = $(this);
 		var title = form.find('input[name="title"]').val();
 		var start_date = form.find('input[name="start_date"]').val();
 		var end_date = form.find('input[name="end_date"]').val();
 		
-		console.log(title);
-		
 		$.post(urlAddSubmissionPeriod, {
 			title: title,
 			start_date: start_date,
 			end_date: end_date,
 			assignment: assignmentId
-		}, function (data) {
+		}).done(function (data) {
 			var context = {
 				id: data.id,
 				title: title,
@@ -58,6 +59,8 @@ $(document).ready(function () {
 			};
 			var html = tmplSubmissionPeriod(context);
 			form.parent().replaceWith(html);
+		}).fail(function(data) {
+			console.log(data);
 		});
 	});
 	
