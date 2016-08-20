@@ -9,7 +9,8 @@ from django.http import JsonResponse
 from . import forms
 from django.views.generic.base import View
 from guardian.shortcuts import assign_perm
-from guardian.decorators import permission_required_or_403
+from guardian.mixins import LoginRequiredMixin
+from guardian.mixins import PermissionRequiredMixin
 
 class AjaxableResponseMixin(object):
     """
@@ -38,7 +39,7 @@ class AjaxableResponseMixin(object):
 
 # Course
 
-class CourseList(generic.ListView):
+class CourseList(LoginRequiredMixin, generic.ListView):
     model = models.Course
     template_name = 'courses/course_list.html'
     
@@ -65,9 +66,6 @@ class CourseCreate(generic.CreateView):
         response = super(CourseCreate, self).form_valid(form)
         
         # Assign permissions
-        print(form.instance.instructors.all())
-        print(form.instance.students.all())
-        
         for user in form.instance.instructors.all():
             assign_perm('change_course', user, form.instance)
             assign_perm('view_course', user, form.instance)
@@ -76,16 +74,20 @@ class CourseCreate(generic.CreateView):
         
         return response
 
-class CourseUpdate(generic.UpdateView):
+class CourseUpdate(PermissionRequiredMixin, generic.UpdateView):
     model = models.Course
     #fields = [ 'title', 'instructors', 'description', 'students' ]
     form_class = forms.CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
+    permission_required = 'courses.change_course'
+    raise_exception = True
 
-class CourseDetail(generic.DetailView):
+class CourseDetail(PermissionRequiredMixin, generic.DetailView):
     model = models.Course
     template_name = 'courses/course_detail.html'
+    permission_required = 'courses.view_course'
+    raise_exception = True
 
 # Assignment
 
@@ -135,12 +137,11 @@ class AssignmentUpdate(generic.UpdateView):
         course_id = self.get_form().instance.course.id
         return reverse_lazy('courses:assignment.list', kwargs={'pk' : course_id})
 
-
 # Submission Period
 
 class SubmissionPeriodCreate(AjaxableResponseMixin, generic.CreateView):
     model = models.SubmissionPeriod
-    fields = [ 'title', 'start_date', 'end_date', 'assignment' ]
+    form_class = forms.SubmissionPeriodForm
     success_url = reverse_lazy('courses:course.list')
 
 class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):

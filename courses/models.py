@@ -37,7 +37,6 @@ class Assignment(models.Model):
     description = models.TextField()
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     create_date = models.DateTimeField()
-    due_date = models.DateTimeField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     
     def __str__(self):

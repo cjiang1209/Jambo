@@ -8,81 +8,81 @@
 {% include "courses/course_nav.html" %}
 {% endwith %}
 
-{% if perms.courses.add_assignment %}
-<a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
-{% endif %}
-
-<ul class="list-unstyled">
-{% for assignment in object_list %}
-	<li>
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<span>{{ assignment.title }}</span>
-				
-				{% if perms.courses.change_assignment %}
-				<span class="dropdown pull-right">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<b class="caret"></b>
-					</a>
+<div class="container">
+	{% if perms.courses.add_assignment %}
+	<a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+	{% endif %}
+	
+	<ul class="list-unstyled">
+	{% for assignment in object_list %}
+		<li>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<span>{{ assignment.title }}</span>
 					
-					<ul class="dropdown-menu">
-						<li>
-							<a href="{% url 'courses:assignment.update' assignment.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
-							<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
-						<li>
-					</ul>
-				</span>
-				{% endif %}
-				
-				<span class="pull-right">Due Date: {{ assignment.due_date }}</span>
-			</div>
-			<div class="panel-body">
-				<blockquote>
-					{{ assignment.description }}
-				</blockquote>
-				
-				<ul class="list-group">
-					{% for period in assignment.submissionperiod_set.all %}
-						<li class="list-group-item">
-							<div class="panel panel-info">
-								<div class="panel-heading">
-									<span>{{period.title}}</span>
-									<span class="pull-right">
-										Due: {{period.end_date}}
-									</span>
+					{% if perms.courses.change_assignment %}
+					<span class="dropdown pull-right">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<b class="caret"></b>
+						</a>
+						
+						<ul class="dropdown-menu">
+							<li>
+								<a href="{% url 'courses:assignment.update' assignment.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
+								<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
+							<li>
+						</ul>
+					</span>
+					{% endif %}
+				</div>
+				<div class="panel-body">
+					<blockquote>
+						{{ assignment.description }}
+					</blockquote>
+					
+					<ul class="list-group">
+						{% for period in assignment.submissionperiod_set.all %}
+							<li class="list-group-item">
+								<div class="panel panel-info">
+									<div class="panel-heading">
+										<span>{{period.title}}</span>
+										<span class="pull-right">
+											Due: {{period.end_date}}
+										</span>
+									</div>
+									<div class="panel-body">
+										<ul>
+										{% for article in period.article_set.all %}
+											<li>
+												<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.last_modified_date}}</a>
+												{% if article.gradingattempt %}
+													Grade: {{article.gradingattempt.grade}}
+													<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">View Details</a>
+												{% else %}
+													<a href="{% url 'courses:grading_attempt.create' article.id %}">Start Grading</a>
+												{% endif %}
+											</li>
+										{% endfor %}
+										</ul>
+									{% if perms.courses.add_article %}
+										<a class="btn btn-default" href="{% url 'courses:article.create' period.id %}" role="button">Submit an Article</a>
+									{% endif %}
 								</div>
-								<div class="panel-body">
-									<ul>
-									{% for article in period.article_set.all %}
-										<li>
-											<a href="{% url 'courses:article.detail' article.id %}">{{article.author}} - {{article.last_modified_date}}</a>
-											{% if article.gradingattempt %}
-												Grade: {{article.gradingattempt.grade}}
-												<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">View Details</a>
-											{% else %}
-												<a href="{% url 'courses:grading_attempt.create' article.id %}">Start Grading</a>
-											{% endif %}
-										</li>
-									{% endfor %}
-									</ul>
-								{% if perms.courses.add_article %}
-									<a class="btn btn-default" href="{% url 'courses:article.create' period.id %}" role="button">Submit an Article</a>
-								{% endif %}
-							</div>
-							</div>
-						</li>
-					{% endfor %}
-				</ul>
-				
-				{% if perms.courses.add_article %}
-				<a class="btn btn-default" href="{% url 'courses:article.create' assignment.id %}" role="button">Submit an Article</a>
-				{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+					
+					{% if perms.courses.add_article %}
+					<a class="btn btn-default" href="{% url 'courses:article.create' assignment.id %}" role="button">Submit an Article</a>
+					{% endif %}
+				</div>
 			</div>
-		</div>
-	</li>
-{% empty %}
-	<li>{{ course.title }} does not have any assignment.</li>
-{% endfor %}
-</ul>
+		</li>
+	{% empty %}
+		<li>{{ course.title }} does not have any assignment.</li>
+	{% endfor %}
+	</ul>
+</div>
 
 {% endblock %}

@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load staticfiles %}
-
 {% block content %}
 
 {% include "courses/course_header.html" %}
@@ -10,6 +8,8 @@
 {% include "courses/course_nav.html" %}
 {% endwith %}
 
-<blockquote>{{ course.description }}</blockquote>
+<div class="container">
+	<blockquote>{{ course.description }}</blockquote>
+</div>
 
 {% endblock %}

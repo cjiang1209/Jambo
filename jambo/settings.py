@@ -51,6 +51,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'jambo.middleware.CustomUserMiddleware',
 ]
 
 ROOT_URLCONF = 'jambo.urls'
@@ -131,3 +132,5 @@ STATIC_URL = '/static/'
 
 # Login
 LOGIN_REDIRECT_URL = '/'
+
+LOGIN_URL = '/login/'
