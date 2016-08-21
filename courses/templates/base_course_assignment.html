@@ -1,0 +1,9 @@
+{% extends 'base_course.html' %}
+
+{% block content %}
+
+{% with active_tab="assignment" %}
+{{ block.super }}
+{% endwith %}
+
+{% endblock content %}

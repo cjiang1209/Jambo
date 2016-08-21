@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_course_assignment.html' %}
 
 {% load staticfiles %}
 
@@ -8,8 +8,17 @@
 
 {% block content %}
 
-<h2>{{ assignment.title }} - {{ assignment.course.title }}</h2>
-<blockquote>{{ assignment.description }}</blockquote>
+{% with course=assignment.course %}
+{{ block.super }}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'courses:assignment.list' assignment.course.id %}">Assignment</a></li>
+  <li><a href="{% url 'courses:article.list' assignment.id %}">{{assignment.title}}</a></li>
+  <li class="active">Submission</li>
+</ol>
+
+{% include "courses/assignment_info.html" %}
 
 {% include "courses/form_errors.html" %}
 
@@ -25,4 +34,4 @@
 	<input class="btn btn-default" type="reset" value="Reset" />
 </form>
 
-{% endblock %}
+{% endblock content %}

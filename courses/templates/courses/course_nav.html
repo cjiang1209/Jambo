@@ -6,5 +6,11 @@
 		<li role="presentation" {% if active_tab == "assignment" %}class="active"{% endif %}>
 			<a href="{% url 'courses:assignment.list' course.id %}" role="tab">Assignment</a>
 		</li>
+		<li role="presentation" {% if active_tab == "assignment_management" %}class="active"{% endif %}>
+			<a href="{% url 'courses:manage.assignment.list' course.id %}" role="tab">Assignment Management</a>
+		</li>
+		<li role="presentation" {% if active_tab == "grade" %}class="active"{% endif %}>
+			<a href="{% url 'courses:grade.list' course.id %}" role="tab">Grade</a>
+		</li>
 	</ul>
 </div>

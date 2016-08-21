@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+<script src="{% static 'common/script/csrf.js' %}"></script>
+<script src="{% static 'common/lib/moment/moment.min.js' %}"></script>
+<script src="{% static 'common/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+{% verbatim %}
+<script id="new-submission-period-template" type="text/x-handlebars-template">
+<li class="list-group-item">
+	<form class="form_new_submission_period" action="" method="post">
+		<input name="assignment" type="hidden" value="{{assignment}}" />
+		<div class="row">
+			<div class="col-xs-4">
+				<input class="form-control" name="title" type="text" placeholder="New Submission" />
+			</div>
+			<div class="col-xs-3">
+				<input class="form-control" name="start_date" type="text" value="{{start_date}}" />
+			</div>
+			<div class="col-xs-3">
+				<input class="form-control" name="end_date" type="text" value="{{end_date}}" />
+			</div>
+			<input class="cls_btn_confirm_add_submision_period btn btn-default" type="submit" value="Add" />
+			<input class="cls_btn_cancel_add_submision_period btn btn-default" type="button" value="Cancel" />
+		</div>
+	</form>
+</li>
+</script>
+
+<script id="submission-period-template" type="text/x-handlebars-template">
+<li class="list-group-item">
+	<input class="cls_hidden_submission_period_id" type="hidden" value="{{id}}" />
+	<span>{{title}}</span>
+	<span class="pull-right cls_btn_remove_submission_period">
+		<button class="cls_btn_delete_submission_period btn btn-default" type="button"><i class="fa fa-fw fa-times"></i></button>
+	</span>
+	<span class="pull-right">From {{start_date}} To {{end_date}}</span>
+</li>
+</script>
+{% endverbatim %}
+
+<script>
+var assignmentId = "{{assignment.id}}";
+var urlAddSubmissionPeriod = "{% url 'courses:submission_period.create' %}";
+var urlDeleteSubmissionPeriod = "{% url 'courses:submission_period.delete' %}";
+</script>
+
+<script src="{% static 'courses/script/assignment_management_list.js' %}"></script>
+
+{% endblock script-head %}
+
+{% block content %}
+
+{% include "courses/course_header.html" %}
+
+{% with active_tab="assignment_management" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+
+<div class="container">
+	{% if perms.courses.add_assignment %}
+	<a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
+	{% endif %}
+	
+	<ul class="list-unstyled">
+	{% for assignment in object_list %}
+		<li>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<span>{{ assignment.title }}</span>
+					
+					{% if perms.courses.change_assignment %}
+					<span class="dropdown pull-right">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<b class="caret"></b>
+						</a>
+						
+						<ul class="dropdown-menu">
+							<li>
+								<a href="{% url 'courses:assignment.update' assignment.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
+								<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
+							<li>
+						</ul>
+					</span>
+					{% endif %}
+				</div>
+				<div class="panel-body">
+					<blockquote>
+						{{ assignment.description }}
+					</blockquote>
+					
+					<div>
+						<div class="page-header">
+							<span>Submission Periods</span>
+							<input class="cls_hidden_assignment" type="hidden" value="{{assignment.id}}" />
+							<button id="btn_add_submission_period" class="btn btn-default pull-right" type="button"><i class="fa fa-fw fa-plus"></i></button>
+						</div>
+						
+						<ul id="list_submission_periods" class="list-group">
+							{% for period in assignment.submissionperiod_set.all %}
+							<li class="list-group-item">
+								<input class="cls_hidden_submission_period_id" type="hidden" value="{{period.id}}" />
+								<span>{{period.title}}</span>
+								<span class="pull-right cls_btn_remove_submission_period">
+									<button class="cls_btn_delete_submission_period btn btn-default" type="button"><i class="fa fa-fw fa-times"></i></button>
+								</span>
+								<span class="pull-right">From {{period.start_date}} To {{period.end_date}}</span>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</li>
+	{% empty %}
+		<li>{{ course.title }} does not have any assignment.</li>
+	{% endfor %}
+	</ul>
+</div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_course_assignment.html' %}
 
 {% load staticfiles %}
 
@@ -19,15 +19,22 @@ $(document).ready(function() {
 
 {% block content %}
 
-<a class="btn btn-default" href="{% url 'courses:assignment.list' article.submission_period.assignment.course.id %}" role="button">Back to List</a>
+{% with course=article.assignment.course %}
+{{ block.super }}
+{% endwith %}
 
-<h2>{{ article.submission_period.assignment.title }} - {{ article.submission_period.assignment.course.title }}</h2>
-<blockquote>{{ article.submission_period.assignment.description }}</blockquote>
+<ol class="breadcrumb">
+  <li><a href="{% url 'courses:assignment.list' article.assignment.course.id %}">Assignment</a></li>
+  <li><a href="{% url 'courses:article.list' article.assignment.id %}">{{article.assignment.title}}</a></li>
+  <li class="active">Submission</li>
+</ol>
+
+{% with assignment=article.assignment %}
+{% include "courses/assignment_info.html" %}
+{% endwith %}
 
 <textarea id="id_content" rows="10" cols="40">
 {{ article.content | safe }}
 </textarea>
 
-<a class="btn btn-default" href="{% url 'courses:grading_attempt.create' article.id %}" role="button">New grading attempt</a>
-
-{% endblock %}
+{% endblock content %}

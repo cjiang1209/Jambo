@@ -1,0 +1,31 @@
+{% extends 'base_course_assignment.html' %}
+
+{% block content %}
+
+{% with course=assignment.course %}
+{{ block.super }}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'courses:assignment.list' assignment.course.id %}">Assignment</a></li>
+  <li class="active">{{assignment.title}}</li>
+</ol>
+
+{% include "courses/assignment_info.html" %}
+
+<ul>
+{% for article in object_list %}
+	<li>
+		<a href="{% url 'courses:article.detail' article.id %}">Submission #{{forloop.counter}}</a> (Last Modified: {{article.last_modified_date}})
+		{% if article.gradingattempt %}
+			Grade: <a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">{{article.gradingattempt.grade}}</a>
+		{% endif %}
+	</li>
+{% empty %}
+	<li>No submission yet.</li>
+{% endfor %}
+</ul>
+
+<a class="btn btn-default" href="{% url 'courses:article.create' assignment.id %}"><i class="fa fa-fw fa-plus"></i> New Submission</a>
+
+{% endblock content %}

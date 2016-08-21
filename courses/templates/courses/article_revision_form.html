@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_course_assignment.html' %}
 
 {% load staticfiles %}
 
@@ -24,8 +24,19 @@ $(document).ready(function() {
 
 {% block content %}
 
-<h2>{{ gradingattempt.article.submission_period.assignment.title }} - {{ gradingattempt.article.submission_period.assignment.course.title }}</h2>
-<blockquote>{{ gradingattempt.article.submission_period.assignment.description }}</blockquote>
+{% with course=gradingattempt.article.assignment.course %}
+{{ block.super }}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'courses:assignment.list' gradingattempt.article.assignment.course.id %}">Assignment</a></li>
+  <li><a href="{% url 'courses:article.list' gradingattempt.article.assignment.id %}">{{gradingattempt.article.assignment.title}}</a></li>
+  <li class="active">Submission</li>
+</ol>
+
+{% with assignment=gradingattempt.article.assignment %}
+{% include "courses/assignment_info.html" %}
+{% endwith %}
 
 {% include "courses/form_errors.html" %}
 
@@ -47,4 +58,4 @@ $(document).ready(function() {
 	</div>
 </div>
 
-{% endblock %}
+{% endblock content %}

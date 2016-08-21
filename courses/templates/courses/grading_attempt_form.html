@@ -31,10 +31,22 @@ var editorConfig = '{% static 'common/miscellaneous/ckeditor_grading_config.js' 
 
 {% block content %}
 
-<a class="btn btn-default" href="{% url 'courses:assignment.list' gradingattempt.article.submission_period.assignment.course.id %}" role="button">Back to List</a>
+{% with course=gradingattempt.article.assignment.course %}
+{% include "courses/course_header.html" %}
 
-<h2>{{ gradingattempt.article.submission_period.assignment.title }} - {{ gradingattempt.article.submission_period.assignment.course.title }}</h2>
-<blockquote>{{ gradingattempt.article.submission_period.assignment.description }}</blockquote>
+{% with active_tab="grade" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'courses:grade.list' gradingattempt.article.assignment.course.id %}">Grade</a></li>
+  <li class="active">{{gradingattempt.article.author}} - {{gradingattempt.article.assignment.title}}</li>
+</ol>
+
+{% with assignment=gradingattempt.article.assignment %}
+{% include "courses/assignment_info.html" %}
+{% endwith %}
 
 <div class="row">
 	<div class="col-md-2">

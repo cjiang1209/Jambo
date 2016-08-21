@@ -103,13 +103,25 @@ class AssignmentList(generic.ListView):
     def get_queryset(self):
         return models.Assignment.objects.filter(course__id=self.kwargs['pk'])
 
+class AssignmentManagementList(generic.ListView):
+    model = models.Assignment
+    template_name = 'courses/assignment_management_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(AssignmentManagementList, self).get_context_data(**kwargs)
+        context['course'] = models.Course.objects.get(id=self.kwargs['pk'])
+        return context
+    
+    def get_queryset(self):
+        return models.Assignment.objects.filter(course__id=self.kwargs['pk'])
+
 class AssignmentCreate(generic.CreateView):
     model = models.Assignment
     form_class = forms.AssignmentForm
     template_name = 'courses/assignment_form.html'
     
     def get_success_url(self):
-        return reverse_lazy('courses:assignment.list', kwargs={'pk' : self.kwargs['pk']})
+        return reverse_lazy('courses:manage.assignment.list', kwargs={'pk' : self.kwargs['pk']})
     
     def get_context_data(self, **kwargs):
         context = super(AssignmentCreate, self).get_context_data(**kwargs)
@@ -135,7 +147,7 @@ class AssignmentUpdate(generic.UpdateView):
 
     def get_success_url(self):
         course_id = self.get_form().instance.course.id
-        return reverse_lazy('courses:assignment.list', kwargs={'pk' : course_id})
+        return reverse_lazy('courses:manage.assignment.list', kwargs={'pk' : course_id})
 
 # Submission Period
 
@@ -150,23 +162,24 @@ class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):
 
 # Article
 
-class ArticleCreate(generic.CreateView):
+class ArticleOriginCreate(generic.CreateView):
     model = models.Article
     form_class = forms.ArticleForm
     template_name = 'courses/article_form.html'
 
-    def get_initial(self):
-        period = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
-        return { 'submission_period' : period }
+#     def get_initial(self):
+#         assignment = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
+#         return { 'submission_period' : period }
 
     def get_context_data(self, **kwargs):
-        context = super(ArticleCreate, self).get_context_data(**kwargs)
-        period = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
-        context['assignment'] = period.assignment
+        context = super(ArticleOriginCreate, self).get_context_data(**kwargs)
+        assignment = get_object_or_404(models.Assignment, pk=self.kwargs['pk'])
+        context['assignment'] = assignment
         return context
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        form.instance.assignment = get_object_or_404(models.Assignment, pk=self.kwargs['pk'])
         current_date = datetime.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
@@ -176,7 +189,52 @@ class ArticleCreate(generic.CreateView):
         #    return False
         #form.instance.assignment = assignment
         
-        return super(ArticleCreate, self).form_valid(form)
+        return super(ArticleOriginCreate, self).form_valid(form)
+    
+    def get_success_url(self):
+        assignment_id = self.get_form().instance.assignment.id
+        return reverse_lazy('courses:article.list', kwargs={'pk' : assignment_id})
+
+class ArticleRevisionCreate(generic.CreateView):
+    form_class = forms.ArticleForm
+    template_name = 'courses/article_revision_form.html'
+
+    def get_initial(self):
+        attempt = get_object_or_404(models.GradingAttempt, pk=self.kwargs['pk'])
+        return { 'content': attempt.article.content }
+
+    def get_context_data(self, **kwargs):
+        context = super(ArticleRevisionCreate, self).get_context_data(**kwargs)
+        context['gradingattempt'] = get_object_or_404(models.GradingAttempt, pk=self.kwargs['pk'])
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user  
+        attempt = get_object_or_404(models.GradingAttempt, pk = self.kwargs['pk'])
+        if not attempt:
+            return False
+        form.instance.parent_attempt = attempt
+        form.instance.assignment = attempt.article.assignment
+        current_date = datetime.now()
+        form.instance.create_date = current_date
+        form.instance.last_modified_date = current_date
+        
+        return super(ArticleRevisionCreate, self).form_valid(form)
+    
+    def get_success_url(self):
+        assignment_id = self.get_form().instance.assignment.id
+        return reverse_lazy('courses:article.list', kwargs={'pk' : assignment_id})
+
+class ArticleCreate(generic.base.RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        assignment = get_object_or_404(models.Assignment, pk = self.kwargs['pk'])
+        last_article = assignment.article_set.filter(author = self.request.user).order_by('-last_modified_date').first()
+        if last_article is None:
+            return reverse_lazy('courses:article.origin.create', kwargs = {'pk' : assignment.id})
+        elif hasattr(last_article, 'gradingattempt'):
+            return reverse_lazy('courses:article.revision.create', kwargs = {'pk' : last_article.gradingattempt.id})
+        else:
+            return reverse_lazy('courses:article.update', kwargs = {'pk' : last_article.id})
 
 class ArticleUpdate(generic.UpdateView):
     model = models.Article
@@ -185,7 +243,7 @@ class ArticleUpdate(generic.UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super(ArticleUpdate, self).get_context_data(**kwargs)
-        context['assignment'] = self.get_form().instance.submission_period.assignment
+        context['assignment'] = self.get_form().instance.assignment
         return context
     
     def form_valid(self, form):
@@ -193,37 +251,37 @@ class ArticleUpdate(generic.UpdateView):
         return super(ArticleUpdate, self).form_valid(form)
     
     def get_success_url(self):
-        course_id = self.get_form().instance.submission_period.assignment.course.id
-        return reverse_lazy('courses:assignment.list', kwargs={'pk' : course_id})
-
-class ArticleFromGradingAttemptCreate(generic.CreateView):
-    form_class = forms.ArticleForm
-    template_name = 'courses/article_from_grading_attempt_form.html'
-
-    def get_initial(self):
-        attempt = get_object_or_404(models.GradingAttempt, pk=self.kwargs['pk'])
-        return { 'content': attempt.article.content }
-
-    def get_context_data(self, **kwargs):
-        context = super(ArticleFromGradingAttemptCreate, self).get_context_data(**kwargs)
-        context['gradingattempt'] = get_object_or_404(models.GradingAttempt, pk=self.kwargs['pk'])
-        return context
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        form.instance.create_date = datetime.now()
-        
-        attempt = get_object_or_404(models.GradingAttempt, pk = self.kwargs['pk'])
-        if not attempt:
-            return False
-        form.instance.parent_attempt = attempt
-        form.instance.assignment = attempt.article.assignment
-        
-        return super(ArticleFromGradingAttemptCreate, self).form_valid(form)
+        assignment_id = self.get_form().instance.assignment.id
+        return reverse_lazy('courses:article.list', kwargs={'pk' : assignment_id})
 
 class ArticleDetail(generic.DetailView):
     model = models.Article
     template_name = 'courses/article_detail.html'
+
+class ArticleList(generic.ListView):
+    model = models.Article
+    template_name = 'courses/article_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(ArticleList, self).get_context_data(**kwargs)
+        context['assignment'] = models.Assignment.objects.get(id=self.kwargs['pk'])
+        return context
+
+    def get_queryset(self):
+        return models.Article.objects.filter(assignment__id=self.kwargs['pk']).filter(author=self.request.user).order_by('last_modified_date')
+
+class GradeList(generic.ListView):
+    model = models.Article
+    template_name = 'courses/grade_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(GradeList, self).get_context_data(**kwargs)
+        course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
+        context['course'] = course
+        return context
+    
+    def get_queryset(self):
+        return models.Article.objects.filter(assignment__course__id = self.kwargs['pk']).order_by('-last_modified_date')
 
 # Grading Attempt
 

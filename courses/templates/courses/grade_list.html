@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include "courses/course_header.html" %}
+
+{% with active_tab="grade" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li class="active">Grade</li>
+</ol>
+
+<table class="table">
+	<tr>
+		<th>Assignment</th>
+		<th>Author</th>
+		<th>Last Modfied Date</th>
+		<th>Grade</th>
+	</tr>
+	{% for article in object_list %}
+	<tr{% if not article.gradingattempt %} class="danger"{% endif %}>
+		<td>{{article.assignment.title}}</td>
+		<td>{{article.author}}</td>
+		<td>{{article.last_modified_date}}</td>
+		<td>
+			{% if article.gradingattempt %}
+				<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">{{article.gradingattempt.grade}}</a>
+			{% else %}
+				<a href="{% url 'courses:grading_attempt.create' article.id %}">Not Graded</a>
+			{% endif %}
+		</td>
+	</tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

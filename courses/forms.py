@@ -45,10 +45,10 @@ class SubmissionPeriodForm(forms.ModelForm):
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = models.Article
-        fields = [ 'content', 'submission_period' ]
+        fields = [ 'content' ]
         widgets = {
             'content': widgets.RichTextEditor(),
-            'submission_period': forms.HiddenInput
+#             'assignment': forms.HiddenInput
         }
 
 class GradingAttemptGradeForm(forms.ModelForm):
