@@ -59,10 +59,15 @@ class GradingAttemptGradeForm(forms.ModelForm):
             'grade': forms.NumberInput(attrs={'class': 'form-control'})
         }
 
-class CommentTemplateForm(forms.ModelForm):
+class PredefinedCommentForm(forms.ModelForm):
     class Meta:
-        model = models.CommentTemplate
-        fields = [ 'title', 'template_class', 'content' ]
+        model = models.PredefinedComment
+        fields = [ 'title', 'category', 'content' ]
         widgets = {
             'content': widgets.RichTextEditor(),
         }
+
+class PredefinedCommentCategoryForm(forms.ModelForm):
+    class Meta:
+        model = models.PredefinedCommentCategory
+        fields = [ 'title', 'parent' ]

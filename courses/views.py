@@ -11,6 +11,7 @@ from django.views.generic.base import View
 from guardian.shortcuts import assign_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
+from _overlapped import NULL
 
 class AjaxableResponseMixin(object):
     """
@@ -380,20 +381,37 @@ class CommentDelete(AjaxableResponseMixin, generic.DeleteView):
     model = models.Comment
     success_url = reverse_lazy('courses:course.list')
 
-class CommentTemplateList(generic.ListView):
-    model = models.CommentTemplateClass
-    template_name = 'courses/comment_template_list.html'
+# class CommentTemplateList(generic.ListView):
+#     model = models.CommentTemplateClass
+#     template_name = 'courses/comment_template_list.html'
+#      
+#     def get_queryset(self):
+#         return models.CommentTemplateClass.objects.filter(parent_class__isnull=True)
+# 
+# class CommentTemplateClassCreate(generic.CreateView):
+#     model = models.CommentTemplateClass
+#     fields = [ 'title', 'is_end_class', 'parent_class']
+#     template_name = 'courses/comment_template_class_form.html'
+#     success_url = reverse_lazy('courses:commenttemplate.list')
+# 
+# class CommentTemplateCreate(generic.CreateView):
+#     form_class = forms.CommentTemplateForm
+#     template_name = 'courses/comment_template_form.html'
+#     success_url = reverse_lazy('courses:commenttemplate.list')
+
+class PredefinedCommentList(generic.TemplateView):
+    template_name = 'courses/predefined_comment_list.html'
      
-    def get_queryset(self):
-        return models.CommentTemplateClass.objects.filter(parent_class__isnull=True)
+    def get_context_data(self, **kwargs):
+        context = super(PredefinedCommentList, self).get_context_data(**kwargs)
+        context['categories'] = models.PredefinedCommentCategory.objects.exclude(parent__isnull=False).order_by('create_date')
+        return context
 
-class CommentTemplateClassCreate(generic.CreateView):
-    model = models.CommentTemplateClass
-    fields = [ 'title', 'is_end_class', 'parent_class']
-    template_name = 'courses/comment_template_class_form.html'
-    success_url = reverse_lazy('courses:commenttemplate.list')
-
-class CommentTemplateCreate(generic.CreateView):
-    form_class = forms.CommentTemplateForm
-    template_name = 'courses/comment_template_form.html'
-    success_url = reverse_lazy('courses:commenttemplate.list')
+class PredefinedCommentCategoryCreate(AjaxableResponseMixin, generic.CreateView):
+    model = models.PredefinedCommentCategory
+    form_class = forms.PredefinedCommentCategoryForm
+    success_url = reverse_lazy('courses:predefined_comment.list')
+    
+    def form_valid(self, form):
+        form.instance.create_date = datetime.now()
+        return super(PredefinedCommentCategoryCreate, self).form_valid(form)

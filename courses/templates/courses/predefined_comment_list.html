@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+<script src="{% static 'common/script/csrf.js' %}"></script>
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+
+{% verbatim %}
+<script id="add-category-template" type="text/x-handlebars-template">
+<form class="form-add-category" action="" method="post">
+	<input name="parent" type="hidden" value="{{parent}}" />
+	<input name="title" type="text" placeholder="Title" />
+</form>
+</script>
+
+<script id="add-category-link-template" type="text/x-handlebars-template">
+<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+</script>
+
+<script id="category-template" type="text/x-handlebars-template">
+<li class="li-category"><a class="link-show-subcategory" href="#">{{title}}</a></li>
+</script>
+
+<script id="category-list-template" type="text/x-handlebars-template">
+<div class="div-category well col-sm-3">
+	<h4>Category</h4>
+	<ul class="list-unstyled pre-scrollable">
+		<li class="li-reserved">
+			<input type="hidden" name="parent" value=""  />
+			<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+		</li>
+	</ul>
+</div>
+</script>
+
+{% endverbatim %}
+
+<script>
+var urlAddPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.create' %}";
+</script>
+
+<script src="{% static 'courses/script/predefined_comment_list.js' %}"></script>
+
+{% endblock script-head %}
+
+{% block content %}
+
+<div id="div_select_category">
+	<div class="div-category well col-sm-3">
+		<h4>Category</h4>
+		<ul class="list-unstyled pre-scrollable">
+			{% for category in categories %}
+				<li class="li-category"><a class="link-show-subcategory" href="#">{{ category.title }}</a></li>
+			{% endfor %}
+			<li class="li-reserved">
+				<input type="hidden" name="parent" value=""  />
+				<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+			</li>
+		</ul>
+	</div>
+</div>
+
+{% endblock %}

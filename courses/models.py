@@ -73,18 +73,20 @@ class Comment(models.Model):
     attempt = models.ForeignKey(GradingAttempt, on_delete=models.CASCADE)
     create_date = models.TextField()
 
-class CommentTemplateClass(models.Model):
+class PredefinedCommentCategory(models.Model):
     title = models.CharField(max_length=200)
-    is_end_class = models.BooleanField(default=True)
-    parent_class = models.ForeignKey("CommentTemplateClass", on_delete=models.CASCADE, null=True)
+    is_end = models.BooleanField(default=True)
+    parent = models.ForeignKey("PredefinedCommentCategory", on_delete=models.CASCADE, null=True, blank=True)
+    create_date = models.DateTimeField()
     
     def __str__(self):
         return self.title
 
-class CommentTemplate(models.Model):
+class PredefinedComment(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    template_class = models.ForeignKey(CommentTemplateClass, on_delete=models.CASCADE)
+    category = models.ForeignKey(PredefinedCommentCategory, on_delete=models.CASCADE)
+    create_date = models.DateTimeField()
     
     def __str__(self):
         return self.title

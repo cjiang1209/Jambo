@@ -42,9 +42,10 @@ urlpatterns = [
     url(r'^comment/delete/$', CommentDelete.as_view(), name='comment.delete'),
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
     
-    url(r'^commenttemplate/$', CommentTemplateList.as_view(), name='commenttemplate.list'),
-    url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),
-    url(r'^commenttemplate/create/$', CommentTemplateCreate.as_view(), name='commenttemplate.create'),
+    url(r'^predefinedcomment/$', PredefinedCommentList.as_view(), name='predefined_comment.list'),
+    url(r'^predefinedcomment/category/create$', PredefinedCommentCategoryCreate.as_view(), name='predefined_comment_category.create'),
+#     url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),
+#     url(r'^commenttemplate/create/$', CommentTemplateCreate.as_view(), name='commenttemplate.create'),
     
     url(r'^course/(?P<pk>[0-9]+)/grade/$', GradeList.as_view(), name='grade.list'),
     
