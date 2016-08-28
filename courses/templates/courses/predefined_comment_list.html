@@ -16,22 +16,34 @@
 </script>
 
 <script id="add-category-link-template" type="text/x-handlebars-template">
+<input type="hidden" name="parent" value="{{parent}}"  />
 <button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
 </script>
 
 <script id="category-template" type="text/x-handlebars-template">
-<li class="li-category"><a class="link-show-subcategory" href="#">{{title}}</a></li>
+<li class="li-category list-group-item">
+	<input type="hidden" name="category_id" value="{{id}}" />
+	<a class="link-show-subcategory" href="#">{{title}}</a>
+</li>
 </script>
 
 <script id="category-list-template" type="text/x-handlebars-template">
-<div class="div-category well col-sm-3">
-	<h4>Category</h4>
-	<ul class="list-unstyled pre-scrollable">
-		<li class="li-reserved">
-			<input type="hidden" name="parent" value=""  />
-			<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
-		</li>
-	</ul>
+<div class="div-category container col-sm-4">
+	<div class="well">
+		<h4>Category</h4>
+		<ul class="list-group pre-scrollable">
+			{{#each categories}}
+			<li class="li-category list-group-item">
+				<input type="hidden" name="category_id" value="{{id}}" />
+				<a class="link-show-subcategory" href="#">{{title}}</a>
+			</li>
+			{{/each}}
+			<li class="li-reserved list-group-item">
+				<input type="hidden" name="parent" value="{{parent}}"  />
+				<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+			</li>
+		</ul>
+	</div>
 </div>
 </script>
 
@@ -39,6 +51,7 @@
 
 <script>
 var urlAddPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.create' %}";
+var urlPredefinedCommentSubCategoryList = "{% url 'courses:predefined_comment_category.sub.list' %}";
 </script>
 
 <script src="{% static 'courses/script/predefined_comment_list.js' %}"></script>
@@ -48,17 +61,22 @@ var urlAddPredefinedCommentCategory = "{% url 'courses:predefined_comment_catego
 {% block content %}
 
 <div id="div_select_category">
-	<div class="div-category well col-sm-3">
-		<h4>Category</h4>
-		<ul class="list-unstyled pre-scrollable">
-			{% for category in categories %}
-				<li class="li-category"><a class="link-show-subcategory" href="#">{{ category.title }}</a></li>
-			{% endfor %}
-			<li class="li-reserved">
-				<input type="hidden" name="parent" value=""  />
-				<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
-			</li>
-		</ul>
+	<div class="div-category container col-sm-4">
+		<div class="well">
+			<h4>Category</h4>
+			<ul class="list-group pre-scrollable">
+				{% for category in categories %}
+				<li class="li-category list-group-item">
+					<input type="hidden" name="category_id" value="{{ category.id }}" />
+					<a class="link-show-subcategory" href="#">{{ category.title }}</a>
+				</li>
+				{% endfor %}
+				<li class="li-reserved list-group-item">
+					<input type="hidden" name="parent" value=""  />
+					<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>
 

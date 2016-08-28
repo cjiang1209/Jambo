@@ -6,12 +6,12 @@ from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from . import forms
+from courses import forms
 from django.views.generic.base import View
 from guardian.shortcuts import assign_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
-from _overlapped import NULL
+from django.core import serializers
 
 class AjaxableResponseMixin(object):
     """
@@ -415,3 +415,9 @@ class PredefinedCommentCategoryCreate(AjaxableResponseMixin, generic.CreateView)
     def form_valid(self, form):
         form.instance.create_date = datetime.now()
         return super(PredefinedCommentCategoryCreate, self).form_valid(form)
+
+class PredefinedCommentSubCategoryList(View):
+    def get(self, request, pk):
+        sub_categories = models.PredefinedCommentCategory.objects.filter(parent__id = pk).order_by('create_date')
+        data = [ { 'id': sub_category.id, 'title': sub_category.title } for sub_category in sub_categories]
+        return JsonResponse({ 'list': data})

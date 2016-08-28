@@ -44,6 +44,8 @@ urlpatterns = [
     
     url(r'^predefinedcomment/$', PredefinedCommentList.as_view(), name='predefined_comment.list'),
     url(r'^predefinedcomment/category/create$', PredefinedCommentCategoryCreate.as_view(), name='predefined_comment_category.create'),
+    url(r'^predefinedcomment/category/sub/$', PredefinedCommentSubCategoryList.as_view(), name='predefined_comment_category.sub.list'),
+    url(r'^predefinedcomment/category/sub/(?P<pk>[0-9]+)/$', PredefinedCommentSubCategoryList.as_view(), name='predefined_comment_category.sub.list'),
 #     url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),
 #     url(r'^commenttemplate/create/$', CommentTemplateCreate.as_view(), name='commenttemplate.create'),
     
