@@ -12,6 +12,7 @@ from guardian.shortcuts import assign_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from django.core import serializers
+from django.views.generic.detail import SingleObjectMixin
 
 class AjaxableResponseMixin(object):
     """
@@ -421,3 +422,11 @@ class PredefinedCommentSubCategoryList(View):
         sub_categories = models.PredefinedCommentCategory.objects.filter(parent__id = pk).order_by('create_date')
         data = [ { 'id': sub_category.id, 'title': sub_category.title } for sub_category in sub_categories]
         return JsonResponse({ 'list': data})
+
+class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
+    model = models.PredefinedCommentCategory
+    
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({ })

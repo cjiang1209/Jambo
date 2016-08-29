@@ -6,6 +6,9 @@
 <script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
 <script src="{% static 'common/script/csrf.js' %}"></script>
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/jquery-confirm/jquery-confirm.min.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/jquery-confirm/jquery-confirm.min.css' %}">
 
 {% verbatim %}
 <script id="add-category-template" type="text/x-handlebars-template">
@@ -17,32 +20,46 @@
 
 <script id="add-category-link-template" type="text/x-handlebars-template">
 <input type="hidden" name="parent" value="{{parent}}"  />
-<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
+<button type="button" class="btn btn-default btn-block btn-add-category-link">
+	<i class="fa fa-plus" aria-hidden="true"></i>
+</button>
 </script>
 
 <script id="category-template" type="text/x-handlebars-template">
-<li class="li-category list-group-item">
+<a class="li-category link-show-subcategory list-group-item" href="#">
 	<input type="hidden" name="category_id" value="{{id}}" />
-	<a class="link-show-subcategory" href="#">{{title}}</a>
-</li>
+	<span>{{title}}</span>
+	<span class="pull-right">
+		<button type="button" class="btn-delete-category btn btn-danger btn-xs">
+			<i class="fa fa-times" aria-hidden="true"></i>
+		</button>
+	</span>
+</a>
 </script>
 
 <script id="category-list-template" type="text/x-handlebars-template">
 <div class="div-category container col-sm-4">
 	<div class="well">
 		<h4>Category</h4>
-		<ul class="list-group pre-scrollable">
+		<div class="list-group pre-scrollable">
 			{{#each categories}}
-			<li class="li-category list-group-item">
+			<a class="li-category link-show-subcategory list-group-item" href="#">
 				<input type="hidden" name="category_id" value="{{id}}" />
-				<a class="link-show-subcategory" href="#">{{title}}</a>
-			</li>
+				<span>{{title}}</span>
+				<span class="pull-right">
+					<button type="button" class="btn-delete-category btn btn-danger btn-xs">
+						<i class="fa fa-times" aria-hidden="true"></i>
+					</button>
+				</span>
+			</a>
 			{{/each}}
-			<li class="li-reserved list-group-item">
+			<p class="li-reserved list-group-item">
 				<input type="hidden" name="parent" value="{{parent}}"  />
-				<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
-			</li>
-		</ul>
+				<button type="button" class="btn btn-default btn-block btn-add-category-link">
+					<i class="fa fa-plus" aria-hidden="true"></i>
+				</button>
+			</p>
+		</div>
 	</div>
 </div>
 </script>
@@ -52,6 +69,7 @@
 <script>
 var urlAddPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.create' %}";
 var urlPredefinedCommentSubCategoryList = "{% url 'courses:predefined_comment_category.sub.list' %}";
+var urlPredefinedCommentCategoryDelete = "{% url 'courses:predefined_comment_category.delete' %}";
 </script>
 
 <script src="{% static 'courses/script/predefined_comment_list.js' %}"></script>
@@ -64,18 +82,25 @@ var urlPredefinedCommentSubCategoryList = "{% url 'courses:predefined_comment_ca
 	<div class="div-category container col-sm-4">
 		<div class="well">
 			<h4>Category</h4>
-			<ul class="list-group pre-scrollable">
+			<div class="list-group pre-scrollable">
 				{% for category in categories %}
-				<li class="li-category list-group-item">
+				<a class="li-category link-show-subcategory list-group-item" href="#">
 					<input type="hidden" name="category_id" value="{{ category.id }}" />
-					<a class="link-show-subcategory" href="#">{{ category.title }}</a>
-				</li>
+					<span>{{ category.title }}</span>
+					<span class="pull-right">
+						<button type="button" class="btn-delete-category btn btn-danger btn-xs">
+							<i class="fa fa-times" aria-hidden="true"></i>
+						</button>
+					</span>
+				</a>
 				{% endfor %}
-				<li class="li-reserved list-group-item">
+				<p class="li-reserved list-group-item">
 					<input type="hidden" name="parent" value=""  />
-					<button type="button" class="btn btn-default btn-block btn-add-category-link">+ Add</button>
-				</li>
-			</ul>
+					<button type="button" class="btn btn-default btn-block btn-add-category-link">
+						<i class="fa fa-plus" aria-hidden="true"></i>
+					</button>
+				</p>
+			</div>
 		</div>
 	</div>
 </div>

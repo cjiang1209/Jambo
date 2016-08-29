@@ -43,7 +43,9 @@ urlpatterns = [
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
     
     url(r'^predefinedcomment/$', PredefinedCommentList.as_view(), name='predefined_comment.list'),
-    url(r'^predefinedcomment/category/create$', PredefinedCommentCategoryCreate.as_view(), name='predefined_comment_category.create'),
+    url(r'^predefinedcomment/category/create/$', PredefinedCommentCategoryCreate.as_view(), name='predefined_comment_category.create'),
+    url(r'^predefinedcomment/category/delete/$', PredefinedCommentCategoryDelete.as_view(), name='predefined_comment_category.delete'),
+    url(r'^predefinedcomment/category/delete/(?P<pk>[0-9]+)/$', PredefinedCommentCategoryDelete.as_view(), name='predefined_comment_category.delete'),
     url(r'^predefinedcomment/category/sub/$', PredefinedCommentSubCategoryList.as_view(), name='predefined_comment_category.sub.list'),
     url(r'^predefinedcomment/category/sub/(?P<pk>[0-9]+)/$', PredefinedCommentSubCategoryList.as_view(), name='predefined_comment_category.sub.list'),
 #     url(r'^commenttemplateclass/create/$', CommentTemplateClassCreate.as_view(), name='commenttemplateclass.create'),
