@@ -3,7 +3,15 @@
 {% load staticfiles %}
 
 {% block script-head %}
+<script src="{% static 'common/script/csrf.js' %}"></script>
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
+<script>
+var idRichTextEditor = "{{form.content.auto_id}}";
+</script>
+
+<script src="{% static 'courses/script/article_form.js' %}"></script>
 {% endblock script-head %}
 
 {% block content %}

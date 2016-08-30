@@ -53,6 +53,8 @@ urlpatterns = [
     
     url(r'^course/(?P<pk>[0-9]+)/grade/$', GradeList.as_view(), name='grade.list'),
     
+    url(r'^imageupload/', ImageUpload.as_view(), name='image.upload'),
+    
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),
 #     url(r'^i/course/(?P<pk>[0-9]+)/$', instructor_views.CourseUpdate.as_view(), name='instructor.courses.update'),

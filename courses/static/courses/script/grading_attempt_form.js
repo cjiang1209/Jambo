@@ -12,6 +12,7 @@ $(document).ready(function () {
 		});
 	});
 	
-	var rteditor = RichTextEditor.render('id_content', editorConfig);
+	var config = RichTextEditorConfig.Comment();
+	var rteditor = RichTextEditor.render(idRichTextEditor, config);
 	rteditor.supportComment(commentUrlConfig, false);
 });

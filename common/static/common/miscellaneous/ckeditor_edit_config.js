@@ -10,9 +10,17 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 	];
 
+	//config.extraPlugins = 'notification,notificationaggregator,filetools,uploadwidget,uploadimage';
+	config.extraPlugins = 'uploadimage,image2';
 	config.removePlugins= 'elementspath';
 	config.removeButtons = 'Subscript,Superscript,Styles,Blockquote';
 	config.allowedContent = true;
 	
 	config.height = 500;
+	
+	config.uploadUrl = '/courses/imageupload/';
+	config.filebrowserBrowseUrl = '/ckfinder/ckfinder.html';
+	config.filebrowserImageBrowseUrl = '/ckfinder/ckfinder.html?type=Images';
+	config.filebrowserUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
+	config.filebrowserImageUploadUrl = '/courses/imageupload/';
 };

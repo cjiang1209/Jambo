@@ -1,9 +1,81 @@
+var RichTextEditorConfig = (function() {
+	return {
+		Edit: function() {
+			return {
+				toolbarGroups: [
+	        	    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+	        	    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+	        	    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+	        	    { name: 'styles', groups: [ 'styles' ] },
+	        	    { name: 'editing', groups: [ 'spellchecker'] },
+	        	    { name: 'insert', groups: [ 'insert' ] },
+	        	    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+	        	],
+	        	extraPlugins: 'uploadimage,image2',
+	        	removePlugins: 'elementspath',
+	        	removeButtons: 'Subscript,Superscript,Styles,Blockquote',
+	        	allowedContent: true,
+	        	height: 500,
+	        };
+		},
+		ReadOnly: function() {
+			return {
+				toolbarGroups: [
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+	                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+	                { name: 'styles', groups: [ 'styles' ] },
+	                { name: 'editing', groups: [ 'spellchecker'] },
+	                { name: 'insert', groups: [ 'insert' ] },
+	                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+                ],
+				removePlugins: 'elementspath',
+				allowedContent: true,
+				readOnly: true,
+				removeButtons: 'Subscript,Superscript,Styles,Blockquote',
+				height: 500,
+			};
+		},
+		Comment: function() {
+			return {
+				toolbarGroups: [
+	                { name: 'insert', groups: [ 'insert' ] },
+			        { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+			    ],
+			    removePlugins: 'elementspath',
+			    removeButtons: 'Image,Table,HorizontalRule,SpecialChar',
+			    allowedContent: true,
+			    readOnly: true,
+			    extraPlugins: 'comment',
+			    height: 500,
+			};
+		},
+		ReadOnlyComment: function() {
+			return {
+				toolbarGroups: [
+                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                    { name: 'styles', groups: [ 'styles' ] },
+                    { name: 'editing', groups: [ 'spellchecker'] },
+                    { name: 'insert', groups: [ 'insert' ] },
+                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+				],
+				removePlugins: 'elementspath',
+				allowedContent: true,
+				readOnly: true,
+				extraPlugins: 'comment',
+				removeButtons: 'Subscript,Superscript,Styles,Blockquote',
+				height: 500,
+			};
+		},
+	};
+})();
+
 var RichTextEditor = (function() {
 	return {
 		render: function(id_component, config) {
-			var editor = CKEDITOR.replace(id_component, {
-				customConfig: config
-			});
+			var editor = CKEDITOR.replace(id_component, config);
 
 			// Return a RichTextEditor instance
 			return (function(id_component) {
@@ -137,8 +209,8 @@ var RichTextEditor = (function() {
 							editor.execCommand('hideCommentWindow');
 						});
 					},
-				}
+				};
 			}(id_component));
 		},
-	}
+	};
 })();

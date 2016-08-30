@@ -11,7 +11,8 @@
 
 <script>
 $(document).ready(function() {
-	var rteditor = RichTextEditor.render('id_content', '{% static 'common/miscellaneous/ckeditor_readonly_config.js' %}');
+	var config = RichTextEditorConfig.ReadOnly();
+	var rteditor = RichTextEditor.render('id_content', config);
 });
 </script>
 

@@ -11,12 +11,16 @@
 <script>
 $(document).ready(function() {
 	var urlConfig = {
-		contentId: {{gradingattempt.id}},
+		contentId: {{ gradingattempt.id }},
 		getComment: "{% url 'courses:comment.detail' %}",
 	};
-			
-	var rteditor = RichTextEditor.render('id_grading_attempt', '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}');
-	rteditor.supportComment(urlConfig, true);
+
+	var config1 = RichTextEditorConfig.ReadOnlyComment();
+	var rteditor1 = RichTextEditor.render('id_grading_attempt', config1);
+	rteditor1.supportComment(urlConfig, true);
+	
+	var config2 = RichTextEditorConfig.Edit();
+	var rteditor2 = RichTextEditor.render('{{ form.content.auto_id }}', config2);
 });
 </script>
 

@@ -13,6 +13,8 @@ from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from django.core import serializers
 from django.views.generic.detail import SingleObjectMixin
+import uuid
+from django.template.context_processors import request
 
 class AjaxableResponseMixin(object):
     """
@@ -430,3 +432,15 @@ class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
         self.object = self.get_object()
         self.object.delete()
         return JsonResponse({ })
+
+class ImageUpload(View):
+    path = 'upload/images/'
+    
+    def post(self, *args, **kwargs):
+        file = request.FILES['file']
+        ext = request.FILES['ext']
+        name = uuid.uuid4() + '.' + ext
+        with open(self.path + name, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        return JsonResponse({ 'url': self.path + name })

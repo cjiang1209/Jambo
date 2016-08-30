@@ -46,10 +46,10 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = models.Article
         fields = [ 'content' ]
-        widgets = {
-            'content': widgets.RichTextEditor(),
-#             'assignment': forms.HiddenInput
-        }
+#         widgets = {
+#             'content': widgets.RichTextEditor(),
+# #             'assignment': forms.HiddenInput
+#         }
 
 class GradingAttemptGradeForm(forms.ModelForm):
     class Meta:

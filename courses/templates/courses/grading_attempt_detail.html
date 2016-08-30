@@ -16,8 +16,9 @@ $(document).ready(function() {
 		contentId: {{gradingattempt.id}},
 		getComment: "{% url 'courses:comment.detail' %}",
 	};
-		
-	var rteditor = RichTextEditor.render('id_content', '{% static 'common/miscellaneous/ckeditor_grading_view_config.js' %}');
+	
+	var config = RichTextEditorConfig.ReadOnlyComment();
+	var rteditor = RichTextEditor.render('id_content', config);
 	rteditor.supportComment(urlConfig, true);
  });
 
