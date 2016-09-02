@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'guardian',
+    'easy_thumbnails',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -134,3 +135,9 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = '/login/'
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'small': {'size': (50, 50), 'crop': True},
+    },
+}

@@ -13,8 +13,9 @@ from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from django.core import serializers
 from django.views.generic.detail import SingleObjectMixin
-import uuid
-from django.template.context_processors import request
+import os
+from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.http import HttpResponse
 
 class AjaxableResponseMixin(object):
     """
@@ -434,13 +435,35 @@ class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
         return JsonResponse({ })
 
 class ImageUpload(View):
-    path = 'upload/images/'
+    relative_path = 'courses/upload/images/'
+    
+    def absolute_path(self):
+        return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
     
     def post(self, *args, **kwargs):
-        file = request.FILES['file']
-        ext = request.FILES['ext']
-        name = uuid.uuid4() + '.' + ext
-        with open(self.path + name, 'wb+') as destination:
+        file = self.request.FILES['upload']
+        filename = self.request.FILES['upload'].name
+#         if not os.path.exists(self.absolute_path()):
+#             os.makedirs(self.absolute_path())
+        with open(os.path.join(self.absolute_path(), filename), 'wb') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        return JsonResponse({ 'url': self.path + name })
+        #return JsonResponse({ 'url': static(self.relative_path + filename) })
+        return HttpResponse('<script type="text/javascript">' +
+            'window.parent.CKEDITOR.tools.callFunction("' + self.request.GET.get('CKEditorFuncNum') + '", "' +
+            static(self.relative_path + filename) + '", "");</script>')
+
+class ImageBrowse(generic.TemplateView):
+    template_name = 'courses/image_browse.html'
+    relative_path = 'courses/upload/images/'
+    
+    def absolute_path(self):
+        return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
+        
+    def get_context_data(self, **kwargs):
+        context = super(ImageBrowse, self).get_context_data(**kwargs)
+        
+        files = [f for f in os.listdir(self.absolute_path()) if os.path.isfile(os.path.join(self.absolute_path(), f))]
+        context['images'] = [static(self.relative_path + f) for f in files]
+        context['CKEditorFuncNum'] = self.request.GET.get('CKEditorFuncNum')
+        return context
