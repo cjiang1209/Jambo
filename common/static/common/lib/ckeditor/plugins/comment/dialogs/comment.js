@@ -30,7 +30,8 @@ CKEDITOR.dialog.add('commentDialog', function(editor) {
 						'default': '',
 						required: true,
 						onLoad: function(widget) {
-							var editor = CKEDITOR.replace(this.getInputElement().getId());
+							var editorConfig = RichTextEditorConfig.EditComment();
+							var editor = CKEDITOR.replace(this.getInputElement().getId(), editorConfig);
 							editor.on('change', function() {
 								editor.updateElement();
 							});

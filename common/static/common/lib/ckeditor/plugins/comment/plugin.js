@@ -14,8 +14,10 @@
 		canUndo : false,
 		readOnly : true,
 		exec : function(editor) {
-			editor.setReadOnly(false);
-			editor.execCommand(pluginName);
+			if (editor.getSelection().getRanges().length > 0) {
+				editor.setReadOnly(false);
+				editor.execCommand(pluginName);
+			}
 		}
 	};
 	

@@ -3,17 +3,17 @@ var RichTextEditorConfig = (function() {
 		Edit: function() {
 			return {
 				toolbarGroups: [
-	        	    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+	        	    //{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 	        	    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-	        	    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-	        	    { name: 'styles', groups: [ 'styles' ] },
+	        	    //{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+	        	    //{ name: 'styles', groups: [ 'styles' ] },
 	        	    { name: 'editing', groups: [ 'spellchecker'] },
-	        	    { name: 'insert', groups: [ 'insert' ] },
-	        	    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+	        	    //{ name: 'insert', groups: [ 'insert' ] },
+	        	    //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 	        	],
-	        	extraPlugins: 'uploadimage,image2,html5audio',
+	        	//extraPlugins: 'uploadimage,image2,html5audio',
 	        	removePlugins: 'elementspath',
-	        	removeButtons: 'Subscript,Superscript,Styles,Blockquote',
+	        	//removeButtons: 'Subscript,Superscript,Styles,Blockquote',
 	        	allowedContent: true,
 	        	height: 500,
 	        };
@@ -21,18 +21,18 @@ var RichTextEditorConfig = (function() {
 		ReadOnly: function() {
 			return {
 				toolbarGroups: [
-                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    //{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 	                { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-	                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-	                { name: 'styles', groups: [ 'styles' ] },
+	                //{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+	                //{ name: 'styles', groups: [ 'styles' ] },
 	                { name: 'editing', groups: [ 'spellchecker'] },
-	                { name: 'insert', groups: [ 'insert' ] },
-	                { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+	                //{ name: 'insert', groups: [ 'insert' ] },
+	                //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
                 ],
 				removePlugins: 'elementspath',
 				allowedContent: true,
 				readOnly: true,
-				removeButtons: 'Subscript,Superscript,Styles,Blockquote',
+				//removeButtons: 'Subscript,Superscript,Styles,Blockquote',
 				height: 500,
 			};
 		},
@@ -40,7 +40,7 @@ var RichTextEditorConfig = (function() {
 			return {
 				toolbarGroups: [
 	                { name: 'insert', groups: [ 'insert' ] },
-			        { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+			        //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 			    ],
 			    removePlugins: 'elementspath',
 			    removeButtons: 'Image,Table,HorizontalRule,SpecialChar',
@@ -50,16 +50,38 @@ var RichTextEditorConfig = (function() {
 			    height: 500,
 			};
 		},
+		EditComment: function() {
+			return {
+				toolbarGroups: [
+	                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+	        	    { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+	        	    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+	        	    //{ name: 'styles', groups: [ 'styles' ] },
+	        	    { name: 'editing', groups: [ 'spellchecker'] },
+	        	    { name: 'insert', groups: [ 'insert' ] },
+	        	    //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+			    ],
+			    extraPlugins: 'uploadimage,image2,html5audio',
+			    removePlugins: 'elementspath',
+			    allowedContent: true,
+			    // Upload URLs
+				uploadUrl: '/courses/imageupload/',
+				filebrowserBrowseUrl: '/courses/audiobrowse/',
+				filebrowserImageBrowseUrl: '/courses/imagebrowse/',
+				filebrowserUploadUrl: '/courses/audioupload/',
+				filebrowserImageUploadUrl: '/courses/imageupload/',
+			};
+		},
 		ReadOnlyComment: function() {
 			return {
 				toolbarGroups: [
-                    { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                    //{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
                     { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
-                    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
-                    { name: 'styles', groups: [ 'styles' ] },
+                    //{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                    //{ name: 'styles', groups: [ 'styles' ] },
                     { name: 'editing', groups: [ 'spellchecker'] },
-                    { name: 'insert', groups: [ 'insert' ] },
-                    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
+                    //{ name: 'insert', groups: [ 'insert' ] },
+                    //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 				],
 				removePlugins: 'elementspath',
 				allowedContent: true,
@@ -74,11 +96,11 @@ var RichTextEditorConfig = (function() {
 
 var RichTextEditor = (function() {
 	return {
-		render: function(id_component, config) {
-			var editor = CKEDITOR.replace(id_component, config);
+		render: function(id_content, editorConfig) {
+			var editor = CKEDITOR.replace(id_content, editorConfig);
 
 			// Return a RichTextEditor instance
-			return (function(id_component) {
+			return (function(id_content) {
 				var commentCache = {};
 				
 				var htmlTmplComment = '<div class="panel panel-primary">' +
@@ -142,10 +164,10 @@ var RichTextEditor = (function() {
 				};
 				
 				var updateContent = function () {
-					console.log(id_component);
+					console.log(id_content);
 					var url = urlConfig.updateContent;
 					$.post(url, {
-						content: CKEDITOR.instances[id_component].getData()
+						content: CKEDITOR.instances[id_content].getData()
 					}, function(data) {
 						console.log(data);
 					})
@@ -172,7 +194,7 @@ var RichTextEditor = (function() {
 						
 						CKEDITOR.on('instanceReady', function(evt) {
 							var editor = evt.editor;
-							if (editor.name == id_component) {
+							if (editor.name == id_content) {
 								console.log(editor.title);
 
 								$.each(editor.widgets.instances, function(index, value) {
@@ -210,7 +232,7 @@ var RichTextEditor = (function() {
 						});
 					},
 				};
-			}(id_component));
+			}(id_content));
 		},
 	};
 })();
