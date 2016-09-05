@@ -11,7 +11,7 @@ var RichTextEditorConfig = (function() {
 	        	    { name: 'insert', groups: [ 'insert' ] },
 	        	    { name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 	        	],
-	        	extraPlugins: 'uploadimage,image2',
+	        	extraPlugins: 'uploadimage,image2,html5audio',
 	        	removePlugins: 'elementspath',
 	        	removeButtons: 'Subscript,Superscript,Styles,Blockquote',
 	        	allowedContent: true,

@@ -20,16 +20,20 @@
 		var CKEditorFuncNum = {{ CKEditorFuncNum }};
 	</script>
 	
-	<script src="{% static 'courses/script/image_browse.js' %}"></script>
+	<script src="{% static 'courses/script/audio_browse.js' %}"></script>
 </head>
 <body>
 	<div class="container row">
-		{% for image in objects %}
-		<div class="col-md-4 thumbnail">
-			<a href="#" class="image-link" data-url="{{ image.url }}">
-				<img class="img-responsive" src="{{ image.url }}" />
-			</a>
-			<div class="caption">{{ image.title }}</div>
+		{% for audio in objects %}
+		<div class="col-xs-6 well">
+			<a href="#" class="audio-link btn btn-default" data-url="{{ audio.url }}">Select</a>
+			<div class="pull-right">
+				<div class="caption">{{ audio.title }}</div>
+				<audio controls="controls">
+					<source src="{{ audio.url }}" type="audio/mpeg">
+					Your browser does not support the audio element.
+				</audio>
+			</div>
 		</div>
 		{% endfor %}
 	</div>

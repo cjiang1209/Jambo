@@ -434,8 +434,8 @@ class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
         self.object.delete()
         return JsonResponse({ })
 
-class ImageUpload(View):
-    relative_path = 'courses/upload/images/'
+class FileUpload(View):
+    relative_path = 'courses/upload/'
     
     def absolute_path(self):
         return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
@@ -443,27 +443,37 @@ class ImageUpload(View):
     def post(self, *args, **kwargs):
         file = self.request.FILES['upload']
         filename = self.request.FILES['upload'].name
-#         if not os.path.exists(self.absolute_path()):
-#             os.makedirs(self.absolute_path())
         with open(os.path.join(self.absolute_path(), filename), 'wb') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        #return JsonResponse({ 'url': static(self.relative_path + filename) })
         return HttpResponse('<script type="text/javascript">' +
             'window.parent.CKEDITOR.tools.callFunction("' + self.request.GET.get('CKEditorFuncNum') + '", "' +
             static(self.relative_path + filename) + '", "");</script>')
 
-class ImageBrowse(generic.TemplateView):
-    template_name = 'courses/image_browse.html'
-    relative_path = 'courses/upload/images/'
+class FileBrowseMixin(object):
+    relative_path = 'courses/upload/'
     
     def absolute_path(self):
         return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
         
     def get_context_data(self, **kwargs):
-        context = super(ImageBrowse, self).get_context_data(**kwargs)
+        context = super(FileBrowseMixin, self).get_context_data(**kwargs)
         
         files = [f for f in os.listdir(self.absolute_path()) if os.path.isfile(os.path.join(self.absolute_path(), f))]
-        context['images'] = [static(self.relative_path + f) for f in files]
+        context['objects'] = [ { 'title': f, 'url': static(self.relative_path + f) } for f in files]
         context['CKEditorFuncNum'] = self.request.GET.get('CKEditorFuncNum')
         return context
+
+class ImageUpload(FileUpload):
+    relative_path = 'courses/upload/images/'
+
+class ImageBrowse(FileBrowseMixin, generic.TemplateView):
+    template_name = 'courses/image_browse.html'
+    relative_path = 'courses/upload/images/'
+
+class AudioUpload(FileUpload):
+    relative_path = 'courses/upload/audios/'
+
+class AudioBrowse(FileBrowseMixin, generic.TemplateView):
+    template_name = 'courses/audio_browse.html'
+    relative_path = 'courses/upload/audios/'

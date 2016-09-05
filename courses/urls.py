@@ -56,6 +56,9 @@ urlpatterns = [
     url(r'^imageupload/', ImageUpload.as_view(), name='image.upload'),
     url(r'^imagebrowse/', ImageBrowse.as_view(), name='image.browse'),
     
+    url(r'^audioupload/', AudioUpload.as_view(), name='audio.upload'),
+    url(r'^audiobrowse/', AudioBrowse.as_view(), name='audio.browse'),
+    
 #     url(r'^i/$', instructor_views.CourseList.as_view(), name='instructor.courses'),
 #     url(r'^i/course/create/$', instructor_views.CourseCreate.as_view(), name='instructor.courses.create'),
 #     url(r'^i/course/(?P<pk>[0-9]+)/$', instructor_views.CourseUpdate.as_view(), name='instructor.courses.update'),
