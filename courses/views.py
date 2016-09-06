@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from courses import forms
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from guardian.shortcuts import assign_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
@@ -477,3 +477,12 @@ class AudioUpload(FileUpload):
 class AudioBrowse(FileBrowseMixin, generic.TemplateView):
     template_name = 'courses/audio_browse.html'
     relative_path = 'courses/upload/audios/'
+
+class PeopleList(TemplateView):
+    template_name = 'courses/people_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(PeopleList, self).get_context_data(**kwargs)
+        course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
+        context['course'] = course
+        return context

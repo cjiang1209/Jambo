@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block script-head %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/DataTables/css/dataTables.bootstrap.min.css' %}">
+
+<script src="{% static 'common/lib/DataTables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'common/lib/DataTables/js/dataTables.bootstrap.min.js' %}"></script>
+
+
+<script>
+$(document).ready(function() {
+	$('#table-instructors').DataTable();
+	$('#table-students').DataTable();
+});
+</script>
+
+{% endblock script-head %}
+
+{% block content %}
+
+{% include "courses/course_header.html" %}
+
+{% with active_tab="people" %}
+{% include "courses/course_nav.html" %}
+{% endwith %}
+
+<ol class="breadcrumb">
+  <li class="active">People</li>
+</ol>
+
+<table id="table-instructors" class="table">
+	<caption><h4>Instructors</h4></caption>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for instructor in course.instructors.all %}
+		<tr>
+			<td>{{ instructor.full_name }}</td>
+			<td>
+				<a href="mailto:{{ instructor.email }}">{{ instructor.email }}</a>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<hr>
+
+<table id="table-students" class="table">
+	<caption><h4>Students</h4></caption>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for student in course.students.all %}
+		<tr>
+			<td>{{ student.full_name }}</td>
+			<td>
+				<a href="mailto:{{ instructor.email }}">{{ student.email }}</a>
+			</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

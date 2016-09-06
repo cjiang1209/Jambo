@@ -7,8 +7,12 @@ $(document).ready(function () {
 		
 		$.post(urlUpdateGrade, {
 			grade: grade
-		}, function (data) {
-			alert("Grade updated successfully");
+		}).done(function (data) {
+			$.alert({
+			    title: 'Updated',
+			    content: 'Grade updated successfully.',
+			    backgroundDismiss: true
+			});
 		});
 	});
 	

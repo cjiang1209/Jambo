@@ -1,16 +1,29 @@
 <div>
 	<ul class="nav nav-tabs" role="tablist">
 		<li role="presentation" {% if active_tab == "home" %}class="active"{% endif %}>
-			<a href="{% url 'courses:course.detail' course.id %}" aria-controls="home" role="tab">Home</a>
+			<a href="{% url 'courses:course.detail' course.id %}" aria-controls="home" role="tab">
+				<i class="fa fa-home"></i> Home
+			</a>
 		</li>
 		<li role="presentation" {% if active_tab == "assignment" %}class="active"{% endif %}>
-			<a href="{% url 'courses:assignment.list' course.id %}" role="tab">Assignment</a>
+			<a href="{% url 'courses:assignment.list' course.id %}" role="tab">
+				<i class="fa fa-folder-open"></i> Assignment
+			</a>
 		</li>
 		<li role="presentation" {% if active_tab == "assignment_management" %}class="active"{% endif %}>
-			<a href="{% url 'courses:manage.assignment.list' course.id %}" role="tab">Assignment Management</a>
+			<a href="{% url 'courses:manage.assignment.list' course.id %}" role="tab">
+				<i class="fa fa-fw fa-gear"></i> Assignment Management
+			</a>
 		</li>
 		<li role="presentation" {% if active_tab == "grade" %}class="active"{% endif %}>
-			<a href="{% url 'courses:grade.list' course.id %}" role="tab">Grade</a>
+			<a href="{% url 'courses:grade.list' course.id %}" role="tab">
+				<i class="fa fa-check-square"></i> Grade
+			</a>
+		</li>
+		<li role="presentation" {% if active_tab == "people" %}class="active"{% endif %}>
+			<a href="{% url 'courses:people.list' course.id %}" role="tab">
+				<i class="fa fa-users"></i> People
+			</a>
 		</li>
 	</ul>
 </div>
