@@ -62,10 +62,7 @@ class GradingAttemptGradeForm(forms.ModelForm):
 class PredefinedCommentForm(forms.ModelForm):
     class Meta:
         model = models.PredefinedComment
-        fields = [ 'title', 'category', 'content' ]
-        widgets = {
-            'content': widgets.RichTextEditor(),
-        }
+        fields = [ 'content' ]
 
 class PredefinedCommentCategoryForm(forms.ModelForm):
     class Meta:

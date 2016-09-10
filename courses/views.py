@@ -352,7 +352,6 @@ class GradingAttemptGradeUpdate(AjaxableResponseMixin, generic.UpdateView):
 
     def form_valid(self, form):
         form.instance.last_modified_date = datetime.now()
-        print(form.instance.grade)
         return super(GradingAttemptGradeUpdate, self).form_valid(form)
 
     def get_success_url(self):
@@ -452,7 +451,7 @@ class PredefinedCommentCategoryCreate(AjaxableResponseMixin, generic.CreateView)
 class PredefinedCommentSubCategoryList(View):
     def get(self, request, pk):
         sub_categories = models.PredefinedCommentCategory.objects.filter(parent__id = pk).order_by('create_date')
-        data = [ { 'id': sub_category.id, 'title': sub_category.title } for sub_category in sub_categories]
+        data = [ { 'id': sub_category.id, 'title': sub_category.title, 'is_terminal': sub_category.is_terminal } for sub_category in sub_categories]
         return JsonResponse({ 'list': data})
 
 class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
@@ -462,6 +461,35 @@ class PredefinedCommentCategoryDelete(SingleObjectMixin, View):
         self.object = self.get_object()
         self.object.delete()
         return JsonResponse({ })
+
+class PredefinedCommentCategoryTerminate(SingleObjectMixin, View):
+    model = models.PredefinedCommentCategory
+    
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.is_terminal = True
+        self.object.predefinedcommentcategory_set.clear()
+        self.object.save()
+        
+        comment = models.PredefinedComment(content='',
+            category=self.object,
+            create_date=datetime.now())
+        comment.save()
+        
+        return JsonResponse({ })
+
+class PredefinedCommentDetail(View): 
+    def get(self, request, pk):
+        category = models.PredefinedCommentCategory.objects.get(id = pk)
+        assert category.is_terminal
+        comment = category.comment
+        data = { 'id': comment.id, 'content': comment.content }
+        return JsonResponse(data)
+
+class PredefinedCommentUpdate(AjaxableResponseMixin, generic.UpdateView):
+    model = models.PredefinedComment
+    form_class = forms.PredefinedCommentForm
+    success_url = reverse_lazy('courses:predefined_comment.list')
 
 class FileUpload(View):
     relative_path = 'courses/upload/'

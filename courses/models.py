@@ -105,18 +105,18 @@ class Comment(models.Model):
 
 class PredefinedCommentCategory(models.Model):
     title = models.CharField(max_length=200)
-    is_end = models.BooleanField(default=True)
-    parent = models.ForeignKey("PredefinedCommentCategory", on_delete=models.CASCADE, null=True, blank=True)
+    is_terminal = models.BooleanField(default=False)
+    parent = models.ForeignKey('PredefinedCommentCategory', on_delete=models.CASCADE, null=True, blank=True)
     create_date = models.DateTimeField()
     
     def __str__(self):
         return self.title
 
 class PredefinedComment(models.Model):
-    title = models.CharField(max_length=200)
+    #title = models.CharField(max_length=200)
     content = models.TextField()
-    category = models.ForeignKey(PredefinedCommentCategory, on_delete=models.CASCADE)
+    category = models.OneToOneField(PredefinedCommentCategory, on_delete=models.CASCADE, related_name='comment')
     create_date = models.DateTimeField()
     
     def __str__(self):
-        return self.title
+        return self.content

@@ -10,6 +10,8 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'common/lib/jquery-confirm/jquery-confirm.min.css' %}">
 
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
 {% verbatim %}
 <script id="add-category-template" type="text/x-handlebars-template">
 <form class="form-add-category" action="" method="post">
@@ -28,8 +30,14 @@
 <script id="category-template" type="text/x-handlebars-template">
 <a class="li-category link-show-subcategory list-group-item" href="#">
 	<input type="hidden" name="category_id" value="{{id}}" />
+	<input type="hidden" name="is_terminal" value="{{is_terminal}}" />
 	<span>{{title}}</span>
 	<span class="pull-right">
+		{{#unless is_terminal}}
+		<button type="button" class="btn-terminate-category btn btn-success btn-xs">
+			<i class="fa fa-sign-out" aria-hidden="true"></i>
+		</button>
+		{{/unless}}
 		<button type="button" class="btn-delete-category btn btn-danger btn-xs">
 			<i class="fa fa-times" aria-hidden="true"></i>
 		</button>
@@ -45,8 +53,14 @@
 			{{#each categories}}
 			<a class="li-category link-show-subcategory list-group-item" href="#">
 				<input type="hidden" name="category_id" value="{{id}}" />
+				<input type="hidden" name="is_terminal" value="{{is_terminal}}" />
 				<span>{{title}}</span>
 				<span class="pull-right">
+					{{#unless is_terminal}}
+					<button type="button" class="btn-terminate-category btn btn-success btn-xs">
+						<i class="fa fa-sign-out" aria-hidden="true"></i>
+					</button>
+					{{/unless}}
 					<button type="button" class="btn-delete-category btn btn-danger btn-xs">
 						<i class="fa fa-times" aria-hidden="true"></i>
 					</button>
@@ -70,6 +84,11 @@
 var urlAddPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.create' %}";
 var urlPredefinedCommentSubCategoryList = "{% url 'courses:predefined_comment_category.sub.list' %}";
 var urlPredefinedCommentCategoryDelete = "{% url 'courses:predefined_comment_category.delete' %}";
+var urlPredefinedCommentCategoryTerminate = "{% url 'courses:predefined_comment_category.terminate' %}";
+var urlCommentOfPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.comment' %}";
+var urlPredefinedCommentUpdate = "{% url 'courses:predefined_comment.update' %}";
+
+var idRichTextEditor = 'id_content';
 </script>
 
 <script src="{% static 'courses/script/predefined_comment_list.js' %}"></script>
@@ -78,7 +97,7 @@ var urlPredefinedCommentCategoryDelete = "{% url 'courses:predefined_comment_cat
 
 {% block content %}
 
-<div id="div_select_category">
+<div id="div_select_category" class="row">
 	<div class="div-category container col-sm-4">
 		<div class="well">
 			<h4>Category</h4>
@@ -86,11 +105,17 @@ var urlPredefinedCommentCategoryDelete = "{% url 'courses:predefined_comment_cat
 				{% for category in categories %}
 				<a class="li-category link-show-subcategory list-group-item" href="#">
 					<input type="hidden" name="category_id" value="{{ category.id }}" />
+					<input type="hidden" name="is_terminal" value="{% if category.is_terminal %}true{% else %}false{% endif %}" />
 					<span>{{ category.title }}</span>
 					<span class="pull-right">
+						{% if not category.is_terminal %}
+						<button type="button" class="btn-terminate-category btn btn-success btn-xs">
+							<i class="fa fa-sign-out" aria-hidden="true"></i>
+						</button>
+						{% endif %}
 						<button type="button" class="btn-delete-category btn btn-danger btn-xs">
 							<i class="fa fa-times" aria-hidden="true"></i>
-						</button>
+						</button>	
 					</span>
 				</a>
 				{% endfor %}
@@ -104,5 +129,12 @@ var urlPredefinedCommentCategoryDelete = "{% url 'courses:predefined_comment_cat
 		</div>
 	</div>
 </div>
+
+<form id="form_comment" action="" method="post">
+	<input type="hidden" name="predefinedcomment_id" value="" />
+	<textarea id="id_content" name="content" rows="10" cols="40">
+	</textarea>
+	<input class="btn btn-default" type="submit" value="Submit" />
+</form>
 
 {% endblock %}
