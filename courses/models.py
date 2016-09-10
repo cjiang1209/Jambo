@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from guardian.shortcuts import assign_perm
+from guardian.shortcuts import remove_perm
 
 class CustomUser(User):
     class Meta:
@@ -24,13 +26,41 @@ class Course(models.Model):
     create_date = models.DateTimeField()
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     
-    def __str__(self):
-        return self.title
+    __original_instructors = None
+    __original_students = None
     
     class Meta:
         permissions = (
             ('view_course', 'Can view course'),
+            ('instruct_course', 'Instruct course'),
+            ('enroll_course', 'Enroll in course'),
         )
+    
+    def __init__(self, *args, **kwargs):
+        super(Course, self).__init__(*args, **kwargs)
+        self.__original_instructors = self.instructors
+        self.__original_students = self.students
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, force_insert=False, force_update=False, using=None, 
+        update_fields=None):
+        for user in self.__original_instructors.all():
+            remove_perm('view_course', user, self)
+            remove_perm('instruct_course', user, self)
+        for user in self.__original_students.all():
+            remove_perm('view_course', user, self)
+            remove_perm('enroll_course', user, self)
+        
+        models.Model.save(self, force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+        
+        for user in self.instructors.all():
+            assign_perm('view_course', user, self)
+            assign_perm('instruct_course', user, self)
+        for user in self.students.all():
+            assign_perm('view_course', user, self)
+            assign_perm('enroll_course', user, self)
 
 class Assignment(models.Model):
     title = models.CharField(max_length=200)

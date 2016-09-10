@@ -1,5 +1,5 @@
 from django.views import generic
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from courses import models
 from helper import auth
 from datetime import datetime
@@ -16,6 +16,8 @@ from django.views.generic.detail import SingleObjectMixin
 import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
+from _testcapi import raise_exception
+from courses.models import CustomUser
 
 class AjaxableResponseMixin(object):
     """
@@ -41,6 +43,20 @@ class AjaxableResponseMixin(object):
             return JsonResponse(data)
         else:
             return response
+
+class InstructCoursePermissionRequiredMixin(PermissionRequiredMixin):
+    permission_required = 'courses.instruct_course'
+    raise_exception = True
+    
+    def get_permission_object(self):
+        return get_object_or_404(models.Course, pk=self.kwargs['pk'])
+
+class EnrollCoursePermissionRequiredMixin(PermissionRequiredMixin):
+    permission_required = 'courses.enroll_course'
+    raise_exception = True
+    
+    def get_permission_object(self):
+        return get_object_or_404(models.Course, pk=self.kwargs['pk'])
 
 # Course
 
@@ -71,17 +87,18 @@ class CourseCreate(generic.CreateView):
         response = super(CourseCreate, self).form_valid(form)
         
         # Assign permissions
-        for user in form.instance.instructors.all():
-            assign_perm('change_course', user, form.instance)
-            assign_perm('view_course', user, form.instance)
-        for user in form.instance.students.all():
-            assign_perm('view_course', user, form.instance)
+#         for user in form.instance.instructors.all():
+#             assign_perm('change_course', user, form.instance)
+#             assign_perm('view_course', user, form.instance)
+#             assign_perm('instruct_course', user, form.instance)
+#         for user in form.instance.students.all():
+#             assign_perm('view_course', user, form.instance)
+#             assign_perm('enroll_course', user, form.instance)
         
         return response
 
 class CourseUpdate(PermissionRequiredMixin, generic.UpdateView):
     model = models.Course
-    #fields = [ 'title', 'instructors', 'description', 'students' ]
     form_class = forms.CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('courses:course.list')
@@ -96,7 +113,7 @@ class CourseDetail(PermissionRequiredMixin, generic.DetailView):
 
 # Assignment
 
-class AssignmentList(generic.ListView):
+class AssignmentList(EnrollCoursePermissionRequiredMixin, generic.ListView):
     model = models.Assignment
     template_name = 'courses/assignment_list.html'
     
@@ -108,7 +125,7 @@ class AssignmentList(generic.ListView):
     def get_queryset(self):
         return models.Assignment.objects.filter(course__id=self.kwargs['pk'])
 
-class AssignmentManagementList(generic.ListView):
+class AssignmentManagementList(InstructCoursePermissionRequiredMixin, generic.ListView):
     model = models.Assignment
     template_name = 'courses/assignment_management_list.html'
     
@@ -120,7 +137,7 @@ class AssignmentManagementList(generic.ListView):
     def get_queryset(self):
         return models.Assignment.objects.filter(course__id=self.kwargs['pk'])
 
-class AssignmentCreate(generic.CreateView):
+class AssignmentCreate(InstructCoursePermissionRequiredMixin, generic.CreateView):
     model = models.Assignment
     form_class = forms.AssignmentForm
     template_name = 'courses/assignment_form.html'
@@ -139,11 +156,13 @@ class AssignmentCreate(generic.CreateView):
         form.instance.create_date = datetime.now()
         return super(AssignmentCreate, self).form_valid(form)
 
-class AssignmentUpdate(generic.UpdateView):
+class AssignmentUpdate(InstructCoursePermissionRequiredMixin, generic.UpdateView):
     model = models.Assignment
-    #fields = [ 'title', 'course', 'description', 'due_date' ]
     form_class = forms.AssignmentForm
     template_name = 'courses/assignment_form.html'
+    
+    def get_permission_object(self):
+        return self.get_form().instance.course
 
     def get_context_data(self, **kwargs):
         context = super(AssignmentUpdate, self).get_context_data(**kwargs)
@@ -167,10 +186,13 @@ class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):
 
 # Article
 
-class ArticleOriginCreate(generic.CreateView):
+class ArticleOriginCreate(EnrollCoursePermissionRequiredMixin, generic.CreateView):
     model = models.Article
     form_class = forms.ArticleForm
     template_name = 'courses/article_form.html'
+
+    def get_permission_object(self):
+        return get_object_or_404(models.Assignment, pk=self.kwargs['pk']).course
 
 #     def get_initial(self):
 #         assignment = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
@@ -194,7 +216,11 @@ class ArticleOriginCreate(generic.CreateView):
         #    return False
         #form.instance.assignment = assignment
         
-        return super(ArticleOriginCreate, self).form_valid(form)
+        response = super(ArticleOriginCreate, self).form_valid(form)
+        
+        assign_perm('articles.change_article', self.request.user, form.instance)
+        
+        return response
     
     def get_success_url(self):
         assignment_id = self.get_form().instance.assignment.id
@@ -224,7 +250,11 @@ class ArticleRevisionCreate(generic.CreateView):
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
         
-        return super(ArticleRevisionCreate, self).form_valid(form)
+        response = super(ArticleRevisionCreate, self).form_valid(form)
+        
+        assign_perm('articles.change_article', self.request.user, form.instance)
+        
+        return response
     
     def get_success_url(self):
         assignment_id = self.get_form().instance.assignment.id
@@ -275,14 +305,13 @@ class ArticleList(generic.ListView):
     def get_queryset(self):
         return models.Article.objects.filter(assignment__id=self.kwargs['pk']).filter(author=self.request.user).order_by('last_modified_date')
 
-class GradeList(generic.ListView):
+class GradeList(InstructCoursePermissionRequiredMixin, generic.ListView):
     model = models.Article
     template_name = 'courses/grade_list.html'
     
     def get_context_data(self, **kwargs):
         context = super(GradeList, self).get_context_data(**kwargs)
-        course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
-        context['course'] = course
+        context['course'] = get_object_or_404(models.Course, pk=self.kwargs['pk'])
         return context
     
     def get_queryset(self):

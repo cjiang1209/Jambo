@@ -5,10 +5,10 @@ from django.contrib.auth.models import Group
 
 class CourseForm(forms.ModelForm):
     instructors = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
-        queryset = Group.objects.get(name='Instructor').user_set.all(),
+        queryset = models.CustomUser.objects.filter(groups__name='Instructor'),
         required = False);
     students = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
-        queryset = Group.objects.get(name='Student').user_set.all(),
+        queryset = models.CustomUser.objects.filter(groups__name='Student'),
         required = False);
     
     class Meta:
