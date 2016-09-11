@@ -59,9 +59,10 @@ var RichTextEditorConfig = (function() {
 	        	    //{ name: 'styles', groups: [ 'styles' ] },
 	        	    { name: 'editing', groups: [ 'spellchecker'] },
 	        	    { name: 'insert', groups: [ 'insert' ] },
+	        	    { name: 'colors', groups: [ 'colors' ] },
 	        	    //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 			    ],
-			    extraPlugins: 'uploadimage,image2,html5audio',
+			    extraPlugins: 'uploadimage,image2,html5audio,colorbutton',
 			    removePlugins: 'elementspath',
 			    allowedContent: true,
 			    // Upload URLs
