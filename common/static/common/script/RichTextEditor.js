@@ -104,9 +104,11 @@ var RichTextEditor = (function() {
 			return (function(id_content) {
 				var commentCache = {};
 				
+				HandlebarsIntl.registerWith(Handlebars);
+				
 				var htmlTmplComment = '<div class="panel panel-primary">' +
 					'<div class="panel-heading">' +
-					'<span>{{create_date}}</span>' +
+					'<span>{{formatTime create_date}}</span>' +
 					'<span><button type="button" class="close cls_btn_close" aria-label="Close"><span aria-hidden="true">&times;</span></button></span>' +
 					'</div>' +
 					'<div class="panel-body">{{{content}}}</div>' +

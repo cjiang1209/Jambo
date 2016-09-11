@@ -537,18 +537,18 @@ class FileBrowseMixin(object):
         return context
 
 class ImageUpload(FileUpload):
-    relative_path = 'courses/upload/images/'
+    relative_path = 'courses/upload/image/'
 
 class ImageBrowse(FileBrowseMixin, generic.TemplateView):
     template_name = 'courses/image_browse.html'
-    relative_path = 'courses/upload/images/'
+    relative_path = 'courses/upload/image/'
 
 class AudioUpload(FileUpload):
-    relative_path = 'courses/upload/audios/'
+    relative_path = 'courses/upload/audio/'
 
 class AudioBrowse(FileBrowseMixin, generic.TemplateView):
     template_name = 'courses/audio_browse.html'
-    relative_path = 'courses/upload/audios/'
+    relative_path = 'courses/upload/audio/'
 
 class PeopleList(TemplateView):
     template_name = 'courses/people_list.html'
