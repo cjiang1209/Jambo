@@ -47,7 +47,7 @@ var RichTextEditorConfig = (function() {
 			    allowedContent: true,
 			    readOnly: true,
 			    extraPlugins: 'comment',
-			    height: 500,
+			    height: 400,
 			};
 		},
 		EditComment: function() {

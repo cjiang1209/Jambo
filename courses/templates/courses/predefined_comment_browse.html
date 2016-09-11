@@ -1,0 +1,90 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/bootstrap/css/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/font-awesome/css/font-awesome.min.css' %}" >
+<link rel="stylesheet" type="text/css" href="{% static 'common/css/heroic-features.css' %}" />
+
+<script src="{% static 'common/lib/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'common/lib/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<script src="{% static 'common/lib/handlebars/handlebars.js' %}"></script>
+<script src="{% static 'common/script/csrf.js' %}"></script>
+<script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
+<script src="{% static 'common/lib/jquery-confirm/jquery-confirm.min.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/jquery-confirm/jquery-confirm.min.css' %}">
+
+<script src="{% static 'common/script/RichTextEditor.js' %}"></script>
+
+{% verbatim %}
+
+<script id="category-list-template" type="text/x-handlebars-template">
+<div class="div-category container col-sm-4">
+	<div class="well">
+		<h4>Category</h4>
+		<div class="list-group pre-scrollable">
+			{{#each categories}}
+			<a class="li-category link-show-subcategory list-group-item" href="#">
+				<input type="hidden" name="category_id" value="{{id}}" />
+				<input type="hidden" name="is_terminal" value="{{is_terminal}}" />
+				<span>{{title}}</span>
+			</a>
+			{{/each}}
+		</div>
+	</div>
+</div>
+</script>
+
+{% endverbatim %}
+
+<script>
+var urlPredefinedCommentSubCategoryList = "{% url 'courses:predefined_comment_category.sub.list' %}";
+var urlCommentOfPredefinedCommentCategory = "{% url 'courses:predefined_comment_category.comment' %}";
+
+var idRichTextEditor = 'id_content';
+var CKEditorFuncNum = {{ CKEditorFuncNum }};
+</script>
+
+<script src="{% static 'courses/script/predefined_comment_browse.js' %}"></script>
+
+</head>
+
+<body>
+<div class="container">
+	<h4>Pre-defined Comments</h4>
+	
+	<div id="div_select_category" class="row">
+		<div class="div-category container col-sm-4">
+			<div class="well">
+				<h4>Category</h4>
+				<div class="list-group pre-scrollable">
+					{% for category in categories %}
+					<a class="li-category link-show-subcategory list-group-item" href="#">
+						<input type="hidden" name="category_id" value="{{ category.id }}" />
+						<input type="hidden" name="is_terminal" value="{% if category.is_terminal %}true{% else %}false{% endif %}" />
+						<span>{{ category.title }}</span>
+					</a>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<form id="form_comment" action="" method="post">
+		<input type="hidden" name="predefinedcomment_id" value="" />
+		<textarea id="id_content" name="content" rows="10" cols="40">
+		</textarea>
+		<input class="btn btn-default" type="submit" value="Insert" />
+	</form>
+</div>
+</body>
+</html>

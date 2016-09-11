@@ -439,6 +439,21 @@ class PredefinedCommentList(generic.TemplateView):
         context['categories'] = models.PredefinedCommentCategory.objects.exclude(parent__isnull=False).order_by('create_date')
         return context
 
+class PredefinedCommentBrowse(generic.TemplateView):
+    template_name = 'courses/predefined_comment_browse.html'
+     
+    def get_context_data(self, **kwargs):
+        context = super(PredefinedCommentBrowse, self).get_context_data(**kwargs)
+        context['categories'] = models.PredefinedCommentCategory.objects.exclude(parent__isnull=False).order_by('create_date')
+        context['CKEditorFuncNum'] = self.request.GET.get('CKEditorFuncNum')
+        return context
+    
+    def post(self, *args, **kwargs):
+        comment = get_object_or_404(models.PredefinedComment, pk = self.request.POST['predefinedcomment_id'])
+        return HttpResponse('<script type="text/javascript">' +
+            'window.parent.CKEDITOR.tools.callFunction("' + self.request.GET.get('CKEditorFuncNum') + '", "' +
+            comment.content + '");</script>')
+
 class PredefinedCommentCategoryCreate(AjaxableResponseMixin, generic.CreateView):
     model = models.PredefinedCommentCategory
     form_class = forms.PredefinedCommentCategoryForm

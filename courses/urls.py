@@ -43,6 +43,8 @@ urlpatterns = [
     url(r'^comment/delete/(?P<pk>[0-9]+)/$', CommentDelete.as_view(), name='comment.delete'),
     
     url(r'^predefinedcomment/$', PredefinedCommentList.as_view(), name='predefined_comment.list'),
+    url(r'^predefinedcomment/browse/', PredefinedCommentBrowse.as_view(), name='predefined_comment.browse'),
+    
     url(r'^predefinedcomment/category/create/$', PredefinedCommentCategoryCreate.as_view(), name='predefined_comment_category.create'),
     url(r'^predefinedcomment/category/delete/$', PredefinedCommentCategoryDelete.as_view(), name='predefined_comment_category.delete'),
     url(r'^predefinedcomment/category/delete/(?P<pk>[0-9]+)/$', PredefinedCommentCategoryDelete.as_view(), name='predefined_comment_category.delete'),
