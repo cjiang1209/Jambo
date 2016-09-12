@@ -106,13 +106,12 @@ var RichTextEditor = (function() {
 				
 				HandlebarsIntl.registerWith(Handlebars);
 				
-				var htmlTmplComment = '<div class="panel panel-primary">' +
-					'<div class="panel-heading">' +
+				var htmlTmplComment = 
+					'<div class="panel-heading draggable-heading">' +
 					'<span>{{formatTime create_date}}</span>' +
 					'<span><button type="button" class="close cls_btn_close" aria-label="Close"><span aria-hidden="true">&times;</span></button></span>' +
 					'</div>' +
-					'<div class="panel-body">{{{content}}}</div>' +
-					'</div>';
+					'<div class="panel-body">{{{content}}}</div>';
 				var tmplComment = Handlebars.compile(htmlTmplComment);
 				
 				var urlConfig = {
@@ -136,19 +135,30 @@ var RichTextEditor = (function() {
 					});
 				};
 				
-				var setTooltipContent = function (evt) {
+				var showCommentPopup = function (evt) {
 					var widget = evt.sender;
 					var commentId = widget.data.comment_id;
 					if (commentCache.hasOwnProperty(commentId)) {
-						var html = tmplComment(commentCache[commentId]);
-						evt.data.setContent(html);
+						var popup = $('#div_comment_popup');
+						popup.html(tmplComment(commentCache[commentId]));
+						popup.css({
+							left: evt.data.left,
+							top: evt.data.top + 60
+						});
+						popup.show();
 					}
 					else {
 						var url = urlConfig.getComment + commentId + '/';
 						$.get(url, function(data) {
 							commentCache[commentId] = data;
-							var html = tmplComment(data);
-							evt.data.setContent(html);
+							
+							var popup = $('#div_comment_popup');
+							popup.html(tmplComment(data));
+							popup.css({
+								left: evt.data.left,
+								top: evt.data.top + 60
+							});
+							popup.show();
 						});
 					}
 				};
@@ -189,7 +199,6 @@ var RichTextEditor = (function() {
 							CKEDITOR.on('dialogDefinition', function(evt) {
 								if (evt.data.name == 'commentDialog') {
 									var dialogDef = evt.data.definition;
-									console.log('listen to commit comment');
 									dialogDef.dialog.on('commitComment', addComment);
 								}
 							});
@@ -203,8 +212,7 @@ var RichTextEditor = (function() {
 								$.each(editor.widgets.instances, function(index, value) {
 									var widget = value;
 									if (widget.name == 'comment') {
-										console.log('listen to show tooltip');
-										widget.on('showTooltip', setTooltipContent);
+										widget.on('mouseover', showCommentPopup);
 										
 										if (!readonly) {
 											widget.on('remove', removeComment);
@@ -216,8 +224,7 @@ var RichTextEditor = (function() {
 									editor.widgets.on('instanceCreated', function(evt) {
 										var widget = evt.data;
 										if (widget.name == 'comment') {
-											console.log('listen to show tooltip');
-											widget.on('showTooltip', setTooltipContent);
+											widget.on('mouseover', showCommentPopup);
 											widget.on('remove', removeComment);
 										}
 									});
@@ -230,9 +237,15 @@ var RichTextEditor = (function() {
 							}
 						});
 						
-						$('body').on('click', '.cls_btn_close', function () {
-							editor.execCommand('hideCommentWindow');
+						//CKEDITOR.instances[id_content].element.getParent().appendHtml('<div id="div_comment_popup" class="panel panel-primary" style="position: absolute; z-index: 200;"></div>');
+						$('body').append('<div id="div_comment_popup" class="panel panel-primary comment-popup"></div>');
+						var popup = $('#div_comment_popup').draggable();
+						popup.on('click', '.cls_btn_close', function () {
+							//editor.execCommand('hideCommentWindow');
+							$('#div_comment_popup').hide();
 						});
+						popup.draggable();
+						popup.hide();
 					},
 				};
 			}(id_content));

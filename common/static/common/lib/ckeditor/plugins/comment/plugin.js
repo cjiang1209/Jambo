@@ -34,34 +34,34 @@
 		}
 	};
 	
-	var hideCommentWindowCmd = {
-		canUndo : false,
-		readOnly : true,
-		exec : function(editor) {
-			tooltip.hide();
-		}
-	};
+//	var hideCommentWindowCmd = {
+//		canUndo : false,
+//		readOnly : true,
+//		exec : function(editor) {
+//			tooltip.hide();
+//		}
+//	};
 	
 	function removeCommand(editor, widget) {
 		editor.insertHtml(widget.data.name);
 		//editor.widgets.del(widget);
 	}
 	
-	var tooltip;
+//	var tooltip;
 	
-	function showTooltip(widget, editor) {
-		var cpos = editor.container.getDocumentPosition();
-		var wpos = editor.window.getScrollPosition();
-		var pos = widget.parts.name.getDocumentPosition();
-		var styles = {
-			'z-index': editor.config.baseFloatZIndex + 10,
-			top: (cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height') + 40) + 'px',
-			left: (cpos.x - wpos.x + pos.x) + 'px'
-		};
-
-		tooltip.setStyles(styles);
-		tooltip.show();
-	}
+//	function showTooltip(widget, editor) {
+//		var cpos = editor.container.getDocumentPosition();
+//		var wpos = editor.window.getScrollPosition();
+//		var pos = widget.parts.name.getDocumentPosition();
+//		var styles = {
+//			'z-index': editor.config.baseFloatZIndex + 10,
+//			top: (cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height') + 40) + 'px',
+//			left: (cpos.x - wpos.x + pos.x) + 'px'
+//		};
+//
+//		tooltip.setStyles(styles);
+//		tooltip.show();
+//	}
 	
 //	function hideTooltip(widget, editor) {
 //		tooltip.hide();
@@ -75,8 +75,8 @@
 	    onLoad: function() {
 	    	CKEDITOR.addCss('.' + idCls + '{display:none}');
 			CKEDITOR.addCss('.' + cls + '{background-color:#ff0}');
-			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
-					'#cke_tooltip { max-width: 400px; }');
+//			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
+//					'#cke_tooltip { max-width: 400px; }');
 //			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
 //				'#cke_tooltip { padding: 5px; border: 2px solid #333; background: #ffffff }' +
 //				'#cke_tooltip h2 { font-size: 1.1em; border-bottom: 1px solid; margin: 0; padding: 1px; }' +
@@ -86,14 +86,14 @@
 	    init: function(editor) {
 	    	CKEDITOR.dialog.add('commentDialog', this.path + 'dialogs/comment.js');
 	    	
-	    	if (!tooltip) {
-		    	tooltip = CKEDITOR.dom.element.createFromHtml(
-		    			'<div id="cke_tooltip" tabindex="-1" style="position: absolute"></div>',
-		    			CKEDITOR.document);
-		    	//tooltip.setCustomData('updating', false);
-				tooltip.hide();
-				tooltip.appendTo(editor.element.getParent());
-	    	}
+//	    	if (!tooltip) {
+//		    	tooltip = CKEDITOR.dom.element.createFromHtml(
+//		    			'<div id="cke_tooltip" tabindex="-1" style="position: absolute"></div>',
+//		    			CKEDITOR.document);
+//		    	//tooltip.setCustomData('updating', false);
+//				tooltip.hide();
+//				tooltip.appendTo(editor.element.getParent());
+//	    	}
 	    	
 	        editor.widgets.add(pluginName, {
 	        	dialog: 'commentDialog',
@@ -123,24 +123,15 @@
 	            	this.setData('name', this.parts.name.getHtml());
 	            	
 	            	var widget = this;
-	            	widget.parts.name.on('mouseover', function() {
-//	            		var id = widget.data.comment_id;
-//	            		if(id != tooltip.getCustomData('comment_id')) {
-	            			//tooltip.setCustomData('comment_id', id);
-//	            			tooltip.setCustomData('updating', true);
-	            			widget.fire('showTooltip', {
-	            				setContent: function(html) {
-	            					tooltip.setHtml(html);
-	            					showTooltip(widget, editor);
-//	            					tooltip.setCustomData('updating', false);
-	            				}
-	            			});
-//	            		}
-//	            		else{
-//	            			if(!tooltip.getCustomData('updating')) {
-//	            				showTooltip(widget, editor);
-//	            			}
-//	            		}
+	            	widget.parts.name.on('mouseover', function(evt) {
+	            		var cpos = editor.container.getDocumentPosition();
+	            		var wpos = editor.window.getScrollPosition();
+	            		var pos = widget.parts.name.getDocumentPosition();
+            		
+            			widget.fire('mouseover', {
+            				top: cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height'),
+            				left: cpos.x - wpos.x + pos.x
+            			});
 	            	});
 //	            	widget.parts.name.on('mouseout', function() {
 //	            		hideTooltip(widget, editor);
@@ -162,7 +153,7 @@
 	        
 	        editor.addCommand('addComment', addCommentCmd);
 	        editor.addCommand('removeComment', removeCommentCmd);
-	        editor.addCommand('hideCommentWindow', hideCommentWindowCmd);
+	        //editor.addCommand('hideCommentWindow', hideCommentWindowCmd);
 	        
 	        if (editor.contextMenu) {
 	        	editor.addMenuGroup('comment');

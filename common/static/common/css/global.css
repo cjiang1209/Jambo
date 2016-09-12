@@ -1,0 +1,10 @@
+
+.draggable-heading {
+    cursor: move;
+}
+
+.comment-popup {
+	position: absolute;
+	z-index: 200;
+	max-width: 500px;
+}
