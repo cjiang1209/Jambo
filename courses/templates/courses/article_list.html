@@ -1,5 +1,25 @@
 {% extends 'base_course_assignment.html' %}
 
+{% load staticfiles %}
+
+{% block script-head %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/DataTables/css/dataTables.bootstrap.min.css' %}">
+
+<script src="{% static 'common/lib/DataTables/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'common/lib/DataTables/js/dataTables.bootstrap.min.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+	$('#table_articles').DataTable({
+		paging: false,
+		searching: false
+	});
+});
+</script>
+
+{% endblock script-head %}
+
 {% block content %}
 
 {% with course=assignment.course %}
@@ -13,19 +33,39 @@
 
 {% include "courses/assignment_info.html" %}
 
-<ul>
-{% for article in object_list %}
-	<li>
-		<a href="{% url 'courses:article.detail' article.id %}">Submission #{{forloop.counter}}</a> (Last Modified: {{article.last_modified_date}})
-		{% if article.gradingattempt %}
-			Grade: <a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">{{article.gradingattempt.grade}}</a>
-		{% endif %}
-	</li>
-{% empty %}
-	<li>No submission yet.</li>
-{% endfor %}
-</ul>
+<table id="table_articles" class="table">
+	<thead>
+		<th>#</th>
+		<th>Last Modified Date</th>
+		<th>Grade</th>
+		<th>Actions</th>
+	</thead>
+	<tbody>
+		{% for article in object_list %}
+		<tr>
+			<td>Submission #{{forloop.counter}}</td>
+			<td>{{article.last_modified_date}}</td>
+			<td>
+			{% if article.gradingattempt %}
+				<a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">{{article.gradingattempt.grade}}</a>
+			{% else %}
+				Not Graded
+			{% endif %}
+			</td>
+			<td>
+				{% if article.gradingattempt %}
+				<a class="btn btn-default" href="{% url 'courses:article.revision.create' article.gradingattempt.id %}"><i class="fa fa-fw fa-plus"></i> New Revision</a>
+				{% else %}
+				<a class="btn btn-default" href="{% url 'courses:article.detail' article.id %}">View</a>
+				{% endif %}
+			</td>
+		</tr>
+		{% empty %}
+			<tr><td colspan="4">No submission</td></tr>
+		{% endfor %}
+	</tbody>
+</table>
 
-<a class="btn btn-default" href="{% url 'courses:article.create' assignment.id %}"><i class="fa fa-fw fa-plus"></i> New Submission</a>
+<a class="btn btn-default" href="{% url 'courses:article.origin.create' assignment.id %}"><i class="fa fa-fw fa-plus"></i> New Submission</a>
 
 {% endblock content %}
