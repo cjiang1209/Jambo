@@ -108,7 +108,7 @@ var RichTextEditor = (function() {
 				
 				var htmlTmplComment = 
 					'<div class="panel-heading draggable-heading">' +
-					'<span>{{formatTime create_date}}</span>' +
+					'<span>{{create_date}}</span>' +
 					'<span><button type="button" class="close cls_btn_close" aria-label="Close"><span aria-hidden="true">&times;</span></button></span>' +
 					'</div>' +
 					'<div class="panel-body">{{{content}}}</div>';

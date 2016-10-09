@@ -162,15 +162,16 @@ class AssignmentUpdate(InstructCoursePermissionRequiredMixin, generic.UpdateView
     template_name = 'courses/assignment_form.html'
     
     def get_permission_object(self):
-        return self.get_form().instance.course
+        #return self.get_form().instance.course
+        return self.get_object().course
 
     def get_context_data(self, **kwargs):
         context = super(AssignmentUpdate, self).get_context_data(**kwargs)
-        context['course'] = self.get_form().instance.course
+        context['course'] = self.get_object().course
         return context
 
     def get_success_url(self):
-        course_id = self.get_form().instance.course.id
+        course_id = self.get_object().course.id
         return reverse_lazy('courses:manage.assignment.list', kwargs={'pk' : course_id})
 
 # Submission Period
