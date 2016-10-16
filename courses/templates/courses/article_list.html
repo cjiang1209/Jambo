@@ -33,6 +33,13 @@ $(document).ready(function() {
 
 {% include "courses/assignment_info.html" %}
 
+{% for stage in assignment.stage_set.all %}
+<div>
+	<h4>Stage ({{ stage.status }})</h4>
+	<hr />
+</div>
+{% endfor %}
+
 <table id="table_articles" class="table">
 	<thead>
 		<th>#</th>

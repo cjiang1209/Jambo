@@ -42,6 +42,23 @@ class SubmissionPeriodForm(forms.ModelForm):
             if start_date >= end_date:
                 raise forms.ValidationError('Start date must be earlier than end date.')
 
+class StageForm(forms.ModelForm):
+    class Meta:
+        model = models.Stage
+        fields = [ 'start_date', 'end_date', 'grace_period_end_date', 'assignment' ]
+    
+    def clean(self):
+        cleaned_data = super(StageForm, self).clean()
+         
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        grace_period_end_date = cleaned_data.get('grace_period_end_date')
+        if start_date and end_date and grace_period_end_date:
+            if start_date > end_date:
+                raise forms.ValidationError('Start date must be earlier than end date.')
+            if end_date > grace_period_end_date:
+                raise forms.ValidationError('End date must be earlier than grace period end date.')
+
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = models.Article

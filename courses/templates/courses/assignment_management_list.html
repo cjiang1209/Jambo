@@ -7,45 +7,54 @@
 <script src="{% static 'common/script/csrf.js' %}"></script>
 <script src="{% static 'common/lib/moment/moment.min.js' %}"></script>
 <script src="{% static 'common/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% static 'common/lib/jquery-confirm/jquery-confirm.min.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'common/lib/jquery-confirm/jquery-confirm.min.css' %}">
 
 {% verbatim %}
-<script id="new-submission-period-template" type="text/x-handlebars-template">
-<li class="list-group-item">
-	<form class="form_new_submission_period" action="" method="post">
-		<input name="assignment" type="hidden" value="{{assignment}}" />
-		<div class="row">
-			<div class="col-xs-4">
-				<input class="form-control" name="title" type="text" placeholder="New Submission" />
+<script id="new-stage-template" type="text/x-handlebars-template">
+<tr>
+	<td colspan="5">
+		<form class="form_new_stage" action="" method="post">
+			<input name="assignment" type="hidden" value="{{assignment}}" />
+			<div class="row">
+				<div class="col-xs-3">
+					<input class="form-control" name="start_date" type="text" value="{{start_date}}" />
+				</div>
+				<div class="col-xs-3">
+					<input class="form-control" name="end_date" type="text" value="{{end_date}}" />
+				</div>
+				<div class="col-xs-3">
+					<input class="form-control" name="grace_period_end_date" type="text" value="{{grace_period_end_date}}" />
+				</div>
+				<div class="col-xs-3">
+					<button class="btn btn-default" type="submit">Add</button>
+					<button class="btn-cancel-add-stage btn btn-default">Cancel</button>
+				</div>
 			</div>
-			<div class="col-xs-3">
-				<input class="form-control" name="start_date" type="text" value="{{start_date}}" />
-			</div>
-			<div class="col-xs-3">
-				<input class="form-control" name="end_date" type="text" value="{{end_date}}" />
-			</div>
-			<input class="cls_btn_confirm_add_submision_period btn btn-default" type="submit" value="Add" />
-			<input class="cls_btn_cancel_add_submision_period btn btn-default" type="button" value="Cancel" />
 		</div>
-	</form>
-</li>
+	</td>
+</tr>
 </script>
 
-<script id="submission-period-template" type="text/x-handlebars-template">
-<li class="list-group-item">
-	<input class="cls_hidden_submission_period_id" type="hidden" value="{{id}}" />
-	<span>{{title}}</span>
-	<span class="pull-right cls_btn_remove_submission_period">
-		<button class="cls_btn_delete_submission_period btn btn-default" type="button"><i class="fa fa-fw fa-times"></i></button>
-	</span>
-	<span class="pull-right">From {{start_date}} To {{end_date}}</span>
-</li>
+<script id="stage-template" type="text/x-handlebars-template">
+<tr>
+	<td>
+		<input class="hidden-stage" type="hidden" value="{{id}}" />
+	</td>
+	<td>{{start_date}}</td>
+	<td>{{end_date}}</td>
+	<td>{{grace_period_end_date}}</td>
+	<td>
+		<button class="btn-delete-stage btn btn-default"><i class="fa fa-times" aria-hidden="true"></i></button>
+	</td>
+</tr>
 </script>
 {% endverbatim %}
 
 <script>
-var assignmentId = "{{assignment.id}}";
-var urlAddSubmissionPeriod = "{% url 'courses:submission_period.create' %}";
-var urlDeleteSubmissionPeriod = "{% url 'courses:submission_period.delete' %}";
+var urlAddStage = "{% url 'courses:stage.create' %}";
+var urlDeleteStage = "{% url 'courses:stage.delete' %}";
 </script>
 
 <script src="{% static 'courses/script/assignment_management_list.js' %}"></script>
@@ -92,25 +101,39 @@ var urlDeleteSubmissionPeriod = "{% url 'courses:submission_period.delete' %}";
 						{{ assignment.description }}
 					</blockquote>
 					
-					<div>
-						<div class="page-header">
-							<span>Submission Periods</span>
-							<input class="cls_hidden_assignment" type="hidden" value="{{assignment.id}}" />
-							<button id="btn_add_submission_period" class="btn btn-default pull-right" type="button"><i class="fa fa-fw fa-plus"></i></button>
-						</div>
+					<div>						
+						<table class="table table-stages">
+							<caption><h4>Stages</h4></caption>
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Start Date</th>
+									<th>End Date</th>
+									<th>Grace Period End Date</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for stage in assignment.stage_set.all %}
+								<tr>
+									<td>
+										<input class="hidden-stage" type="hidden" value="{{ stage.id }}" />
+									</td>
+									<td>{{ stage.start_date }}</td>
+									<td>{{ stage.end_date }}</td>
+									<td>{{ stage.end_date }}</td>
+									<td>
+										<button class="btn-delete-stage btn btn-default"><i class="fa fa-times" aria-hidden="true"></i></button>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
 						
-						<ul id="list_submission_periods" class="list-group">
-							{% for period in assignment.submissionperiod_set.all %}
-							<li class="list-group-item">
-								<input class="cls_hidden_submission_period_id" type="hidden" value="{{period.id}}" />
-								<span>{{period.title}}</span>
-								<span class="pull-right cls_btn_remove_submission_period">
-									<button class="cls_btn_delete_submission_period btn btn-default" type="button"><i class="fa fa-fw fa-times"></i></button>
-								</span>
-								<span class="pull-right">From {{period.start_date}} To {{period.end_date}}</span>
-							</li>
-							{% endfor %}
-						</ul>
+						<div>
+							<input class="hidden-assignment" type="hidden" value="{{ assignment.id }}" />
+							<button class="btn btn-default pull-right btn-add-stage" type="button"><i class="fa fa-fw fa-plus"></i></button>
+						</div>
 					</div>
 				</div>
 			</div>

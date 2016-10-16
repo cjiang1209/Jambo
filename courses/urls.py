@@ -22,6 +22,10 @@ urlpatterns = [
     url(r'^submissionperiod/delete/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
     url(r'^submissionperiod/delete/(?P<pk>[0-9]+)/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),
     
+    url(r'^stage/create/$', StageCreate.as_view(), name='stage.create'),
+    url(r'^stage/delete/$', StageDelete.as_view(), name='stage.delete'),
+    url(r'^stage/delete/(?P<pk>[0-9]+)/$', StageDelete.as_view(), name='stage.delete'),
+    
     url(r'^assignment/(?P<pk>[0-9]+)/article/$', ArticleList.as_view(), name='article.list'),
     
     url(r'^assignment/(?P<pk>[0-9]+)/article/create/$', ArticleCreate.as_view(), name='article.create'),

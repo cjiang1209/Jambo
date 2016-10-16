@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
 from guardian.shortcuts import remove_perm
+from datetime import datetime
 
 class CustomUser(User):
     class Meta:
@@ -77,6 +78,24 @@ class SubmissionPeriod(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+
+class Stage(models.Model):
+    #title = models.CharField(max_length=200)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    grace_period_end_date = models.DateTimeField()
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    
+    def status(self):
+        current = datetime.now(self.start_date.tzinfo)
+        if current < self.start_date:
+            return 'Not Started'
+        elif current < self.end_date:
+            return 'In Process'
+        elif current < self.grace_period_end_date:
+            return 'In Grace Period'
+        else:
+            return 'Ended'
 
 class Article(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

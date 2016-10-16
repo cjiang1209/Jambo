@@ -185,6 +185,21 @@ class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):
     model = models.SubmissionPeriod
     success_url = reverse_lazy('courses:course.list')
 
+# Stage
+
+class StageCreate(AjaxableResponseMixin, generic.CreateView):
+    model = models.Stage
+    form_class = forms.StageForm
+    success_url = reverse_lazy('courses:course.list')
+
+class StageDelete(SingleObjectMixin, View):
+    model = models.Stage
+
+    def post(self, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({ })
+
 # Article
 
 class ArticleOriginCreate(EnrollCoursePermissionRequiredMixin, generic.CreateView):
