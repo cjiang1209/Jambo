@@ -28,19 +28,19 @@ class AssignmentForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control'})
         }
 
-class SubmissionPeriodForm(forms.ModelForm):
-    class Meta:
-        model = models.SubmissionPeriod
-        fields = [ 'title', 'start_date', 'end_date', 'assignment' ]
-    
-    def clean(self):
-        cleaned_data = super(SubmissionPeriodForm, self).clean()
-         
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
-        if start_date and end_date:
-            if start_date >= end_date:
-                raise forms.ValidationError('Start date must be earlier than end date.')
+# class SubmissionPeriodForm(forms.ModelForm):
+#     class Meta:
+#         model = models.SubmissionPeriod
+#         fields = [ 'title', 'start_date', 'end_date', 'assignment' ]
+#     
+#     def clean(self):
+#         cleaned_data = super(SubmissionPeriodForm, self).clean()
+#          
+#         start_date = cleaned_data.get('start_date')
+#         end_date = cleaned_data.get('end_date')
+#         if start_date and end_date:
+#             if start_date >= end_date:
+#                 raise forms.ValidationError('Start date must be earlier than end date.')
 
 class StageForm(forms.ModelForm):
     class Meta:

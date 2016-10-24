@@ -39,21 +39,19 @@ $(document).ready(function() {
 {% else %}
 <div>
 	<h4>Active Stage</h4>
-	<p><small>Due: {{ active_stage.end_date }}</small></p>
-	<p><small>Grace Period: {{ active_stage.grace_period_end_date }}</small></p>
+	<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Due Date:</strong> {{ active_stage.end_date }}</small></p>
+	<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Grace Period:</strong> {{ active_stage.grace_period_end_date }}</small></p>
 	{% with active_article=active_stage.article %}
 	{% if active_article == None %}
-		{% with last_grading=assignment.last_grading_attempt %}
-		{% if last_grading == None %}
+		{% if last_grading_attempt == None %}
 		<a class="btn btn-default" href="{% url 'courses:article.origin.create' assignment.id %}">
 			<i class="fa fa-fw fa-plus"></i> New Submission
 		</a>
 		{% else %}
-		<a class="btn btn-default" href="{% url 'courses:article.revision.create' last_grading.id %}">
+		<a class="btn btn-default" href="{% url 'courses:article.revision.create' last_grading_attempt.id %}">
 			<i class="fa fa-fw fa-plus"></i> New Revision
 		</a>
 		{% endif %}
-		{% endwith %}
 	{% else %}
 	<div class="row article article-active">
 		<div class="article-info">
@@ -81,7 +79,7 @@ $(document).ready(function() {
 {% endif %}
 {% endwith %}
 
-{% for article in assignment.article_set.all|dictsortreversed:"create_date" %}
+{% for article in object_list %}
 <div class="row article">
 	<div class="article-info">
 		<h4>Submission #{{ article.number }}</h4>

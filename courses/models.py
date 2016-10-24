@@ -5,6 +5,7 @@ from guardian.shortcuts import assign_perm
 from guardian.shortcuts import remove_perm
 from datetime import datetime
 from tzlocal import get_localzone
+from django.utils import timezone
 
 class CustomUser(User):
     class Meta:
@@ -75,26 +76,26 @@ class Assignment(models.Model):
         return self.title
     
     def active_stage(self):
-        current = datetime.now(get_localzone())
+        current = timezone.now()
         try:
             return Stage.objects.get(assignment__id = self.id, start_date__lte = current,
                 grace_period_end_date__gte = current)
         except Stage.DoesNotExist:
             return None
     
-    def last_grading_attempt(self):
-        try:
-            grading = GradingAttempt.objects.filter(article__assignment__id = self.id).latest('create_date')
-            print(grading)
-            return grading
-        except GradingAttempt.DoesNotExist:
-            return None
+#     def last_grading_attempt(self):
+#         try:
+#             grading = GradingAttempt.objects.filter(article__assignment__id = self.id).latest('create_date')
+#             print(grading)
+#             return grading
+#         except GradingAttempt.DoesNotExist:
+#             return None
 
-class SubmissionPeriod(models.Model):
-    title = models.CharField(max_length=200)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+# class SubmissionPeriod(models.Model):
+#     title = models.CharField(max_length=200)
+#     start_date = models.DateTimeField()
+#     end_date = models.DateTimeField()
+#     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
 
 class Article(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -107,6 +108,9 @@ class Article(models.Model):
     #submission_period = models.ForeignKey(SubmissionPeriod, on_delete=models.CASCADE)
     #parent = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
     
+    def __str__(self):
+        return self.assignment.title + ' - ' + self.author.full_name() + ' - #' + str(self.number)
+    
     def get_absolute_url(self):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
 
@@ -117,8 +121,11 @@ class Stage(models.Model):
     grace_period_end_date = models.DateTimeField()
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     
+    def __str__(self):
+        return self.assignment.title + ' - ' + str(self.start_date) + ' - ' + str(self.end_date)
+    
     def status(self):
-        current = datetime.now(get_localzone())
+        current = timezone.now()
         if current < self.start_date:
             return 'Not Started'
         elif current < self.end_date:

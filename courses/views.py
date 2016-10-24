@@ -176,14 +176,14 @@ class AssignmentUpdate(InstructCoursePermissionRequiredMixin, generic.UpdateView
 
 # Submission Period
 
-class SubmissionPeriodCreate(AjaxableResponseMixin, generic.CreateView):
-    model = models.SubmissionPeriod
-    form_class = forms.SubmissionPeriodForm
-    success_url = reverse_lazy('courses:course.list')
-
-class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):
-    model = models.SubmissionPeriod
-    success_url = reverse_lazy('courses:course.list')
+# class SubmissionPeriodCreate(AjaxableResponseMixin, generic.CreateView):
+#     model = models.SubmissionPeriod
+#     form_class = forms.SubmissionPeriodForm
+#     success_url = reverse_lazy('courses:course.list')
+# 
+# class SubmissionPeriodDelete(AjaxableResponseMixin, generic.DeleteView):
+#     model = models.SubmissionPeriod
+#     success_url = reverse_lazy('courses:course.list')
 
 # Stage
 
@@ -226,6 +226,7 @@ class ArticleOriginCreate(EnrollCoursePermissionRequiredMixin, generic.CreateVie
         current_date = datetime.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
+        form.instance.number = 1
         
         #period = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
         #if not period:
@@ -265,6 +266,7 @@ class ArticleRevisionCreate(generic.CreateView):
         current_date = datetime.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
+        form.instance.number = attempt.article.number + 1
         
         response = super(ArticleRevisionCreate, self).form_valid(form)
         
@@ -315,11 +317,22 @@ class ArticleList(generic.ListView):
     
     def get_context_data(self, **kwargs):
         context = super(ArticleList, self).get_context_data(**kwargs)
-        context['assignment'] = models.Assignment.objects.get(id=self.kwargs['pk'])
+        
+        assignment = models.Assignment.objects.get(id=self.kwargs['pk'])
+        context['assignment'] = assignment
+        
+        try:
+            last_grading_attempt = models.GradingAttempt.objects.filter(article__assignment__id = assignment.id,
+                article__author=self.request.user).latest('create_date')
+            context['last_grading_attempt'] = last_grading_attempt
+        except models.GradingAttempt.DoesNotExist:
+            context['last_grading_attempt'] = None
+        
         return context
 
     def get_queryset(self):
-        return models.Article.objects.filter(assignment__id=self.kwargs['pk']).filter(author=self.request.user).order_by('last_modified_date')
+        return models.Article.objects.filter(assignment__id = self.kwargs['pk'],
+            author = self.request.user).order_by('-create_date')
 
 class GradeList(InstructCoursePermissionRequiredMixin, generic.ListView):
     model = models.Article
