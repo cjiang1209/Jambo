@@ -1,10 +1,73 @@
-
 .draggable-heading {
-    cursor: move;
+	cursor: move;
 }
 
 .comment-popup {
 	position: absolute;
 	z-index: 200;
 	max-width: 600px;
+}
+
+.stage {
+	margin-top: 10px;
+	display: block;
+	border: 1px solid;
+	border-radius: 4px 4px 4px 4px;
+	border-color: #c0c0c0;
+	padding: 10px;
+}
+
+.article {
+	margin-top: 10px;
+	display: block;
+	border: 1px solid;
+	border-radius: 4px 4px 4px 4px;
+	border-color: #c0c0c0;
+	padding: 10px;
+}
+
+.article-active {
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+}
+
+.article .article-info {
+	float: left;
+}
+
+.anchor {
+/*     float: left; */
+    display: block;
+    text-align: center;
+}
+
+.anchor-image {
+	height: 48px;
+	width: 72px;
+	color: #fff;
+	padding-top: 10px;
+	border: 1px solid;
+	border-radius: 6px 6px 0 0;
+	color: #7BB12F;
+	border-color: #7BB12F;
+}
+
+.additional-anchor {
+	line-height: 1.3;
+	width: 72px;
+	border: 1px solid;
+	border-top: none;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 500;
+	border-radius: 0 0 4px 4px;
+	padding: 3px 6px;
+	background-color: #7BB12F;
+	border-color: #7BB12F;
+}
+
+.anchor-big-text {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
 }

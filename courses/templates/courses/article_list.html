@@ -33,46 +33,76 @@ $(document).ready(function() {
 
 {% include "courses/assignment_info.html" %}
 
-{% for stage in assignment.stage_set.all %}
+
+{% with active_stage=assignment.active_stage %}
+{% if active_stage == None %}
+{% else %}
 <div>
-	<h4>Stage ({{ stage.status }})</h4>
-	<hr />
+	<h4>Active Stage</h4>
+	<p><small>Due: {{ active_stage.end_date }}</small></p>
+	<p><small>Grace Period: {{ active_stage.grace_period_end_date }}</small></p>
+	{% with active_article=active_stage.article %}
+	{% if active_article == None %}
+		{% with last_grading=assignment.last_grading_attempt %}
+		{% if last_grading == None %}
+		<a class="btn btn-default" href="{% url 'courses:article.origin.create' assignment.id %}">
+			<i class="fa fa-fw fa-plus"></i> New Submission
+		</a>
+		{% else %}
+		<a class="btn btn-default" href="{% url 'courses:article.revision.create' last_grading.id %}">
+			<i class="fa fa-fw fa-plus"></i> New Revision
+		</a>
+		{% endif %}
+		{% endwith %}
+	{% else %}
+	<div class="row article article-active">
+		<div class="article-info">
+			<h4>Submission #{{ active_article.number }}</h4>
+			<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{ active_article.create_date }}</small></p>
+			<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{ active_article.last_modified_date }}</small></p>
+		</div>
+		<div class="pull-right anchor">
+			<div class="anchor-image">
+				<a href="{% url 'courses:article.update' active_article.id %}">
+				<span class="anchor-big-text">
+				<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+				</span>
+				</a>
+			</div>
+			<div class="additional-anchor">Modify</div>
+		</div>
+	</div>
+	{% endif %}
+	{% endwith %}
+</div>
+
+<hr />
+
+{% endif %}
+{% endwith %}
+
+{% for article in assignment.article_set.all|dictsortreversed:"create_date" %}
+<div class="row article">
+	<div class="article-info">
+		<h4>Submission #{{ article.number }}</h4>
+		<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{article.create_date}}</small></p>
+		<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{article.last_modified_date}}</small></p>
+	</div>
+	<div class="pull-right anchor">
+		<div class="anchor-image">
+			{% if article.gradingattempt %}
+			<a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">
+				<span class="anchor-big-text">{{article.gradingattempt.grade}}</span>
+			</a>
+			{% else %}
+			<a href="{% url 'courses:article.detail' article.id %}">
+				<span class="anchor-big-text">-</span>
+			</a>
+			{% endif %}
+		</div>
+		<div class="additional-anchor">Grade</div>
+	</div>
 </div>
 {% endfor %}
-
-<table id="table_articles" class="table">
-	<thead>
-		<th>#</th>
-		<th>Last Modified Date</th>
-		<th>Grade</th>
-		<th>Actions</th>
-	</thead>
-	<tbody>
-		{% for article in object_list %}
-		<tr>
-			<td>Submission #{{forloop.counter}}</td>
-			<td>{{article.last_modified_date}}</td>
-			<td>
-			{% if article.gradingattempt %}
-				<a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">{{article.gradingattempt.grade}}</a>
-			{% else %}
-				Not Graded
-			{% endif %}
-			</td>
-			<td>
-				{% if article.gradingattempt %}
-				<a class="btn btn-default" href="{% url 'courses:article.revision.create' article.gradingattempt.id %}"><i class="fa fa-fw fa-plus"></i> New Revision</a>
-				{% else %}
-				<a class="btn btn-default" href="{% url 'courses:article.detail' article.id %}">View</a>
-				{% endif %}
-			</td>
-		</tr>
-		{% empty %}
-			<tr><td colspan="4">No submission</td></tr>
-		{% endfor %}
-	</tbody>
-</table>
-
-<a class="btn btn-default" href="{% url 'courses:article.origin.create' assignment.id %}"><i class="fa fa-fw fa-plus"></i> New Submission</a>
 
 {% endblock content %}

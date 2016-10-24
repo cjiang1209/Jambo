@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
 from guardian.shortcuts import remove_perm
 from datetime import datetime
+from tzlocal import get_localzone
 
 class CustomUser(User):
     class Meta:
@@ -72,6 +73,22 @@ class Assignment(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def active_stage(self):
+        current = datetime.now(get_localzone())
+        try:
+            return Stage.objects.get(assignment__id = self.id, start_date__lte = current,
+                grace_period_end_date__gte = current)
+        except Stage.DoesNotExist:
+            return None
+    
+    def last_grading_attempt(self):
+        try:
+            grading = GradingAttempt.objects.filter(article__assignment__id = self.id).latest('create_date')
+            print(grading)
+            return grading
+        except GradingAttempt.DoesNotExist:
+            return None
 
 class SubmissionPeriod(models.Model):
     title = models.CharField(max_length=200)
@@ -79,26 +96,9 @@ class SubmissionPeriod(models.Model):
     end_date = models.DateTimeField()
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
 
-class Stage(models.Model):
-    #title = models.CharField(max_length=200)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
-    grace_period_end_date = models.DateTimeField()
-    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    
-    def status(self):
-        current = datetime.now(self.start_date.tzinfo)
-        if current < self.start_date:
-            return 'Not Started'
-        elif current < self.end_date:
-            return 'In Process'
-        elif current < self.grace_period_end_date:
-            return 'In Grace Period'
-        else:
-            return 'Ended'
-
 class Article(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    number = models.IntegerField()
     content = models.TextField()
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()
@@ -109,6 +109,43 @@ class Article(models.Model):
     
     def get_absolute_url(self):
         return reverse('courses:article.detail', kwargs={'pk': self.pk})
+
+class Stage(models.Model):
+    #title = models.CharField(max_length=200)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    grace_period_end_date = models.DateTimeField()
+    assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    
+    def status(self):
+        current = datetime.now(get_localzone())
+        if current < self.start_date:
+            return 'Not Started'
+        elif current < self.end_date:
+            return 'In Process'
+        elif current < self.grace_period_end_date:
+            return 'In Grace Period'
+        else:
+            return 'Ended'
+    
+    def article(self):
+        #return Article.objects.filter(assignment__id = self.assignment.id,
+        #    last_modified_date__gte = self.start_date,
+        #    last_modified_date__lte = self.grace_period_end_date)
+#         print('nnn')
+#         article = Article.objects.get(assignment__id = self.assignment.id,
+#             create_date__gte = self.start_date,
+#             create_date__lte = self.grace_period_end_date)
+#         print(article)
+#         print('qqq')
+#         return article
+        try:
+            article = Article.objects.get(assignment__id = self.assignment.id,
+                create_date__gte = self.start_date,
+                create_date__lte = self.grace_period_end_date)
+            return article
+        except Article.DoesNotExist:
+            return None
 
 class GradingAttempt(models.Model):
     article = models.OneToOneField(Article, on_delete=models.CASCADE)
