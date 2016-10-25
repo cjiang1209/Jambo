@@ -38,9 +38,15 @@ $(document).ready(function() {
 {% if active_stage == None %}
 {% else %}
 <div>
-	<h4>Active Stage</h4>
-	<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Due Date:</strong> {{ active_stage.end_date }}</small></p>
-	<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Grace Period:</strong> {{ active_stage.grace_period_end_date }}</small></p>
+	<div class="row">
+		<span class="stage-title">Active Stage</span>
+		<span class="pull-right datetime-display">
+			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Grace Period:</strong> {{ active_stage.grace_period_end_date }}</small>
+		</span>
+		<span class="pull-right datetime-display">
+			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Due Date:</strong> {{ active_stage.end_date }}</small>
+		</span>
+	</div>
 	{% with active_article=active_stage.article %}
 	{% if active_article == None %}
 		{% if last_grading_attempt == None %}
@@ -56,8 +62,12 @@ $(document).ready(function() {
 	<div class="row article article-active">
 		<div class="article-info">
 			<h4>Submission #{{ active_article.number }}</h4>
-			<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{ active_article.create_date }}</small></p>
-			<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{ active_article.last_modified_date }}</small></p>
+			<span class="pull-left datetime-display">
+				<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{ active_article.create_date }}</small>
+			</span>
+			<span class="pull-left datetime-display">
+				<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{ active_article.last_modified_date }}</small>
+			</span>
 		</div>
 		<div class="pull-right anchor">
 			<div class="anchor-image">
@@ -83,8 +93,12 @@ $(document).ready(function() {
 <div class="row article">
 	<div class="article-info">
 		<h4>Submission #{{ article.number }}</h4>
-		<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{article.create_date}}</small></p>
-		<p><small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{article.last_modified_date}}</small></p>
+		<span class="pull-left datetime-display">
+			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{article.create_date}}</small>
+		</span>
+		<span class="pull-left datetime-display">
+			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Last Modified Date:</strong> {{article.last_modified_date}}</small>
+		</span>
 	</div>
 	<div class="pull-right anchor">
 		<div class="anchor-image">

@@ -71,3 +71,15 @@
     font-weight: 700;
     line-height: 1;
 }
+
+.stage-title {
+	font-weight: bold;
+}
+
+.datetime-title {
+	float: left;
+}
+
+.datetime-display {
+	width: 256px;
+}
