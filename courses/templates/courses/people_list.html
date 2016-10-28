@@ -12,8 +12,14 @@
 
 <script>
 $(document).ready(function() {
-	$('#table-instructors').DataTable();
-	$('#table-students').DataTable();
+	$('#table-instructors').DataTable({
+		"searching": false,
+		"paging": false
+	});
+	$('#table-students').DataTable({
+		"searching": false,
+		"paging": false
+	});
 });
 </script>
 

@@ -33,11 +33,10 @@ $(document).ready(function() {
 
 {% include "courses/assignment_info.html" %}
 
-
 {% with active_stage=assignment.active_stage %}
 {% if active_stage == None %}
 {% else %}
-<div>
+<div class="container">
 	<div class="row">
 		<span class="stage-title">Active Stage</span>
 		<span class="pull-right datetime-display">
@@ -89,6 +88,7 @@ $(document).ready(function() {
 {% endif %}
 {% endwith %}
 
+<div class="container">
 {% for article in object_list %}
 <div class="row article">
 	<div class="article-info">
@@ -116,5 +116,6 @@ $(document).ready(function() {
 	</div>
 </div>
 {% endfor %}
+</div>
 
 {% endblock content %}

@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from guardian.shortcuts import assign_perm
 from guardian.shortcuts import remove_perm
 from datetime import datetime
-from tzlocal import get_localzone
 from django.utils import timezone
 
 class CustomUser(User):

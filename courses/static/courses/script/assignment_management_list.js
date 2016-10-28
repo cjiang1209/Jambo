@@ -59,8 +59,11 @@ $(document).ready(function () {
 			};
 			var html = tmplStage(context);
 			form.closest('tr').replaceWith(html);
-		}).fail(function(data) {
-			console.log(data);
+		}).fail(function(response) {
+			$.alert({
+				title: 'Error',
+				content: response.responseText
+			});
 		});
 	});
 	

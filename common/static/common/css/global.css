@@ -8,22 +8,13 @@
 	max-width: 600px;
 }
 
-.stage {
-	margin-top: 10px;
-	display: block;
-	border: 1px solid;
-	border-radius: 4px 4px 4px 4px;
-	border-color: #c0c0c0;
-	padding: 10px;
-}
-
 .article {
 	margin-top: 10px;
 	display: block;
 	border: 1px solid;
 	border-radius: 4px 4px 4px 4px;
 	border-color: #c0c0c0;
-	padding: 10px;
+	padding: 20px;
 }
 
 .article-active {
@@ -81,5 +72,5 @@
 }
 
 .datetime-display {
-	width: 256px;
+	width: 272px;
 }

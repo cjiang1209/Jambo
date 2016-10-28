@@ -58,6 +58,12 @@ class StageForm(forms.ModelForm):
                 raise forms.ValidationError('Start date must be earlier than end date.')
             if end_date > grace_period_end_date:
                 raise forms.ValidationError('End date must be earlier than grace period end date.')
+        
+        assign = cleaned_data.get('assignment')
+        stages = models.Stage.objects.filter(assignment=assign)
+        for stage in stages:
+            if not ((stage.grace_period_end_date < start_date) or (grace_period_end_date < stage.start_date)):
+                raise forms.ValidationError('Overlapped with an existing stage.')
 
 class ArticleForm(forms.ModelForm):
     class Meta:
