@@ -2,7 +2,6 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required, permission_required
 from courses import models
 from helper import auth
-from datetime import datetime
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -11,13 +10,11 @@ from django.views.generic.base import View, TemplateView
 from guardian.shortcuts import assign_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
-from django.core import serializers
 from django.views.generic.detail import SingleObjectMixin
 import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
-from _testcapi import raise_exception
-from courses.models import CustomUser
+from django.utils import timezone
 
 class AjaxableResponseMixin(object):
     """
@@ -82,7 +79,7 @@ class CourseCreate(generic.CreateView):
     
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        form.instance.create_date = datetime.now()
+        form.instance.create_date = timezone.now()
         
         response = super(CourseCreate, self).form_valid(form)
         
@@ -153,7 +150,7 @@ class AssignmentCreate(InstructCoursePermissionRequiredMixin, generic.CreateView
     def form_valid(self, form):
         form.instance.course = get_object_or_404(models.Course, pk=self.kwargs['pk'])
         form.instance.created_by = models.CustomUser.objects.get(pk = self.request.user.id)
-        form.instance.create_date = datetime.now()
+        form.instance.create_date = timezone.now()
         return super(AssignmentCreate, self).form_valid(form)
 
 class AssignmentUpdate(InstructCoursePermissionRequiredMixin, generic.UpdateView):
@@ -223,10 +220,18 @@ class ArticleOriginCreate(EnrollCoursePermissionRequiredMixin, generic.CreateVie
     def form_valid(self, form):
         form.instance.author = self.request.user
         form.instance.assignment = get_object_or_404(models.Assignment, pk=self.kwargs['pk'])
-        current_date = datetime.now()
+        current_date = timezone.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
         form.instance.number = 1
+        
+        stage = form.instance.assignment.active_stage()
+        if stage is None:
+            return HttpResponse(status=400)
+        elif current_date < stage.start_date or current_date > stage.grace_period_end_date:
+            return HttpResponse(status=400)
+        
+        form.instance.is_late = (current_date > stage.end_date)
         
         #period = get_object_or_404(models.SubmissionPeriod, pk=self.kwargs['pk'])
         #if not period:
@@ -263,10 +268,18 @@ class ArticleRevisionCreate(generic.CreateView):
             return False
         form.instance.parent_attempt = attempt
         form.instance.assignment = attempt.article.assignment
-        current_date = datetime.now()
+        current_date = timezone.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
         form.instance.number = attempt.article.number + 1
+        
+        stage = form.instance.assignment.active_stage()
+        if stage is None:
+            return HttpResponse(status=400)
+        elif current_date < stage.start_date or current_date > stage.grace_period_end_date:
+            return HttpResponse(status=400)
+        
+        form.instance.is_late = (current_date > stage.end_date)
         
         response = super(ArticleRevisionCreate, self).form_valid(form)
         
@@ -300,7 +313,17 @@ class ArticleUpdate(generic.UpdateView):
         return context
     
     def form_valid(self, form):
-        form.instance.last_modified_date = datetime.now()
+        current_date = timezone.now()
+        form.instance.last_modified_date = current_date
+        
+        stage = form.instance.assignment.active_stage()
+        if stage is None:
+            return HttpResponse(status=400)
+        elif current_date < stage.start_date or current_date > stage.grace_period_end_date:
+            return HttpResponse(status=400)
+        
+        form.instance.is_late = (current_date > stage.end_date)
+        
         return super(ArticleUpdate, self).form_valid(form)
     
     def get_success_url(self):
@@ -354,7 +377,7 @@ class GradingAttemptCreate(generic.base.RedirectView):
         if hasattr(article, 'gradingattempt'):
             attempt = article.gradingattempt
         else:
-            current_date = datetime.now()
+            current_date = timezone.now()
             attempt = models.GradingAttempt(article = article,
                 content = article.content,
                 create_date = current_date,
@@ -380,7 +403,7 @@ class GradingAttemptGradeUpdate(AjaxableResponseMixin, generic.UpdateView):
         return super(GradingAttemptGradeUpdate, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.instance.last_modified_date = datetime.now()
+        form.instance.last_modified_date = timezone.now()
         return super(GradingAttemptGradeUpdate, self).form_valid(form)
 
     def get_success_url(self):
@@ -400,8 +423,7 @@ class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
     fields = [ 'content' ]
     
     def form_valid(self, form):
-        form.instance.last_modified_date = datetime.now()
-        print(datetime.now())
+        form.instance.last_modified_date = timezone.now()
         return super(GradingAttemptContentUpdate, self).form_valid(form)
     
     def get_success_url(self):
@@ -419,7 +441,7 @@ class CommentCreate(AjaxableResponseMixin, generic.CreateView):
     success_url = reverse_lazy('courses:course.list')
     
     def form_valid(self, form):
-        form.instance.create_date = datetime.now()
+        form.instance.create_date = timezone.now()
         return super(CommentCreate, self).form_valid(form)
 
 class CommentDetail(generic.DetailView):
@@ -489,7 +511,7 @@ class PredefinedCommentCategoryCreate(AjaxableResponseMixin, generic.CreateView)
     success_url = reverse_lazy('courses:predefined_comment.list')
     
     def form_valid(self, form):
-        form.instance.create_date = datetime.now()
+        form.instance.create_date = timezone.now()
         return super(PredefinedCommentCategoryCreate, self).form_valid(form)
 
 class PredefinedCommentSubCategoryList(View):
@@ -516,8 +538,8 @@ class PredefinedCommentCategoryTerminate(SingleObjectMixin, View):
         self.object.save()
         
         comment = models.PredefinedComment(content='',
-            category=self.object,
-            create_date=datetime.now())
+            category = self.object,
+            create_date = timezone.now())
         comment.save()
         
         return JsonResponse({ })

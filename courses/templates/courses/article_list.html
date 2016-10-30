@@ -60,7 +60,12 @@ $(document).ready(function() {
 	{% else %}
 	<div class="row article article-active">
 		<div class="article-info">
-			<h4>Submission #{{ active_article.number }}</h4>
+			<h4>
+				Submission #{{ active_article.number }}
+				{% if active_article.is_late %}
+				<span title="Late submission"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+				{% endif %}
+			</h4>
 			<span class="pull-left datetime-display">
 				<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{ active_article.create_date }}</small>
 			</span>
@@ -92,7 +97,12 @@ $(document).ready(function() {
 {% for article in object_list %}
 <div class="row article">
 	<div class="article-info">
-		<h4>Submission #{{ article.number }}</h4>
+		<h4>
+			Submission #{{ article.number }}
+			{% if article.is_late %}
+				<span title="Late submission"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+			{% endif %}
+		</h4>
 		<span class="pull-left datetime-display">
 			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Create Date:</strong> {{article.create_date}}</small>
 		</span>

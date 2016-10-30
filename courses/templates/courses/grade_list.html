@@ -46,7 +46,12 @@ $(document).ready(function() {
 		<tr{% if not article.gradingattempt %} class="danger"{% endif %}>
 			<td>{{ article.assignment.title }}</td>
 			<td>{{ article.author }}</td>
-			<td>Submission #{{ article.number }}</td>
+			<td>
+				Submission #{{ article.number }}
+				{% if article.is_late %}
+				<span title="Late submission"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+				{% endif %}
+			</td>
 			<td>{{ article.last_modified_date }}</td>
 			<td>
 				{% if article.gradingattempt %}

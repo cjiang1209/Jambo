@@ -52,6 +52,7 @@ var editorConfig = '{% static 'common/miscellaneous/ckeditor_grading_config.js' 
 {% include "courses/assignment_info.html" %}
 {% endwith %}
 
+<div class="container">
 <div class="row">
 	<div class="col-md-2">
 		<i class="fa fa-user" aria-hidden="true"></i> Author: {{ gradingattempt.article.author }}
@@ -59,20 +60,27 @@ var editorConfig = '{% static 'common/miscellaneous/ckeditor_grading_config.js' 
 	<div class="col-md-4">
 		<i class="fa fa-calendar" aria-hidden="true"></i> Last Modified Date: {{ gradingattempt.article.last_modified_date }}
 	</div>
-	<div class="col-md-6">
-		<form id="form_update_grade" action="" method="post">
-			{% csrf_token %}
-			<div class="form-group">
-				<div class="col-xs-1">{{ form.grade.label_tag }}</div>
-				<div class="col-xs-2">{{ form.grade }}</div>
-			</div>
-			<input class="btn btn-default" type="submit" value="Update" />
-		</form>
-	</div>
 </div>
+
+<form id="form_update_grade" class="form-inline" action="" method="post">
+	{% csrf_token %}
+	<div class="form-group">
+		{{ form.grade.label_tag }}
+		<div class="input-group">
+			{{ form.grade }}
+			{% if gradingattempt.article.is_late %}
+			<div class="input-group-addon">
+				<span title="Late submission"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	<button class="btn btn-default" type="submit">Update</button>
+</form>
 
 <textarea id="id_content" rows="10" cols="40">
 	{{ gradingattempt.content | safe }}
 </textarea>
+</div>
 
 {% endblock %}

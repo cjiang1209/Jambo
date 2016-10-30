@@ -104,6 +104,7 @@ class Article(models.Model):
     last_modified_date = models.DateTimeField()
     status = models.BooleanField(default=False, help_text="This field denotes if the article has been reviewed.")
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
+    is_late = models.BooleanField(default=False, help_text="This field denotes if the article is created or modified after the end date.")
     #submission_period = models.ForeignKey(SubmissionPeriod, on_delete=models.CASCADE)
     #parent = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
     
