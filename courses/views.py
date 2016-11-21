@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from courses import forms
 from django.views.generic.base import View, TemplateView
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, remove_perm
 from guardian.mixins import LoginRequiredMixin
 from guardian.mixins import PermissionRequiredMixin
 from django.views.generic.detail import SingleObjectMixin
@@ -15,6 +15,7 @@ import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
 from django.utils import timezone
+from sets import Set
 
 class AjaxableResponseMixin(object):
     """
@@ -84,13 +85,13 @@ class CourseCreate(generic.CreateView):
         response = super(CourseCreate, self).form_valid(form)
         
         # Assign permissions
-#         for user in form.instance.instructors.all():
-#             assign_perm('change_course', user, form.instance)
-#             assign_perm('view_course', user, form.instance)
-#             assign_perm('instruct_course', user, form.instance)
-#         for user in form.instance.students.all():
-#             assign_perm('view_course', user, form.instance)
-#             assign_perm('enroll_course', user, form.instance)
+        for user in form.instance.instructors.all():
+            assign_perm('change_course', user, form.instance)
+            assign_perm('view_course', user, form.instance)
+            assign_perm('instruct_course', user, form.instance)
+        for user in form.instance.students.all():
+            assign_perm('view_course', user, form.instance)
+            assign_perm('enroll_course', user, form.instance)
         
         return response
 
@@ -101,6 +102,40 @@ class CourseUpdate(PermissionRequiredMixin, generic.UpdateView):
     success_url = reverse_lazy('courses:course.list')
     permission_required = 'courses.change_course'
     raise_exception = True
+    
+    def form_valid(self, form):
+        initial_instructors = Set(form.instance.instructors.all())
+        initial_students = Set(form.instance.students.all())
+        
+        response = super(CourseUpdate, self).form_valid(form)
+        
+        students = Set(form.instance.students.all())
+        instructors = Set(form.instance.instructors.all())
+        
+        # print(initial_instructors)
+        # print(instructors)
+        # print(initial_students)
+        # print(students)
+        
+        # Revoke permissions
+        for user in initial_instructors.difference(instructors):
+            remove_perm('change_course', user, form.instance)
+            remove_perm('view_course', user, form.instance)
+            remove_perm('instruct_course', user, form.instance)
+        for user in initial_students.difference(students):
+            remove_perm('view_course', user, form.instance)
+            remove_perm('enroll_course', user, form.instance)
+        
+        # Assign permissions
+        for user in instructors.difference(initial_instructors):
+            assign_perm('change_course', user, form.instance)
+            assign_perm('view_course', user, form.instance)
+            assign_perm('instruct_course', user, form.instance)
+        for user in students.difference(initial_students):
+            assign_perm('view_course', user, form.instance)
+            assign_perm('enroll_course', user, form.instance)
+        
+        return response
 
 class CourseDetail(PermissionRequiredMixin, generic.DetailView):
     model = models.Course

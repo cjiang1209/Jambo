@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<form action="" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	
+	{% if form.errors %}
+	<div class="alert alert-danger">
+		<ul>
+			{% for error in form.errors %}
+			<li><strong>{{ error }}</strong></li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+
+	<div class="form-group">
+		<label for="fileUpload">Upload a CSV file</label>
+		<input type="file" class="form-control-file" id="fileUpload" aria-describedby="fileHelp" name="upload" />
+		<small id="fileHelp" class="form-text text-muted">
+			Please make sure that the CSV file contains columns
+			<strong>username</strong>,
+			<strong>password</strong>,
+			<strong>firstname</strong>,
+			<strong>lastname</strong>,
+			<strong>email</strong>, and
+			<strong>group</strong>.
+		</small>
+		<div class="well">
+			<p><strong>Example:</strong></p>
+			<p>username,password,lastname,firstname,email,group</p>
+			<p>bwayne,jambo1234,Wayne,Bruce,bwayne@jambo.com,Student</p>
+			<p>jgreen,jambo1234,Green,Jim,jgreen@jambo.com,Student</p>
+		</div>
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}
