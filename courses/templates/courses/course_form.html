@@ -16,16 +16,24 @@
 		{{ form.title }}
 	</div>
 	<div class="form-group">
-		{{ form.instructors.label_tag }}
-		{{ form.instructors }}
-	</div>
-	<div class="form-group">
 		{{ form.description.label_tag }}
 		{{ form.description }}
 	</div>
 	<div class="form-group">
+		{{ form.instructors.label_tag }}
+		{% for instructor in form.instructors %}
+		<div class="checkbox">
+			{{ instructor }}
+		</div>
+		{% endfor %}
+	</div>
+	<div class="form-group">
 		{{ form.students.label_tag }}
-		{{ form.students }}
+		{% for student in form.students %}
+		<div class="checkbox">
+			{{ student }}
+		</div>
+		{% endfor %}
 	</div>
 
 	<input class="btn btn-default" type="submit" value="Submit" />

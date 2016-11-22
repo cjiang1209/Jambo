@@ -4,14 +4,38 @@
 
 {% block script-head %}
 <script src="{% static 'common/script/csrf.js' %}"></script>
+<script src="{% static 'common/lib/jquery-ui/jquery-ui.min.js' %}"></script>
 <script src="{% static 'common/lib/ckeditor/ckeditor.js' %}"></script>
 <script src="{% static 'common/script/RichTextEditor.js' %}"></script>
 
 <script>
-var idRichTextEditor = "{{form.content.auto_id}}";
+{% if form.instance.parent_attempt == None %}
+
+$(document).ready(function() {
+	var config2 = RichTextEditorConfig.Edit();
+	var rteditor2 = RichTextEditor.render('{{ form.content.auto_id }}', config2);
+});
+
+{% else %}
+
+$(document).ready(function() {
+	var urlConfig = {
+		contentId: {{ form.instance.parent_attempt.id }},
+		getComment: "{% url 'courses:comment.detail' %}",
+	};
+
+	var config1 = RichTextEditorConfig.ReadOnlyComment();
+	var rteditor1 = RichTextEditor.render('id_grading_attempt', config1);
+	rteditor1.supportComment(urlConfig, true);
+	
+	var config2 = RichTextEditorConfig.Edit();
+	var rteditor2 = RichTextEditor.render('{{ form.content.auto_id }}', config2);
+});
+
+{% endif %}
+
 </script>
 
-<script src="{% static 'courses/script/article_form.js' %}"></script>
 {% endblock script-head %}
 
 {% block content %}
@@ -30,15 +54,35 @@ var idRichTextEditor = "{{form.content.auto_id}}";
 
 {% include "courses/form_errors.html" %}
 
+{% if form.instance.parent_attempt == None %}
+
 <form action="" method="post">
 	{% csrf_token %}
-	
-	{{ form.submission_period }}
-	<div class="form-group">
-		{{ form.content }}
-	</div>
 
+	<div class="form-group">{{ form.content }}</div>
 	<input class="btn btn-default" type="submit" value="Submit" />
 </form>
+
+{% else %}
+
+<div class="row">
+	<div class="col-md-6">
+		<textarea id="id_grading_attempt" rows="10" cols="40">
+			{{ form.instance.parent_attempt.content | safe }}
+		</textarea>
+	</div>
+
+	<div class="col-md-6">
+		<form action="" method="post">
+			{% csrf_token %}
+
+			<div class="form-group">{{ form.content }}</div>
+
+			<input class="btn btn-default" type="submit" value="Submit" />
+		</form>
+	</div>
+</div>
+
+{% endif %}
 
 {% endblock content %}

@@ -106,7 +106,7 @@ class Article(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     is_late = models.BooleanField(default=False, help_text="This field denotes if the article is created or modified after the end date.")
     #submission_period = models.ForeignKey(SubmissionPeriod, on_delete=models.CASCADE)
-    #parent = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True)
+    parent_attempt = models.ForeignKey('GradingAttempt', on_delete=models.CASCADE, null=True, related_name='+')
     
     def __str__(self):
         return self.assignment.title + ' - ' + self.author.full_name() + ' - #' + str(self.number)

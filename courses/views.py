@@ -258,6 +258,7 @@ class ArticleOriginCreate(EnrollCoursePermissionRequiredMixin, generic.CreateVie
         current_date = timezone.now()
         form.instance.create_date = current_date
         form.instance.last_modified_date = current_date
+        form.parent_attempt = None
         form.instance.number = 1
         
         stage = form.instance.assignment.active_stage()

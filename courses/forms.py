@@ -4,10 +4,10 @@ from common import widgets
 from django.contrib.auth.models import Group
 
 class CourseForm(forms.ModelForm):
-    instructors = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
+    instructors = forms.ModelMultipleChoiceField(widget = forms.CheckboxSelectMultiple(),
         queryset = models.CustomUser.objects.filter(groups__name='Instructor'),
         required = False);
-    students = forms.ModelMultipleChoiceField(widget = forms.SelectMultiple(attrs = {'class': 'form-control'}),
+    students = forms.ModelMultipleChoiceField(widget = forms.CheckboxSelectMultiple(),
         queryset = models.CustomUser.objects.filter(groups__name='Student'),
         required = False);
     
