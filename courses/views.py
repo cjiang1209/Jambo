@@ -15,7 +15,6 @@ import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
 from django.utils import timezone
-from sets import Set
 
 class AjaxableResponseMixin(object):
     """
@@ -104,13 +103,14 @@ class CourseUpdate(PermissionRequiredMixin, generic.UpdateView):
     raise_exception = True
     
     def form_valid(self, form):
-        initial_instructors = Set(form.instance.instructors.all())
-        initial_students = Set(form.instance.students.all())
+        old_course = models.Course.objects.get(pk=form.instance.pk)
+        initial_instructors = list(old_course.instructors.all())
+        initial_students = list(old_course.students.all())
         
         response = super(CourseUpdate, self).form_valid(form)
         
-        students = Set(form.instance.students.all())
-        instructors = Set(form.instance.instructors.all())
+        instructors = form.instance.instructors.all()
+        students = form.instance.students.all()
         
         # print(initial_instructors)
         # print(instructors)
@@ -118,20 +118,20 @@ class CourseUpdate(PermissionRequiredMixin, generic.UpdateView):
         # print(students)
         
         # Revoke permissions
-        for user in initial_instructors.difference(instructors):
+        for user in initial_instructors:
             remove_perm('change_course', user, form.instance)
             remove_perm('view_course', user, form.instance)
             remove_perm('instruct_course', user, form.instance)
-        for user in initial_students.difference(students):
+        for user in initial_students:
             remove_perm('view_course', user, form.instance)
             remove_perm('enroll_course', user, form.instance)
         
         # Assign permissions
-        for user in instructors.difference(initial_instructors):
+        for user in instructors:
             assign_perm('change_course', user, form.instance)
             assign_perm('view_course', user, form.instance)
             assign_perm('instruct_course', user, form.instance)
-        for user in students.difference(initial_students):
+        for user in students:
             assign_perm('view_course', user, form.instance)
             assign_perm('enroll_course', user, form.instance)
         
