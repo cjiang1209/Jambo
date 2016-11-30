@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView
 from common import forms
 from helper import auth
+from django.conf import settings
 
 class Index(TemplateView):
     template_name = 'index.html'
@@ -40,10 +41,10 @@ class AddUser(FormView):
         return True
     
     def form_valid(self, form):
-        file = self.request.FILES['upload']
-        filename = file.name
+        uploadFile = self.request.FILES['upload']
+        filename = os.path.join(settings.MEDIA_ROOT, uploadFile.name)
         with open(filename, 'w') as destination:
-            for chunk in file.chunks():
+            for chunk in uploadFile.chunks():
                 destination.write(chunk)
         success = self.addUsersFromCSV(filename)
         os.remove(filename)
