@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load auth %}
 
 <!DOCTYPE html>
 <html>
@@ -61,14 +62,16 @@
 						<ul class="dropdown-menu">
 							<li><a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
 							</li>
-							
 							<li><a href="{% url 'courses:course.list' %}"><i class="fa fa-fw fa-university"></i> My Courses</a>
-							</li>
+							</li>						
+							{% if user|is_instructor %}
 							<li><a href="{% url 'courses:predefined_comment.list' %}"><i class="fa fa-fw fa-comment"></i> My Comments</a>
 							</li>
-
-							<li><a href="{% url 'user.list' %}"><i class="fa fa-fw fa-users"></i>
-									Users</a></li>
+							{% endif %}
+							{% if user|is_administrator %}
+							<li><a href="{% url 'user.list' %}"><i class="fa fa-fw fa-users"></i> Users</a>
+							</li>
+							{% endif %}
 							<li><a href="#"><i class="fa fa-fw fa-gear"></i>
 									Settings</a></li>
 							<li class="divider"></li>
