@@ -601,21 +601,24 @@ class FileUpload(View):
     def post(self, *args, **kwargs):
         uploadFile = self.request.FILES['upload']
         filename = self.request.FILES['upload'].name
-        with open(os.path.join(os.path.join(self.root, self.relative_path), filename), 'wb') as destination:
+        path = os.path.join(self.root, self.relative_path)
+        with open(os.path.join(path, filename), 'wb') as destination:
             for chunk in uploadFile.chunks():
                 destination.write(chunk)
         return HttpResponse('<script type="text/javascript">' +
             'window.parent.CKEDITOR.tools.callFunction("' + self.request.GET.get('CKEditorFuncNum') + '", "' +
-            static(settings.MEDIA_URL + self.relative_path + filename) + '", "");</script>')
+            settings.MEDIA_URL + self.relative_path + filename + '", "");</script>')
 
 class FileBrowseMixin(object):
+    root = settings.MEDIA_ROOT
     relative_path = '/'
 
     def get_context_data(self, **kwargs):
         context = super(FileBrowseMixin, self).get_context_data(**kwargs)
         
-        files = [f for f in os.listdir(self.path) if os.path.isfile(os.path.join(self.path, f))]
-        context['objects'] = [ { 'title': f, 'url': static(settings.MEDIA_URL + self.relative_path + f) } for f in files]
+        path = os.path.join(self.root, self.relative_path)
+        files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+        context['objects'] = [ { 'title': f, 'url': settings.MEDIA_URL + self.relative_path + f } for f in files]
         context['CKEditorFuncNum'] = self.request.GET.get('CKEditorFuncNum')
         return context
 
