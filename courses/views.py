@@ -15,6 +15,7 @@ import os
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
 from django.utils import timezone
+from django.conf import settings
 
 class AjaxableResponseMixin(object):
     """
@@ -594,48 +595,43 @@ class PredefinedCommentUpdate(AjaxableResponseMixin, generic.UpdateView):
     success_url = reverse_lazy('courses:predefined_comment.list')
 
 class FileUpload(View):
-    relative_path = 'courses/upload/'
-    
-    def absolute_path(self):
-        return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
+    root = settings.MEDIA_ROOT
+    relative_path = '/'
     
     def post(self, *args, **kwargs):
-        file = self.request.FILES['upload']
+        uploadFile = self.request.FILES['upload']
         filename = self.request.FILES['upload'].name
-        with open(os.path.join(self.absolute_path(), filename), 'wb') as destination:
-            for chunk in file.chunks():
+        with open(os.path.join(os.path.join(self.root, self.relative_path), filename), 'wb') as destination:
+            for chunk in uploadFile.chunks():
                 destination.write(chunk)
         return HttpResponse('<script type="text/javascript">' +
             'window.parent.CKEDITOR.tools.callFunction("' + self.request.GET.get('CKEditorFuncNum') + '", "' +
-            static(self.relative_path + filename) + '", "");</script>')
+            static(settings.MEDIA_URL + self.relative_path + filename) + '", "");</script>')
 
 class FileBrowseMixin(object):
-    relative_path = 'courses/upload/'
-    
-    def absolute_path(self):
-        return os.path.join(os.path.join(os.path.dirname(__file__), 'static/'), self.relative_path)
-        
+    relative_path = '/'
+
     def get_context_data(self, **kwargs):
         context = super(FileBrowseMixin, self).get_context_data(**kwargs)
         
-        files = [f for f in os.listdir(self.absolute_path()) if os.path.isfile(os.path.join(self.absolute_path(), f))]
-        context['objects'] = [ { 'title': f, 'url': static(self.relative_path + f) } for f in files]
+        files = [f for f in os.listdir(self.path) if os.path.isfile(os.path.join(self.path, f))]
+        context['objects'] = [ { 'title': f, 'url': static(settings.MEDIA_URL + self.relative_path + f) } for f in files]
         context['CKEditorFuncNum'] = self.request.GET.get('CKEditorFuncNum')
         return context
 
 class ImageUpload(FileUpload):
-    relative_path = 'courses/upload/image/'
+    relative_path = 'image/'
 
 class ImageBrowse(FileBrowseMixin, generic.TemplateView):
     template_name = 'courses/image_browse.html'
-    relative_path = 'courses/upload/image/'
+    relative_path = 'image/'
 
 class AudioUpload(FileUpload):
-    relative_path = 'courses/upload/audio/'
+    relative_path = 'audio/'
 
 class AudioBrowse(FileBrowseMixin, generic.TemplateView):
     template_name = 'courses/audio_browse.html'
-    relative_path = 'courses/upload/audio/'
+    relative_path = 'audio/'
 
 class PeopleList(TemplateView):
     template_name = 'courses/people_list.html'
