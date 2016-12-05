@@ -46,7 +46,6 @@ $(document).ready(function() {
 			<small><i class="fa fa-calendar" aria-hidden="true"></i> <strong>Due Date:</strong> {{ active_stage.end_date }}</small>
 		</span>
 	</div>
-	{% with active_article=active_stage.article %}
 	{% if active_article == None %}
 		{% if last_grading_attempt == None %}
 		<a class="btn btn-default" href="{% url 'courses:article.origin.create' assignment.id %}">
@@ -85,7 +84,6 @@ $(document).ready(function() {
 		</div>
 	</div>
 	{% endif %}
-	{% endwith %}
 </div>
 
 <hr />

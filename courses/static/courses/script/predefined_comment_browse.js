@@ -45,7 +45,8 @@ $(document).ready(function () {
 		window.close();
 	});
 	
-	var editorConfig = RichTextEditorConfig.ReadOnly();	
+	var editorConfig = RichTextEditorConfig.ReadOnly();
+	editorConfig.height = 300;
 	var editor = RichTextEditor.render(idRichTextEditor, editorConfig);
 	
 	$('#form_comment').hide();

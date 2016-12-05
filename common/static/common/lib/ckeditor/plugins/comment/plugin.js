@@ -174,7 +174,7 @@
 	    },
 	    
 		afterInit: function(editor) {
-			var commentRegex = /\[\[([^\[\]])+\]\]{{([^{{])+}}/mg;
+			var commentRegex = /\[\[([^\[\]])+\]\]{{([^{{])*}}/mg;
 			editor.dataProcessor.dataFilter.addRules({
 				text: function(text, node) {
 					var dtd = node.parent && CKEDITOR.dtd[node.parent.name];
@@ -187,7 +187,7 @@
 					return text.replace(commentRegex, function(str) {
 						console.log(str);
 						
-						var regex = /\[\[(([^\[\]])+)\]\]{{(([^{{])+)}}/mg;
+						var regex = /\[\[(([^\[\]])+)\]\]{{(([^{{])*)}}/mg;
 						var match = regex.exec(str);
 						console.log(match[1]);
 						console.log(match[3]);

@@ -78,12 +78,6 @@ class Assignment(models.Model):
 #         except GradingAttempt.DoesNotExist:
 #             return None
 
-# class SubmissionPeriod(models.Model):
-#     title = models.CharField(max_length=200)
-#     start_date = models.DateTimeField()
-#     end_date = models.DateTimeField()
-#     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-
 class Article(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     number = models.IntegerField()
@@ -123,24 +117,14 @@ class Stage(models.Model):
         else:
             return 'Ended'
     
-    def article(self):
-        #return Article.objects.filter(assignment__id = self.assignment.id,
-        #    last_modified_date__gte = self.start_date,
-        #    last_modified_date__lte = self.grace_period_end_date)
-#         print('nnn')
-#         article = Article.objects.get(assignment__id = self.assignment.id,
-#             create_date__gte = self.start_date,
-#             create_date__lte = self.grace_period_end_date)
-#         print(article)
-#         print('qqq')
-#         return article
-        try:
-            article = Article.objects.get(assignment__id = self.assignment.id,
-                create_date__gte = self.start_date,
-                create_date__lte = self.grace_period_end_date)
-            return article
-        except Article.DoesNotExist:
-            return None
+#     def article(self):
+#         try:
+#             article = Article.objects.get(assignment__id = self.assignment.id,
+#                 create_date__gte = self.start_date,
+#                 create_date__lte = self.grace_period_end_date)
+#             return article
+#         except Article.DoesNotExist:
+#             return None
 
 class GradingAttempt(models.Model):
     article = models.OneToOneField(Article, on_delete=models.CASCADE)
@@ -148,6 +132,9 @@ class GradingAttempt(models.Model):
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()
     grade = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return "Grading Attempt - " + self.article.__str__()
 
 class Comment(models.Model):
     content = models.TextField()

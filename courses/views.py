@@ -388,6 +388,20 @@ class ArticleList(generic.ListView):
         except models.GradingAttempt.DoesNotExist:
             context['last_grading_attempt'] = None
         
+        active_stage = assignment.active_stage()
+        if active_stage is not None:
+            # assignment has an active stage
+            try:
+                active_article = models.Article.objects.get(assignment__id = assignment.id,
+                    author = self.request.user,
+                    create_date__gte = active_stage.start_date,
+                    create_date__lte = active_stage.grace_period_end_date)
+                context['active_article'] = active_article
+            except models.Article.DoesNotExist:
+                context['active_article'] = None
+        else:
+            context['active_article'] = None
+        
         return context
 
     def get_queryset(self):
