@@ -16,6 +16,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import HttpResponse
 from django.utils import timezone
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 class AjaxableResponseMixin(object):
     """
@@ -483,6 +484,16 @@ class GradingAttemptContentUpdate(AjaxableResponseMixin, generic.UpdateView):
 class GradingAttemptDetail(generic.DetailView):
     model = models.GradingAttempt
     template_name = 'courses/grading_attempt_detail.html'
+
+class GradingAttemptToggleVisibility(AjaxableResponseMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            attempt = models.GradingAttempt.objects.get(pk=kwargs['pk'])
+            attempt.visible = not attempt.visible
+            attempt.save()
+            return JsonResponse({'visible': attempt.visible})
+        except ObjectDoesNotExist:
+            return JsonResponse({'visible': False})
 
 # Comment
 

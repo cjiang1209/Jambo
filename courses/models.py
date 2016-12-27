@@ -132,6 +132,7 @@ class GradingAttempt(models.Model):
     create_date = models.DateTimeField()
     last_modified_date = models.DateTimeField()
     grade = models.IntegerField(default=0)
+    visible = models.BooleanField(default=False)
     
     def __str__(self):
         return "Grading Attempt - " + self.article.__str__()

@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^gradingattempt/(?P<pk>[0-9]+)/update/$', GradingAttemptUpdate.as_view(), name='grading_attempt.update'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/updatecontent/$', GradingAttemptContentUpdate.as_view(), name='grading_attempt.update_content'),
     url(r'^gradingattempt/(?P<pk>[0-9]+)/$', GradingAttemptDetail.as_view(), name='grading_attempt.detail'),
+    url(r'^gradingattempt/(?P<pk>[0-9]+)/togglevisibility/$', GradingAttemptToggleVisibility.as_view(), name='grading_attempt.toggle_visibility'),
     
     url(r'^comment/create/$', CommentCreate.as_view(), name='comment.create'),
     url(r'^comment/$', CommentDetail.as_view(), name='comment.detail'),

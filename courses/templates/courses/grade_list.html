@@ -9,10 +9,27 @@
 <script src="{% static 'common/lib/DataTables/js/jquery.dataTables.min.js' %}"></script>
 <script src="{% static 'common/lib/DataTables/js/dataTables.bootstrap.min.js' %}"></script>
 
+<script src="{% static 'common/script/csrf.js' %}"></script>
+
 <script>
+
 $(document).ready(function() {
 	$('#table-grade').DataTable({
 		"order": [[ 2, "desc" ]]
+	});
+	
+	$('.btn-visibility').click(function(event) {
+		console.log($(this).data('id'));
+		var btn = $(this);
+		var url = '{%url "courses:grading_attempt.toggle_visibility" "00000000" %}'.replace('00000000', btn.data('id'));
+		$.post(url).done(function(data) {
+			if (data.visible) {
+				btn.html('<i class="fa fa-eye" aria-hidden="true" title="Visible"></i>');
+			}
+			else {
+				btn.html('<i class="fa fa-eye-slash" aria-hidden="true" title="Invisible"></i>');
+			}
+		});
 	});
 });
 </script>
@@ -34,11 +51,12 @@ $(document).ready(function() {
 <table id="table-grade" class="table">
 	<thead>
 		<tr>
-			<th>Assignment</th>
+			<th>Assignment</th>parameter
 			<th>Author</th>
 			<th>Title</th>
 			<th>Last Modfied Date</th>
 			<th>Grade</th>
+			<th>Visibility</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -49,7 +67,7 @@ $(document).ready(function() {
 			<td>
 				Submission #{{ article.number }}
 				{% if article.is_late %}
-				<span title="Late submission"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+				<i class="fa fa-exclamation-triangle" aria-hidden="true" title="Late submission"></i>
 				{% endif %}
 			</td>
 			<td>{{ article.last_modified_date }}</td>
@@ -58,6 +76,17 @@ $(document).ready(function() {
 					<a href="{% url 'courses:grading_attempt.update' article.gradingattempt.id %}">{{ article.gradingattempt.grade }}</a>
 				{% else %}
 					<a href="{% url 'courses:grading_attempt.create' article.id %}">Not Graded</a>
+				{% endif %}
+			</td>
+			<td>
+				{% if article.gradingattempt %}
+				<button class="btn-link btn-visibility" data-id="{{ article.gradingattempt.id }}">
+				{% if article.gradingattempt.visible %}
+					<i class="fa fa-eye" aria-hidden="true" title="Visible"></i>
+				{% else %}
+					<i class="fa fa-eye-slash" aria-hidden="true" title="Invisible"></i>
+				{% endif %}
+				</button>
 				{% endif %}
 			</td>
 		</tr>

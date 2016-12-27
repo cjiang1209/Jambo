@@ -110,7 +110,7 @@ $(document).ready(function() {
 	</div>
 	<div class="pull-right anchor">
 		<div class="anchor-image">
-			{% if article.gradingattempt %}
+			{% if article.gradingattempt.visible %}
 			<a href="{% url 'courses:grading_attempt.detail' article.gradingattempt.id %}">
 				<span class="anchor-big-text">{{article.gradingattempt.grade}}</span>
 			</a>
