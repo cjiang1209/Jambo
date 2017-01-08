@@ -53,11 +53,6 @@ CKEDITOR.dialog.add('commentDialog', function(editor) {
 							//this.setValue(this['default']);
 							CKEDITOR.instances[this.getInputElement().getId()].setData(this['default']);
 						},
-						commit: function(widget) {
-							console.log('commit content');
-							var html = editor.getSelectedHtml(true);
-							widget.setData('name', html);
-						}
 					},
 				]
 			},

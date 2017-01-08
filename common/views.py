@@ -43,7 +43,7 @@ class AddUser(FormView):
     def form_valid(self, form):
         uploadFile = self.request.FILES['upload']
         filename = os.path.join(settings.MEDIA_ROOT, uploadFile.name)
-        with open(filename, 'w') as destination:
+        with open(filename, 'wb') as destination:
             for chunk in uploadFile.chunks():
                 destination.write(chunk)
         success = self.addUsersFromCSV(filename)

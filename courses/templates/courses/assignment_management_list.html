@@ -70,9 +70,7 @@ var urlDeleteStage = "{% url 'courses:stage.delete' %}";
 {% endwith %}
 
 <div class="container">
-	{% if perms.courses.add_assignment %}
 	<a class="btn btn-default" href="{% url 'courses:assignment.create' course.id %}" role="button"><i class="fa fa-fw fa-plus"></i> Create</a>
-	{% endif %}
 	
 	<ul class="list-unstyled">
 	{% for assignment in object_list %}
@@ -81,7 +79,6 @@ var urlDeleteStage = "{% url 'courses:stage.delete' %}";
 				<div class="panel-heading">
 					<span>{{ assignment.title }}</span>
 					
-					{% if perms.courses.change_assignment %}
 					<span class="dropdown pull-right">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<b class="caret"></b>
@@ -94,7 +91,6 @@ var urlDeleteStage = "{% url 'courses:stage.delete' %}";
 							<li>
 						</ul>
 					</span>
-					{% endif %}
 				</div>
 				<div class="panel-body">
 					<blockquote>

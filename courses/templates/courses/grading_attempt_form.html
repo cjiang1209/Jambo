@@ -54,7 +54,7 @@ var editorConfig = '{% static 'common/miscellaneous/ckeditor_grading_config.js' 
 
 <div class="container">
 <div class="row">
-	<div class="col-md-2">
+	<div class="col-md-4">
 		<i class="fa fa-user" aria-hidden="true"></i> Author: {{ gradingattempt.article.author }}
 	</div>
 	<div class="col-md-4">
@@ -77,6 +77,14 @@ var editorConfig = '{% static 'common/miscellaneous/ckeditor_grading_config.js' 
 	</div>
 	<button class="btn btn-default" type="submit">Update</button>
 </form>
+
+<div class="well">
+	<strong><i class="fa fa-question-circle" aria-hidden="true"></i> Help</strong>
+	<ul>
+		<li>Right-click anywhere to insert a comment.</li>
+		<li>Right-click on an existing comment to remove it.</li>
+	</ul>
+</div>
 
 <textarea id="id_content" rows="10" cols="40">
 	{{ gradingattempt.content | safe }}

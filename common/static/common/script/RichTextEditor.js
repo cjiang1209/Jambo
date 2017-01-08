@@ -39,7 +39,7 @@ var RichTextEditorConfig = (function() {
 		Comment: function() {
 			return {
 				toolbarGroups: [
-	                { name: 'insert', groups: [ 'insert' ] },
+	                //{ name: 'insert', groups: [ 'insert' ] },
 			        //{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] }
 			    ],
 			    removePlugins: 'elementspath',

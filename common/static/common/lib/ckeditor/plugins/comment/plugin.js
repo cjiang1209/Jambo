@@ -1,23 +1,27 @@
 (function() {
 	var pluginName = 'comment';
-	var cls = 'cke_comment';
-	var idCls = 'cke_comment_id';
+	var iconClass = 'cke_comment_icon';
+	var idClass = 'cke_comment_id';
 	var template = new CKEDITOR.template('<span>'
-		+ '<span class="' + idCls + '">{comment_id}</span>'
-		+ '<span class="' + cls + '">{name}</span>'
+		+ '<span class="' + idClass + '">{comment_id}</span>'
+		+ '<img class="' + iconClass + '" />'
 		+ '</span>');
-//	var tooltipTemplate = new CKEDITOR.template('<span>{comment_id}</span>'
-//		+ '<span>{content}</span>'
-//		+ '<span>{create_date}</span>');
 	
 	var addCommentCmd = {
 		canUndo : false,
 		readOnly : true,
 		exec : function(editor) {
-			if (editor.getSelection().getRanges().length > 0) {
-				editor.setReadOnly(false);
-				editor.execCommand(pluginName);
+			var sel = editor.getSelection();
+			console.log(sel.getRanges().length);
+			if (sel.getRanges().length > 0) {
+				var range = sel.getRanges()[0];
+				range.setEnd(range.startContainer, range.startOffset);
+				sel.selectRanges([range]);
+				console.log(range);
 			}
+			
+			editor.setReadOnly(false);
+			editor.execCommand(pluginName);
 		}
 	};
 	
@@ -43,38 +47,31 @@
 //	};
 	
 	function removeCommand(editor, widget) {
-		editor.insertHtml(widget.data.name);
-		//editor.widgets.del(widget);
+		editor.widgets.del(widget);
 	}
-	
-//	var tooltip;
-	
-//	function showTooltip(widget, editor) {
-//		var cpos = editor.container.getDocumentPosition();
-//		var wpos = editor.window.getScrollPosition();
-//		var pos = widget.parts.name.getDocumentPosition();
-//		var styles = {
-//			'z-index': editor.config.baseFloatZIndex + 10,
-//			top: (cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height') + 40) + 'px',
-//			left: (cpos.x - wpos.x + pos.x) + 'px'
-//		};
-//
-//		tooltip.setStyles(styles);
-//		tooltip.show();
-//	}
-	
-//	function hideTooltip(widget, editor) {
-//		tooltip.hide();
-//	}
-	
+
+	function tryRestoreCommentElement(editor, element) {
+		if (element && element.type == CKEDITOR.NODE_ELEMENT && element.hasAttribute('data-cke-widget-wrapper')) {
+			var child = element.getChild(0);
+			if (child && child.hasAttribute('data-widget') && child.getAttribute('data-widget') == 'comment') {
+				return child;
+			}
+		}
+	}
+
 	var plugin = {
 	    requires: 'widget,dialog',
 	    icons: 'comment',
 	    draggable: false,
 	    
 	    onLoad: function() {
-	    	CKEDITOR.addCss('.' + idCls + '{display:none}');
-			CKEDITOR.addCss('.' + cls + '{background-color:#ff0}');
+			var iconPath = CKEDITOR.getUrl( this.path + 'icons/comment.png' );
+			console.log(iconPath);
+			var baseStyle = 'background:url(' + iconPath + ') no-repeat center;border:1px dotted #00f;background-size:16px;'
+				+ 'width:16px;min-height:15px;height:1.15em;vertical-align:text-bottom;';
+	    	
+	    	CKEDITOR.addCss('.' + idClass + '{display:none}');
+			CKEDITOR.addCss('.' + iconClass + '{' + baseStyle + '}');
 //			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
 //					'#cke_tooltip { max-width: 400px; }');
 //			CKEDITOR.document.appendStyleText( CKEDITOR.config.devtools_styles ||
@@ -85,27 +82,16 @@
 	    
 	    init: function(editor) {
 	    	CKEDITOR.dialog.add('commentDialog', this.path + 'dialogs/comment.js');
-	    	
-//	    	if (!tooltip) {
-//		    	tooltip = CKEDITOR.dom.element.createFromHtml(
-//		    			'<div id="cke_tooltip" tabindex="-1" style="position: absolute"></div>',
-//		    			CKEDITOR.document);
-//		    	//tooltip.setCustomData('updating', false);
-//				tooltip.hide();
-//				tooltip.appendTo(editor.element.getParent());
-//	    	}
-	    	
+
 	        editor.widgets.add(pluginName, {
 	        	dialog: 'commentDialog',
-	            //button: 'Add Comment',
 	            template: template.output({
 	            	comment_id: '',
-	            	name: ''
 	            }),
 	            
 	            parts: {
-	            	comment_id: 'span.' + idCls,
-	                name: 'span.' + cls
+	            	comment_id: 'span.' + idClass,
+	                icon: 'img.' + iconClass
 	            },
 
 	            //allowedContent: 'span(!' + cls + ')',
@@ -115,31 +101,25 @@
 //	                return element.name == 'span' && element.hasClass(cls);
 //	            },
 	            downcast: function() {
-	            	return new CKEDITOR.htmlParser.text('[[' + this.data.comment_id + ']]{{' + this.data.name + '}}');
+	            	return new CKEDITOR.htmlParser.text('[[[[' + this.data.comment_id + ']]]]');
 	            },
 	            
 	            init: function() {
 	            	this.setData('comment_id', this.parts.comment_id.getText());
-	            	this.setData('name', this.parts.name.getHtml());
 	            	
 	            	var widget = this;
-	            	widget.parts.name.on('mouseover', function(evt) {
+	            	
+	            	widget.parts.icon.on('mouseover', function(evt) {
 	            		var cpos = editor.container.getDocumentPosition();
 	            		var wpos = editor.window.getScrollPosition();
-	            		var pos = widget.parts.name.getDocumentPosition();
+	            		var pos = widget.parts.icon.getDocumentPosition();
             		
             			widget.fire('mouseover', {
-            				top: cpos.y - wpos.y + pos.y + widget.parts.name.getSize('height'),
-            				left: cpos.x - wpos.x + pos.x
+            				top: cpos.y - wpos.y + pos.y + 5,
+            				left: cpos.x - wpos.x + pos.x + 5
             			});
 	            	});
-//	            	widget.parts.name.on('mouseout', function() {
-//	            		hideTooltip(widget, editor);
-//	            	});
-	            	
-	            	widget.on('contextMenu', function(evt) {
-	            		evt.data.removeComment = CKEDITOR.TRISTATE_OFF;
-	            	});
+
 	            	widget.on('ready', function(evt) {
 	            		editor.setReadOnly(true);
 	            	});
@@ -147,21 +127,35 @@
 	            
 	            data: function() {
 	            	this.parts.comment_id.setText(this.data.comment_id);
-	            	this.parts.name.setHtml(this.data.name);
 	            }
 	        });
 	        
 	        editor.addCommand('addComment', addCommentCmd);
 	        editor.addCommand('removeComment', removeCommentCmd);
-	        //editor.addCommand('hideCommentWindow', hideCommentWindowCmd);
 	        
 	        if (editor.contextMenu) {
 	        	editor.addMenuGroup('comment');
+	        	editor.addMenuItem('insertComment', {
+					label: 'Insert Comment',
+					icon: this.path + 'icons/comment.png',
+					command: 'addComment',
+					group: 'comment'
+				});
 				editor.addMenuItem('removeComment', {
 					label: 'Remove Comment',
 					icon: this.path + 'icons/comment.png',
 					command: 'removeComment',
 					group: 'comment'
+				});
+				
+				editor.contextMenu.addListener(function (element) {
+					var comment = tryRestoreCommentElement(editor, element);
+					if (comment) {
+						return {'removeComment': CKEDITOR.TRISTATE_OFF };
+					}
+					else {
+						return {'insertComment': CKEDITOR.TRISTATE_OFF };
+					}
 				});
 			}
 	        
@@ -174,7 +168,7 @@
 	    },
 	    
 		afterInit: function(editor) {
-			var commentRegex = /\[\[([^\[\]])+\]\]{{([^{{])*}}/mg;
+			var commentRegex = /\[\[\[\[([^\[\]])+\]\]\]\]/mg;
 			editor.dataProcessor.dataFilter.addRules({
 				text: function(text, node) {
 					var dtd = node.parent && CKEDITOR.dtd[node.parent.name];
@@ -187,14 +181,12 @@
 					return text.replace(commentRegex, function(str) {
 						console.log(str);
 						
-						var regex = /\[\[(([^\[\]])+)\]\]{{(([^{{])*)}}/mg;
+						var regex = /\[\[\[\[(([^\[\]])+)\]\]\]\]/mg;
 						var match = regex.exec(str);
 						console.log(match[1]);
-						console.log(match[3]);
 						
 						var innerElement = CKEDITOR.dom.element.createFromHtml(template.output({
 							comment_id: match[1],
-							name: match[3]
 						}));
 
 						var widgetWrapper = editor.widgets.wrapElement(innerElement, 'comment');
