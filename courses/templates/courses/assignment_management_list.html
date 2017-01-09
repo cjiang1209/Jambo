@@ -47,7 +47,7 @@ var urlDeleteStage = "{% url 'courses:stage.delete' %}";
 						<ul class="dropdown-menu">
 							<li>
 								<a href="{% url 'courses:assignment.update' assignment.id %}"><i class="fa fa-fw fa-pencil-square-o"></i> Modify</a>
-								<a href="#"><i class="fa fa-fw fa-times"></i> Delete</a>
+								<a href="{% url 'courses:assignment.delete' assignment.id %}"><i class="fa fa-fw fa-times"></i> Delete</a>
 							<li>
 						</ul>
 					</span>

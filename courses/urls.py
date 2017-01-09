@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^course/(?P<pk>[0-9]+)/assignment/create/$', AssignmentCreate.as_view(), name='assignment.create'),
     
     url(r'^assignment/(?P<pk>[0-9]+)/update/$', AssignmentUpdate.as_view(), name='assignment.update'),
+    url(r'^assignment/(?P<pk>[0-9]+)/delete/$', AssignmentDelete.as_view(), name='assignment.delete'),
     
 #     url(r'^submissionperiod/create/$', SubmissionPeriodCreate.as_view(), name='submission_period.create'),
 #     url(r'^submissionperiod/delete/$', SubmissionPeriodDelete.as_view(), name='submission_period.delete'),

@@ -208,6 +208,22 @@ class AssignmentUpdate(InstructCoursePermissionRequiredMixin, generic.UpdateView
         course_id = self.get_object().course.id
         return reverse_lazy('courses:manage.assignment.list', kwargs={'pk' : course_id})
 
+class AssignmentDelete(InstructCoursePermissionRequiredMixin, generic.DeleteView):
+    model = models.Assignment
+    template_name = 'courses/assignment_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AssignmentDelete, self).get_context_data(**kwargs)
+        context['course'] = self.get_object().course
+        return context
+
+    def get_permission_object(self):
+        return self.get_object().course
+
+    def get_success_url(self):
+        course_id = self.get_object().course.id
+        return reverse_lazy('courses:manage.assignment.list', kwargs={'pk' : course_id})
+
 # Submission Period
 
 # class SubmissionPeriodCreate(AjaxableResponseMixin, generic.CreateView):
