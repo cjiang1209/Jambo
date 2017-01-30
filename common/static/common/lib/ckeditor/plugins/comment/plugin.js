@@ -12,12 +12,10 @@
 		readOnly : true,
 		exec : function(editor) {
 			var sel = editor.getSelection();
-			console.log(sel.getRanges().length);
 			if (sel.getRanges().length > 0) {
 				var range = sel.getRanges()[0];
 				range.setEnd(range.startContainer, range.startOffset);
 				sel.selectRanges([range]);
-				console.log(range);
 			}
 			
 			editor.setReadOnly(false);
@@ -66,7 +64,6 @@
 	    
 	    onLoad: function() {
 			var iconPath = CKEDITOR.getUrl( this.path + 'icons/comment.png' );
-			console.log(iconPath);
 			var baseStyle = 'background:url(' + iconPath + ') no-repeat center;border:1px dotted #00f;background-size:16px;'
 				+ 'width:16px;min-height:15px;height:1.15em;vertical-align:text-bottom;';
 	    	
@@ -178,12 +175,9 @@
 					if (dtd && !dtd.span)
 						return;
 					
-					return text.replace(commentRegex, function(str) {
-						console.log(str);
-						
+					return text.replace(commentRegex, function(str) {					
 						var regex = /\[\[\[\[(([^\[\]])+)\]\]\]\]/mg;
 						var match = regex.exec(str);
-						console.log(match[1]);
 						
 						var innerElement = CKEDITOR.dom.element.createFromHtml(template.output({
 							comment_id: match[1],
